@@ -8,7 +8,5 @@
     <string name="password">Пароль</string>
     <string name="do_login">Войти</string>
     <string name="email">Почта</string>
-    <string name="this_field_is_required">Это обязательное поле</string>
-    <string name="invalid_email_format">Неверный формат почты</string>
-    <string name="password_length_error">Пароль должен содержать не менее 8 символов</string>
+    <string name="min_length_helper">Минимальная длина 8 символов</string>
 </resources>

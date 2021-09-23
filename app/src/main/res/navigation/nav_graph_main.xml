@@ -47,7 +47,7 @@
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment_to_mainFragment"
+            android:id="@+id/action_login_to_main"
             app:destination="@id/mainFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/nav_graph.xml"
@@ -55,7 +55,7 @@
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
-        android:name="ru.maxim.unsplash.ui.base.MainFragment"
+        android:name="ru.maxim.unsplash.ui.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main"/>
 </navigation>

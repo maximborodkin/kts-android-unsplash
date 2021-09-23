@@ -7,7 +7,6 @@
     <string name="password">Password</string>
     <string name="do_login">Login</string>
     <string name="email">Email</string>
-    <string name="this_field_is_required">This field is required</string>
-    <string name="invalid_email_format">Invalid email format</string>
-    <string name="password_length_error">Password must contains at least 8 characters</string>
+    <string name="min_length_helper">Minimal length 8 characters</string>
+    <string name="example_email" translatable="false">example@email.com</string>
 </resources>

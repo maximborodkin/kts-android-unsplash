@@ -1,5 +1,6 @@
 package ru.maxim.unsplash.ui.base
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -15,11 +16,13 @@ import ru.maxim.unsplash.ui.onboarding.OnboardingThirdFragment
 import ru.maxim.unsplash.ui.onboarding.OnboardingThirdFragmentDirections
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
     var navController: NavController? = null
     private var currentFragmentId: Int? = null
+    private val tag = javaClass.simpleName + " (activity lifecycle)"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +37,35 @@ class MainActivity : AppCompatActivity() {
         } else {
             currentFragmentId = navController?.currentDestination?.id
         }
-
         initNavigation()
+        Timber.tag(tag).d("onCreate()")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.tag(tag).d("onStart()")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.tag(tag).d("onResume()")
+
+        startActivity(Intent(this, SecondActivity::class.java))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.tag(tag).d("onPause()")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.tag(tag).d("onStop()")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.tag(tag).d("onDestroy()")
     }
 
     private fun checkBackButton() {

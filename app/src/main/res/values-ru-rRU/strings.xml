@@ -9,4 +9,10 @@
     <string name="do_login">Войти</string>
     <string name="email">Почта</string>
     <string name="min_length_helper">Минимальная длина 8 символов</string>
+    <string name="onboarding_first_title">Добро пожаловать в Unsplash</string>
+    <string name="onboarding_first_description">Кастомный клиент Unsplash, разработанный для kts.studio</string>
+    <string name="onboarding_second_title">Сообщество креативных фотографов</string>
+    <string name="onboarding_second_description">Вам доступны тысячи красивых фотографий в высоком разрешении. Оценивайте их, создавайте коллекции, делитесь. Ваши собственные фото также будут интересны другим</string>
+    <string name="onboarding_third_title">Войдите для разблокирования всех функций</string>
+    <string name="onboarding_third_description">Используйте свой аккаунт Unsplash чтобы смотреть, скачивать и делиться фотографиями, создавать собственные коллекции, менять данные аккаунта</string>
 </resources>

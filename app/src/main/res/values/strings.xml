@@ -9,4 +9,10 @@
     <string name="email">Email</string>
     <string name="min_length_helper">Minimal length 8 characters</string>
     <string name="example_email" translatable="false">example@email.com</string>
+    <string name="onboarding_first_title">Welcome to Unsplash</string>
+    <string name="onboarding_first_description">The custom Unsplash client developed for kts.studio</string>
+    <string name="onboarding_second_title">Creative photographers community</string>
+    <string name="onboarding_second_description">Thousands of beautiful photos in high resolution available for you. Rate it, create collections, share. Your own photos also interested for other</string>
+    <string name="onboarding_third_title">Login to unlock all activities</string>
+    <string name="onboarding_third_description">Use your Unsplash account to watch, download or share photos, create custom collections, manage account information</string>
 </resources>

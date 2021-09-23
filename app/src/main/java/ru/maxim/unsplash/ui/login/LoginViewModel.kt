@@ -1,17 +1,22 @@
 package ru.maxim.unsplash.ui.login
 
 import android.util.Patterns
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(private val state: SavedStateHandle) : ViewModel() {
     // Two-way data binding
-    val email = MutableLiveData("")
-    val password = MutableLiveData("")
+    val email = state.getLiveData<String>("email")
+    val password = state.getLiveData<String>("password")
 
-    private val _errorMessage = MutableLiveData<String>()
+    fun setEmail(email: String) {
+        state["email"] = email
+    }
+
+    fun setPassword(password: String) {
+        state["password"] = password
+    }
+
+    private val _errorMessage = state.getLiveData<String>("error_message")
     val errorMessage: LiveData<String> = _errorMessage
     private val _isButtonEnabled = MediatorLiveData<Boolean>()
     val isButtonEnabled: LiveData<Boolean> = _isButtonEnabled

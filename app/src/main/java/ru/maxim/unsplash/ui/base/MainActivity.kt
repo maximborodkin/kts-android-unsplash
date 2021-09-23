@@ -1,27 +1,23 @@
 package ru.maxim.unsplash.ui.base
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ActivityMainBinding
 import ru.maxim.unsplash.ui.onboarding.OnboardingFirstFragmentDirections
 import ru.maxim.unsplash.ui.onboarding.OnboardingSecondFragmentDirections
-import ru.maxim.unsplash.ui.onboarding.OnboardingThirdFragment
 import ru.maxim.unsplash.ui.onboarding.OnboardingThirdFragmentDirections
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
+import ru.maxim.unsplash.util.toast
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
     var navController: NavController? = null
-    private var currentFragmentId: Int? = null
     private val tag = javaClass.simpleName + " (activity lifecycle)"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,11 +28,6 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.mainNavHost) as NavHostFragment
         navController = navHostFragment.navController
-        if (savedInstanceState != null && savedInstanceState.containsKey("current_fragment_id")) {
-            currentFragmentId = savedInstanceState.getInt("current_fragment_id")
-        } else {
-            currentFragmentId = navController?.currentDestination?.id
-        }
         initNavigation()
         Timber.tag(tag).d("onCreate()")
     }
@@ -50,7 +41,20 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Timber.tag(tag).d("onResume()")
 
-        startActivity(Intent(this, SecondActivity::class.java))
+        //startActivity(Intent(this, SecondActivity::class.java))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBundle("navControllerState", navController?.saveState())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        if (savedInstanceState.containsKey("navControllerState")) {
+            navController?.restoreState(savedInstanceState.getBundle("navControllerState"))
+        }
+        toast("Called")
     }
 
     override fun onPause() {

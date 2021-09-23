@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.base
+package ru.maxim.unsplash.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater

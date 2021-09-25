@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.onboarding
+package ru.maxim.unsplash.ui.onboarding.pages
 
 import androidx.fragment.app.Fragment
 import ru.maxim.unsplash.R

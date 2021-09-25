@@ -12,52 +12,6 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="56dp"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph_main" />
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/onboardingNavigationBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored" >
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/onboardingBackBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                android:layout_gravity="start"
-                style="?android:attr/borderlessButtonStyle"
-                android:drawableStart="@drawable/ic_arrow_back_white"
-                android:text="@string/back"
-                android:textColor="#FFFFFF" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/onboardingPageIndicator"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal|center_vertical"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/onboardingNextBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                android:layout_gravity="end"
-                style="?android:attr/borderlessButtonStyle"
-                android:drawableEnd="@drawable/ic_arrow_forward_white"
-                android:text="@string/next"
-                android:textColor="#FFFFFF" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </com.google.android.material.bottomappbar.BottomAppBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

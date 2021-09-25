@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/onboardingPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/onboardingNavigationBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/onboardingNavigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onboardingPager" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/onboardingBackBtn"
+        style="@style/BottomBarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_arrow_back_white"
+        android:text="@string/back"
+        app:layout_constraintBottom_toBottomOf="@id/onboardingNavigationBar"
+        app:layout_constraintStart_toStartOf="@id/onboardingNavigationBar"
+        app:layout_constraintTop_toTopOf="@id/onboardingNavigationBar" />
+
+    <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+        android:id="@+id/onboardingPageIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/onboardingNavigationBar"
+        app:layout_constraintEnd_toEndOf="@id/onboardingNavigationBar"
+        app:layout_constraintStart_toStartOf="@id/onboardingNavigationBar"
+        app:layout_constraintTop_toTopOf="@id/onboardingNavigationBar"
+        app:spi_dotColor="?colorOnPrimary"
+        app:spi_dotSelectedColor="?colorOnPrimary"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/onboardingNextBtn"
+        style="@style/BottomBarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_arrow_forward_white"
+        android:text="@string/next"
+        app:layout_constraintBottom_toBottomOf="@id/onboardingNavigationBar"
+        app:layout_constraintEnd_toEndOf="@id/onboardingNavigationBar"
+        app:layout_constraintTop_toTopOf="@id/onboardingNavigationBar" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,10 +18,10 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/onboardingNavigationBar"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored" >
+        android:layout_gravity="bottom">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -30,12 +30,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/onboardingBackBtn"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
                 android:layout_gravity="start"
-                style="?android:attr/borderlessButtonStyle"
                 android:drawableStart="@drawable/ic_arrow_back_white"
                 android:text="@string/back"
                 android:textColor="#FFFFFF" />
@@ -45,16 +45,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center_horizontal|center_vertical"/>
+                android:gravity="center_horizontal|center_vertical" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/onboardingNextBtn"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
                 android:layout_gravity="end"
-                style="?android:attr/borderlessButtonStyle"
                 android:drawableEnd="@drawable/ic_arrow_forward_white"
                 android:text="@string/next"
                 android:textColor="#FFFFFF" />

@@ -8,14 +8,6 @@ class LoginViewModel(private val state: SavedStateHandle) : ViewModel() {
     val email = state.getLiveData<String>("email")
     val password = state.getLiveData<String>("password")
 
-    fun setEmail(email: String) {
-        state["email"] = email
-    }
-
-    fun setPassword(password: String) {
-        state["password"] = password
-    }
-
     private val _errorMessage = state.getLiveData<String>("error_message")
     val errorMessage: LiveData<String> = _errorMessage
     private val _isButtonEnabled = MediatorLiveData<Boolean>()

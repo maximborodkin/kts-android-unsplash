@@ -18,4 +18,9 @@ class MainFragment : Fragment() {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding?.root
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
 }

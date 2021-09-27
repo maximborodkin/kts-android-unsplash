@@ -12,13 +12,10 @@ import ru.maxim.unsplash.ui.onboarding.OnboardingSecondFragmentDirections
 import ru.maxim.unsplash.ui.onboarding.OnboardingThirdFragmentDirections
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
-import ru.maxim.unsplash.util.toast
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
     var navController: NavController? = null
-    private val tag = javaClass.simpleName + " (activity lifecycle)"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,19 +26,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.mainNavHost) as NavHostFragment
         navController = navHostFragment.navController
         initNavigation()
-        Timber.tag(tag).d("onCreate()")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Timber.tag(tag).d("onStart()")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.tag(tag).d("onResume()")
-
-        //startActivity(Intent(this, SecondActivity::class.java))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -54,22 +38,6 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState.containsKey("navControllerState")) {
             navController?.restoreState(savedInstanceState.getBundle("navControllerState"))
         }
-        toast("Called")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.tag(tag).d("onPause()")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.tag(tag).d("onStop()")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.tag(tag).d("onDestroy()")
     }
 
     private fun checkBackButton() {

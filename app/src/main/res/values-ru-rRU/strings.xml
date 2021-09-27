@@ -5,10 +5,10 @@
     <string name="back">Назад</string>
     <string name="next">Далее</string>
     <string name="finish">Завершить</string>
-    <string name="password">Пароль</string>
-    <string name="do_login">Войти</string>
-    <string name="email">Почта</string>
-    <string name="min_length_helper">Минимальная длина 8 символов</string>
+    <string name="login_password">Пароль</string>
+    <string name="login_do_login">Войти</string>
+    <string name="login_email">Почта</string>
+    <string name="login_min_length_helper">Минимальная длина 8 символов</string>
     <string name="onboarding_first_title">Добро пожаловать в Unsplash</string>
     <string name="onboarding_first_description">Кастомный клиент Unsplash, разработанный для kts.studio</string>
     <string name="onboarding_second_title">Сообщество креативных фотографов</string>

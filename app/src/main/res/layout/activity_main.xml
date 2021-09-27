@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.base.MainActivity">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mainNavHost"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph_main" />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/onboardingNavigationBar"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/onboardingBackBtn"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="start"
+                android:drawableStart="@drawable/ic_arrow_back_white"
+                android:text="@string/back"
+                android:textColor="#FFFFFF" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/onboardingPageIndicator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/onboardingNextBtn"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="end"
+                android:drawableEnd="@drawable/ic_arrow_forward_white"
+                android:text="@string/next"
+                android:textColor="#FFFFFF" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.bottomappbar.BottomAppBar>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

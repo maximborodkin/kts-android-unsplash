@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/onboardingFirstFragment">
+
+    <fragment
+        android:id="@+id/onboardingFirstFragment"
+        android:name="ru.maxim.unsplash.ui.onboarding.OnboardingFirstFragment"
+        android:label="OnboardingFirstFragment"
+        tools:layout="@layout/fragment_onboarding_first">
+        <action
+            android:id="@+id/action_onboardingFirst_to_Second"
+            app:destination="@id/onboardingSecondFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/onboardingFirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onboardingSecondFragment"
+        android:name="ru.maxim.unsplash.ui.onboarding.OnboardingSecondFragment"
+        android:label="OnboardingSecondFragment"
+        tools:layout="@layout/fragment_onboarding_second">
+        <action
+            android:id="@+id/action_onboardingSecond_to_Third"
+            app:destination="@id/onboardingThirdFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popUpTo="@id/onboardingSecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onboardingThirdFragment"
+        android:name="ru.maxim.unsplash.ui.onboarding.OnboardingThirdFragment"
+        android:label="OnboardingThirdFragment"
+        tools:layout="@layout/fragment_onboarding_third">
+        <action
+            android:id="@+id/action_onboardingThird_to_login"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="ru.maxim.unsplash.ui.login.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_main"
+            app:destination="@id/mainFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="ru.maxim.unsplash.ui.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main"/>
+</navigation>

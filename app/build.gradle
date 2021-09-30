@@ -44,7 +44,7 @@ dependencies {
     def livedata_version = "2.3.1"
     def paging_version = "3.0.1"
 
-    // KTX
+        // KTX
     implementation 'androidx.core:core-ktx:1.6.0'
 
     // AndroidX

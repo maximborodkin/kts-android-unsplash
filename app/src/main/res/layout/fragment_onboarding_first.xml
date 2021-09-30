@@ -2,48 +2,59 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/purple_100"
-    android:paddingHorizontal="48dp"
-    tools:context="ru.maxim.unsplash.ui.onboarding.pages.OnboardingFirstFragment">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/onboardingPageImage"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/onboardingPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:tint="@color/purple_900"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/onboardingNavigationBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/onboardingNavigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25"
-        app:srcCompat="@drawable/ic_logo" />
+        app:layout_constraintTop_toBottomOf="@id/onboardingPager" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/onboardingPageTitle"
+        android:id="@+id/onboardingBackBtn"
+        style="@style/BottomBarButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/onboarding_first_title"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/onboardingPageImage" />
+        android:drawableStart="@drawable/ic_arrow_back_white"
+        android:text="@string/back"
+        app:layout_constraintBottom_toBottomOf="@id/onboardingNavigationBar"
+        app:layout_constraintStart_toStartOf="@id/onboardingNavigationBar"
+        app:layout_constraintTop_toTopOf="@id/onboardingNavigationBar" />
+
+    <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+        android:id="@+id/onboardingPageIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/onboardingNavigationBar"
+        app:layout_constraintEnd_toEndOf="@id/onboardingNavigationBar"
+        app:layout_constraintStart_toStartOf="@id/onboardingNavigationBar"
+        app:layout_constraintTop_toTopOf="@id/onboardingNavigationBar"
+        app:spi_dotColor="?colorOnPrimary"
+        app:spi_dotSelectedColor="?colorOnPrimary"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/onboardingPageDescription"
+        android:id="@+id/onboardingNextBtn"
+        style="@style/BottomBarButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/onboarding_first_description"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/onboardingPageTitle" />
+        android:drawableEnd="@drawable/ic_arrow_forward_white"
+        android:text="@string/next"
+        app:layout_constraintBottom_toBottomOf="@id/onboardingNavigationBar"
+        app:layout_constraintEnd_toEndOf="@id/onboardingNavigationBar"
+        app:layout_constraintTop_toTopOf="@id/onboardingNavigationBar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

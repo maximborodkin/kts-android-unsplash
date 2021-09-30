@@ -4,11 +4,11 @@
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="finish">Finish</string>
-    <string name="password">Password</string>
-    <string name="do_login">Login</string>
-    <string name="email">Email</string>
-    <string name="min_length_helper">Minimal length 8 characters</string>
-    <string name="example_email" translatable="false">example@email.com</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_do_login">Login</string>
+    <string name="login_min_length_helper">Minimal length 8 characters</string>
+    <string name="login_example_email" translatable="false">example@email.com</string>
     <string name="onboarding_first_title">Welcome to Unsplash</string>
     <string name="onboarding_first_description">The custom Unsplash client developed for kts.studio</string>
     <string name="onboarding_second_title">Creative photographers community</string>

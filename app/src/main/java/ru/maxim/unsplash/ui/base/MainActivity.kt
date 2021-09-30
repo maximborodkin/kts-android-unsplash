@@ -5,17 +5,17 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private var binding: ActivityMainBinding? = null
+    private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::bind)
     private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(binding.root)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.mainNavHost) as NavHostFragment

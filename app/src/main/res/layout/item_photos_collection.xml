@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="collection"
+            type="ru.maxim.unsplash.model.PhotosCollection" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@color/yellow_100">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemCollectionCover"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintDimensionRatio="16:9"
+            android:scaleType="center"
+            android:tint="@color/transparent_dark"
+            tools:src="@tools:sample/backgrounds/scenic"/>
+
+        <TextView
+            android:id="@+id/itemCollectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_margin="12dp"
+            android:text="@{collection.title}"
+            tools:text="Example collection"/>
+
+        <ru.maxim.unsplash.ui.view.AvatarView
+            android:id="@+id/itemCollectionAuthorAvatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="12dp"
+            tools:src="@tools:sample/avatars"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemPhotoAuthorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/itemCollectionAuthorAvatar"
+            app:layout_constraintTop_toTopOf="@id/itemCollectionAuthorAvatar"
+            app:layout_constraintBottom_toBottomOf="@id/itemCollectionAuthorAvatar"
+            android:layout_marginStart="12dp"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:text="@{collection.user.name}"
+            tools:text="@tools:sample/full_names" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemCollectionPhotosCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="12dp"
+            android:drawableEnd="@drawable/ic_image"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:text="@{Integer.toString(collection.totalPhotos)}"
+            tools:text="10" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

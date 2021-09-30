@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="photo"
+            type="ru.maxim.unsplash.model.Photo" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="ru.maxim.unsplash.ui.main.MainFragment">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemPhotoImage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemPhotoDownloadBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_download"
+            app:layout_constraintEnd_toStartOf="@id/itemPhotoAddBtn"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemPhotoAddBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ru.maxim.unsplash.ui.view.AvatarView
+            android:id="@+id/itemPhotoAuthorAvatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemPhotoAuthorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:maxLines="1"
+            android:text="@{photo.user.name}"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/itemPhotoAuthorAvatar"
+            app:layout_constraintStart_toEndOf="@id/itemPhotoAuthorAvatar"
+            app:layout_constraintTop_toTopOf="@id/itemPhotoAuthorAvatar"
+            tools:text="@tools:sample/full_names" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemPhotoLikeBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_like"
+            android:tint="@{photo.likedByUser ? @color/red_500 : @color/grey}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/itemPhotoLikesCount" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemPhotoLikesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:text="@{Integer.toString(photo.likes)}"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/itemPhotoLikeBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/itemPhotoLikeBtn"
+            tools:text="5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

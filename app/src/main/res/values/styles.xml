@@ -2,6 +2,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="BottomBarButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">?colorOnPrimary</item>
-        <item name="android:drawableTint" tools:targetApi="m">?colorOnPrimary</item>
+        <item name="drawableTint">?colorOnPrimary</item>
+    </style>
+    <style name="LoginButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="backgroundTint">@drawable/login_button_selector</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
 </resources>

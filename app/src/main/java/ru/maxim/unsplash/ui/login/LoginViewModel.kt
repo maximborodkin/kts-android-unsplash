@@ -1,38 +1,49 @@
 package ru.maxim.unsplash.ui.login
 
-import android.util.Patterns
-import androidx.lifecycle.*
+import android.app.Application
+import android.content.Intent
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.TokenRequest
+import ru.maxim.unsplash.repository.remote.service.AuthService
 import ru.maxim.unsplash.util.SingleLiveEvent
 
-class LoginViewModel(private val state: SavedStateHandle) : ViewModel() {
-    // Two-way data binding
-    val email = state.getLiveData<String>("email")
-    val password = state.getLiveData<String>("password")
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
+    private val authService = AuthService()
+    private val authorizationService = AuthorizationService(application)
 
-    private val _errorMessage = state.getLiveData<String>("error_message")
-    val errorMessage: LiveData<String> = _errorMessage
-    private val _isButtonEnabled = MediatorLiveData<Boolean>()
-    val isButtonEnabled: LiveData<Boolean> = _isButtonEnabled
-    private val _isLoginAccepted = SingleLiveEvent<Boolean>()
-    val isLoginAccepted: SingleLiveEvent<Boolean> = _isLoginAccepted
+    private val _openAuthPageEvent = SingleLiveEvent<Intent>()
+    private val _isAuthSuccess = SingleLiveEvent<Unit>()
+    private val _isAuthInProgress = MutableLiveData(false)
+    private val _error = MutableLiveData<String?>(null)
 
-    init {
-        _isButtonEnabled.apply {
-            addSource(email) { _isButtonEnabled.value = validateEmail() && validatePassword() }
-            addSource(password) { _isButtonEnabled.value = validateEmail() && validatePassword() }
-        }
+    val openAuthPageEvent: LiveData<Intent> = _openAuthPageEvent
+    val isAuthSuccess: LiveData<Unit> = _isAuthSuccess
+    val isAuthInProgress: LiveData<Boolean> = _isAuthInProgress
+    val error: LiveData<String?> = _error
+
+    // Open OAuth2 authentication page in a browser tab
+    fun startLoginPage() {
+        _isAuthInProgress.postValue(true)
+        val authIntent = authorizationService.getAuthorizationRequestIntent(authService.authRequest)
+        _openAuthPageEvent.postValue(authIntent)
     }
 
-    private fun validateEmail(): Boolean =
-        !email.value.isNullOrBlank() && Patterns.EMAIL_ADDRESS.matcher(email.value!!).matches()
+    fun onTokenRequestReceived(tokenRequest: TokenRequest) {
+        _isAuthInProgress.postValue(false)
+        authService.performTokenRequest(
+            authorizationService,
+            tokenRequest,
+            onComplete = { _isAuthSuccess.postValue(Unit) },
+            onError = { message -> _error.postValue(message) }
+        )
+    }
 
-    private fun validatePassword(): Boolean =
-        !password.value.isNullOrBlank() && password.value?.length!! > 7
-
-    fun login() {
-        // Network request to login endpoint
-
-        // Set flag to indicate successful login (now its just fields validation)
-        _isLoginAccepted.value = _isButtonEnabled.value
+    fun onAuthFailed(exception: AuthorizationException) {
+        _isAuthInProgress.postValue(false)
+        _error.postValue(exception.localizedMessage)
     }
 }

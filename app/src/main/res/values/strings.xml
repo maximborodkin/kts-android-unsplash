@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Unsplash</string>
     <string name="welcome_to_unsplash">Welcome to Unsplash</string>
@@ -15,4 +16,9 @@
     <string name="onboarding_second_description">Thousands of beautiful photos in high resolution available for you. Rate it, create collections, share. Your own photos also interested for other</string>
     <string name="onboarding_third_title">Login to unlock all activities</string>
     <string name="onboarding_third_description">Use your Unsplash account to watch, download or share photos, create custom collections, manage account information</string>
+    <string name="unauthorized_error">"Authentication failed. Relogin needed "</string>
+    <string name="common_error">Something went wrong. Please try again</string>
+    <string name="server_error">Server error. Please try again</string>
+    <string name="timeout_error">Request timed out. Check your internet connection</string>
+    <string name="common_login_error">Something went wrong while authentication process. Please try again</string>
 </resources>

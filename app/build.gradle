@@ -17,6 +17,10 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+            appAuthRedirectScheme: "school"
+        ]
     }
 
     buildTypes {
@@ -44,7 +48,7 @@ dependencies {
     def livedata_version = "2.3.1"
     def paging_version = "3.0.1"
 
-        // KTX
+    // KTX
     implementation 'androidx.core:core-ktx:1.6.0'
 
     // AndroidX
@@ -60,6 +64,9 @@ dependencies {
 
     // Scrolling indicator
     implementation 'ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1'
+
+    // Adapter delegates
+    implementation 'com.hannesdorfmann:adapterdelegates4:4.3.0'
 
     // Database
     implementation "androidx.room:room-runtime:$room_version"
@@ -86,7 +93,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.7'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+
+    //AppAuth
+    implementation 'net.openid:appauth:0.9.1'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:5.0.1'

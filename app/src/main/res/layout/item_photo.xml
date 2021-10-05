@@ -4,7 +4,7 @@
     <data>
         <variable
             name="photo"
-            type="ru.maxim.unsplash.model.Photo" />
+            type="ru.maxim.unsplash.ui.main.items.PhotoItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:maxLines="1"
-            android:text="@{photo.user.name}"
+            android:text="@{photo.authorName}"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/itemPhotoAuthorAvatar"
             app:layout_constraintStart_toEndOf="@id/itemPhotoAuthorAvatar"
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:text="@{Integer.toString(photo.likes)}"
+            android:text="@{Integer.toString(photo.likesCount)}"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@id/itemPhotoLikeBtn"

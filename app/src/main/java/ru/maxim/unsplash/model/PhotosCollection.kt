@@ -9,5 +9,12 @@ data class PhotosCollection(
     val coverPhoto: Photo,
     val totalPhotos: Int,
     val user: User,
-    val links: PhotoLinks?
-)
+    val links: Links?
+) {
+    data class Links (
+        val self: String,
+        val html: String,
+        val photos: String,
+        val related: String
+    )
+}

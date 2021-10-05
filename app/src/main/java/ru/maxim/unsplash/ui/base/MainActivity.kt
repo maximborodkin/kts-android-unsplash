@@ -9,13 +9,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
-    private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::bind)
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.mainNavHost) as NavHostFragment

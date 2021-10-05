@@ -1,115 +1,40 @@
 package ru.maxim.unsplash.ui.main
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.Glide
-import ru.maxim.unsplash.R
-import ru.maxim.unsplash.databinding.ItemPhotoBinding
-import ru.maxim.unsplash.databinding.ItemPhotosCollectionBinding
+import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import ru.maxim.unsplash.model.Photo
-import ru.maxim.unsplash.model.PhotosCollection
-import ru.maxim.unsplash.util.toast
+import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingItemDelegate
+import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingItemDelegate
+import ru.maxim.unsplash.ui.main.item_delegates.PhotoItemDelegate
+import ru.maxim.unsplash.ui.main.item_delegates.PhotosCollectionItemDelegate
+import ru.maxim.unsplash.ui.main.items.*
 
-class MainRecyclerAdapter :
-    PagingDataAdapter<Any, MainRecyclerAdapter.MainListViewHolder>(PhotosDiffCallback) {
+class MainRecyclerAdapter(
+    onSetLike: (photoId: String, itemPosition: Int) -> Unit,
+    onAddToCollection: (photoId: String) -> Unit,
+    onDownload: (photoId: String) -> Unit,
+    onCollectionShare: (collectionId: Long) -> Unit
+) : AsyncListDifferDelegationAdapter<Any>(ComplexDiffCallback) {
 
-    override fun onBindViewHolder(holder: MainListViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+    init {
+        delegatesManager
+            .addDelegate(PhotoItemDelegate(onSetLike, onAddToCollection, onDownload))
+            .addDelegate(PhotosCollectionItemDelegate(onCollectionShare))
+            .addDelegate(InitialLoadingItemDelegate())
+            .addDelegate(PageLoadingItemDelegate())
+
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is Photo -> PHOTO_ITEM_ID
-            is PhotosCollection -> COLLECTION_ITEM_ID
-            else -> throw IllegalArgumentException("Unknown item type ${getItem(position)}")
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainListViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            PHOTO_ITEM_ID -> {
-                val view = inflater.inflate(R.layout.item_photo, parent, false)
-                PhotoViewHolder(view)
-            }
-            COLLECTION_ITEM_ID -> {
-                val view = inflater.inflate(R.layout.item_photos_collection, parent, false)
-                PhotosCollectionViewHolder(view)
-            }
-            else -> throw IllegalArgumentException("Unknown viewType $viewType")
-        }
-    }
-
-    companion object {
-        const val PHOTO_ITEM_ID = 1
-        const val COLLECTION_ITEM_ID = 2
-    }
-
-
-    sealed class MainListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(model: Any)
-    }
-
-    inner class PhotoViewHolder(itemView: View) : MainListViewHolder(itemView) {
-        private val binding by viewBinding(ItemPhotoBinding::bind)
-
-        override fun bind(model: Any) {
-            val photo = model as? Photo ?: throw IllegalArgumentException(
-                "ru.maxim.unsplash.model.Photo object required for PhotoViewHolder"
-            )
-            with(binding) {
-                this.photo = photo
-                photo.user.profileImage?.small?.let {
-                    Glide.with(itemView.context).load(it).into(itemPhotoAuthorAvatar)
-                }
-                photo.urls?.raw?.let {
-                    Glide.with(itemView.context).load(it).into(itemPhotoImage)
-                }
-                itemPhotoLikeBtn.setOnClickListener {
-                    photo.likes++
-                    photo.likedByUser = !photo.likedByUser
-                    notifyItemChanged(this@PhotoViewHolder.bindingAdapterPosition)
-                }
-                itemPhotoDownloadBtn.setOnClickListener { itemView.context.toast("Download") }
-                itemPhotoAddBtn.setOnClickListener { itemView.context.toast("Add to collection") }
-            }
-        }
-    }
-
-    inner class PhotosCollectionViewHolder(itemView: View) : MainListViewHolder(itemView) {
-        private val binding by viewBinding(ItemPhotosCollectionBinding::bind)
-
-        override fun bind(model: Any) {
-            val photosCollection = model as? PhotosCollection ?: throw IllegalArgumentException(
-                "ru.maxim.unsplash.model.PhotosCollection object required for PhotosCollectionViewHolder"
-            )
-            with(binding) {
-                this.collection = photosCollection
-                photosCollection.user.profileImage?.small?.let {
-                    Glide.with(itemView.context).load(it).into(itemCollectionAuthorAvatar)
-                }
-                photosCollection.coverPhoto.urls?.raw?.let {
-                    Glide.with(itemView.context).load(it).into(itemCollectionCover)
-                }
-            }
+    object ComplexDiffCallback : DiffUtil.ItemCallback<Any>() {
+        override fun areItemsTheSame(first: Any, second: Any): Boolean =
+        first.javaClass == second.javaClass && when(first) {
+            is PhotoItem -> first.id == (second as PhotoItem).id
+            is PhotosCollectionItem -> first.id == (second as PhotosCollectionItem).id
+            else -> true
         }
 
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(first: Any, second: Any): Boolean = first == second
     }
 }
-
-private object PhotosDiffCallback : DiffUtil.ItemCallback<Any>() {
-
-    override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean =
-        oldItem is Photo && newItem is Photo && oldItem.id == newItem.id ||
-        oldItem is PhotosCollection && newItem is PhotosCollection && oldItem.id == newItem.id
-
-    override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean =
-        oldItem is Photo && newItem is Photo && oldItem == newItem ||
-        oldItem is PhotosCollection && newItem is PhotosCollection && oldItem == newItem
-}
-

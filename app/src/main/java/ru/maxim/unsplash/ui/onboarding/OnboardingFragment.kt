@@ -9,9 +9,6 @@ import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentOnboardingBinding
-import ru.maxim.unsplash.ui.onboarding.pages.OnboardingFirstFragment
-import ru.maxim.unsplash.ui.onboarding.pages.OnboardingSecondFragment
-import ru.maxim.unsplash.ui.onboarding.pages.OnboardingThirdFragment
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
 
@@ -21,9 +18,9 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fragments = arrayListOf(
-            OnboardingFirstFragment(),
-            OnboardingSecondFragment(),
-            OnboardingThirdFragment()
+            Fragment(R.layout.fragment_onboarding_first),
+            Fragment(R.layout.fragment_onboarding_second),
+            Fragment(R.layout.fragment_onboarding_third)
         )
 
         binding.onboardingPager.adapter = OnboardingPagerAdapter(

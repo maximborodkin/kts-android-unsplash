@@ -11,15 +11,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemPhotoBinding
 import ru.maxim.unsplash.ui.main.item_delegates.PhotoItemDelegate.PhotoViewHolder
+import ru.maxim.unsplash.ui.main.items.BaseMainListItem
 import ru.maxim.unsplash.ui.main.items.PhotoItem
 
 class PhotoItemDelegate(
     private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     private val onAddToCollection: (photoId: String) -> Unit,
     private val onDownload: (photoId: String) -> Unit
-) : BaseItemDelegate<PhotoItem, PhotoViewHolder>() {
+) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
 
-    override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean =
+    override fun isForViewType(
+        item: BaseMainListItem,
+        items: MutableList<BaseMainListItem>,
+        position: Int
+    ): Boolean =
         item is PhotoItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PhotoViewHolder {
@@ -57,7 +62,7 @@ class PhotoItemDelegate(
                     .into(itemPhotoAuthorAvatar)
 
                 Glide.with(itemView.context)
-                    .load(photo.source)
+                    .load(photo.regular)
                     .thumbnail(
                         Glide.with(itemView.context)
                             .load(photo.thumbnail)

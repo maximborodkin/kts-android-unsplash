@@ -9,13 +9,17 @@ import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingItemDelegate.InitialLoadingViewHolder
+import ru.maxim.unsplash.ui.main.items.BaseMainListItem
 import ru.maxim.unsplash.ui.main.items.InitialLoaderItem
 
-class InitialLoadingItemDelegate : BaseItemDelegate<InitialLoaderItem, InitialLoadingViewHolder>() {
+class InitialLoadingItemDelegate :
+    BaseMainItemDelegate<InitialLoaderItem, InitialLoadingViewHolder>() {
 
-    inner class InitialLoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean =
+    override fun isForViewType(
+        item: BaseMainListItem,
+        items: MutableList<BaseMainListItem>,
+        position: Int
+    ): Boolean =
         item is InitialLoaderItem
 
     override fun onCreateViewHolder(parent: ViewGroup): InitialLoadingViewHolder {
@@ -38,4 +42,6 @@ class InitialLoadingItemDelegate : BaseItemDelegate<InitialLoaderItem, InitialLo
         payloads: MutableList<Any>
     ) {
     }
+
+    inner class InitialLoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

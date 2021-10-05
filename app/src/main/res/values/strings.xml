@@ -21,4 +21,7 @@
     <string name="server_error">Server error. Please try again</string>
     <string name="timeout_error">Request timed out. Check your internet connection</string>
     <string name="common_login_error">Something went wrong while authentication process. Please try again</string>
+    <string name="editorial">Editorial</string>
+    <string name="collections">Collections</string>
+    <string name="following">Following</string>
 </resources>

@@ -20,4 +20,7 @@
     <string name="server_error">Ошибка сервера. Пожалйста, попробуйте снова</string>
     <string name="timeout_error">Превышено время ожидания ответа. Проверьте соединение с интернетом</string>
     <string name="common_login_error">Ошибка при попытке входа. Пожалуйста, попробуйте снова</string>
+    <string name="editorial">Редакция</string>
+    <string name="collections">Коллекции</string>
+    <string name="following">Подписки</string>
 </resources>

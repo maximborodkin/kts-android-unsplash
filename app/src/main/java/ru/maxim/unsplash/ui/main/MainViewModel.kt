@@ -1,22 +1,35 @@
 package ru.maxim.unsplash.ui.main
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.model.Photo
+import ru.maxim.unsplash.model.PhotosCollection
 import ru.maxim.unsplash.repository.remote.RetrofitClient
+import ru.maxim.unsplash.ui.main.MainFragment.ListMode
+import ru.maxim.unsplash.ui.main.items.BaseMainListItem
+import ru.maxim.unsplash.ui.main.items.PhotoItem
+import ru.maxim.unsplash.ui.main.items.PhotosCollectionItem
 
 class MainViewModel : ViewModel() {
     private val photoService = RetrofitClient.photoService
-    private var currentOrderType = PhotosOrderType.Latest.queryParam
-    private val _photos = MutableLiveData<ArrayList<Photo>>(arrayListOf())
-    val photos: LiveData<ArrayList<Photo>> = _photos
+    private val collectionService = RetrofitClient.collectionService
+
+    var currentListMode = ListMode.Editorial
+
+    private val _items = MutableLiveData<ArrayList<BaseMainListItem>>(arrayListOf())
+    val items: LiveData<ArrayList<BaseMainListItem>> = _items
     var currentPage = 1
         private set
     var errorMessage = MutableLiveData<Int?>(null)
     var isInitialLoading = MutableLiveData(false)
     var isNextPageLoading = MutableLiveData(false)
+
+    private var currentPhotosOrderType = PhotosOrderType.Latest.queryParam
 
     fun loadNextPage() {
         // Load 30 elements for first page
@@ -29,13 +42,28 @@ class MainViewModel : ViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            val response = photoService.getAllPaginated(currentPage++, pageSize, currentOrderType)
+            val response = when (currentListMode) {
+                ListMode.Editorial ->
+                    photoService.getAllPaginated(currentPage++, pageSize, currentPhotosOrderType)
+                ListMode.Collections ->
+                    collectionService.getAllPaginated(currentPage++, pageSize)
+                ListMode.Following ->
+                    photoService.getAllPaginated(currentPage++, pageSize, currentPhotosOrderType)
+            }
             isInitialLoading.postValue(false)
             isNextPageLoading.postValue(false)
             if (response.isSuccessful && response.body() != null) {
-                _photos.postValue(_photos.value?.apply { addAll(response.body()!!) })
+                _items.postValue(_items.value?.apply {
+                    addAll(response.body()!!.map {
+                        when (it) {
+                            is Photo -> PhotoItem.fromPhoto(it)
+                            is PhotosCollection -> PhotosCollectionItem.fromCollection(it)
+                            else -> throw IllegalArgumentException("Unknown item type")
+                        }
+                    })
+                })
             } else {
-                val error = when(response.code()) {
+                val error = when (response.code()) {
                     401 -> {
                         // TODO: update auth credentials
                         R.string.unauthorized_error
@@ -62,7 +90,7 @@ class MainViewModel : ViewModel() {
 
     }
 
-    fun shareCollection(collectionId: Long) {
+    fun shareCollection(collectionId: String) {
 
     }
 }

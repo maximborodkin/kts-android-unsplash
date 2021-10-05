@@ -3,19 +3,20 @@ package ru.maxim.unsplash.ui.main
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
-import ru.maxim.unsplash.model.Photo
 import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingItemDelegate
 import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingItemDelegate
 import ru.maxim.unsplash.ui.main.item_delegates.PhotoItemDelegate
 import ru.maxim.unsplash.ui.main.item_delegates.PhotosCollectionItemDelegate
-import ru.maxim.unsplash.ui.main.items.*
+import ru.maxim.unsplash.ui.main.items.BaseMainListItem
+import ru.maxim.unsplash.ui.main.items.PhotoItem
+import ru.maxim.unsplash.ui.main.items.PhotosCollectionItem
 
 class MainRecyclerAdapter(
     onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     onAddToCollection: (photoId: String) -> Unit,
     onDownload: (photoId: String) -> Unit,
-    onCollectionShare: (collectionId: Long) -> Unit
-) : AsyncListDifferDelegationAdapter<Any>(ComplexDiffCallback) {
+    onCollectionShare: (collectionId: String) -> Unit
+) : AsyncListDifferDelegationAdapter<BaseMainListItem>(ComplexDiffCallback) {
 
     init {
         delegatesManager
@@ -26,15 +27,16 @@ class MainRecyclerAdapter(
 
     }
 
-    object ComplexDiffCallback : DiffUtil.ItemCallback<Any>() {
-        override fun areItemsTheSame(first: Any, second: Any): Boolean =
-        first.javaClass == second.javaClass && when(first) {
-            is PhotoItem -> first.id == (second as PhotoItem).id
-            is PhotosCollectionItem -> first.id == (second as PhotosCollectionItem).id
-            else -> true
-        }
+    object ComplexDiffCallback : DiffUtil.ItemCallback<BaseMainListItem>() {
+        override fun areItemsTheSame(first: BaseMainListItem, second: BaseMainListItem): Boolean =
+            first.javaClass == second.javaClass && when (first) {
+                is PhotoItem -> first.id == (second as PhotoItem).id
+                is PhotosCollectionItem -> first.id == (second as PhotosCollectionItem).id
+                else -> true
+            }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(first: Any, second: Any): Boolean = first == second
+        override fun areContentsTheSame(first: BaseMainListItem, second: BaseMainListItem) =
+            first == second
     }
 }

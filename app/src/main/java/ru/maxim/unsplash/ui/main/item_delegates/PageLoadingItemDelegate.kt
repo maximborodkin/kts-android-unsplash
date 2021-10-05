@@ -6,31 +6,34 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
-import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingItemDelegate.InitialLoadingViewHolder
 import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingItemDelegate.PageLoadingViewHolder
-import ru.maxim.unsplash.ui.main.items.InitialLoaderItem
+import ru.maxim.unsplash.ui.main.items.BaseMainListItem
 import ru.maxim.unsplash.ui.main.items.PageLoaderItem
 
-class PageLoadingItemDelegate : BaseItemDelegate<PageLoaderItem, PageLoadingViewHolder>() {
+class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoaderItem, PageLoadingViewHolder>() {
 
-    inner class PageLoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean =
+    override fun isForViewType(
+        item: BaseMainListItem,
+        items: MutableList<BaseMainListItem>,
+        position: Int
+    ): Boolean =
         item is PageLoaderItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PageLoadingViewHolder {
         val layout = LinearLayout(parent.context).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                    gravity = Gravity.CENTER_HORIZONTAL
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.CENTER_HORIZONTAL
             }
         }
         val loader = ProgressBar(layout.context).apply {
             isIndeterminate = true
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT)
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
         }
         layout.addView(loader)
         return PageLoadingViewHolder(layout)
@@ -40,5 +43,8 @@ class PageLoadingItemDelegate : BaseItemDelegate<PageLoaderItem, PageLoadingView
         item: PageLoaderItem,
         holder: PageLoadingViewHolder,
         payloads: MutableList<Any>
-    ){}
+    ) {
+    }
+
+    inner class PageLoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

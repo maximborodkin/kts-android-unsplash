@@ -44,5 +44,32 @@
         android:id="@+id/mainFragment"
         android:name="ru.maxim.unsplash.ui.main.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_main_to_photoDetails"
+            app:destination="@id/photoDetailsFragment" />
+        <action
+            android:id="@+id/action_main_to_collectionDetails"
+            app:destination="@id/collectionDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photoDetailsFragment"
+        android:name="ru.maxim.unsplash.ui.photo_details.PhotoDetailsFragment"
+        android:label="PhotoDetailsFragment"
+        tools:layout="@layout/fragment_photo_details">
+        <argument
+            android:name="photoId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/collectionDetailsFragment"
+        android:name="ru.maxim.unsplash.ui.collection_details.CollectionDetailsFragment"
+        android:label="CollectionDetailsFragment"
+        tools:layout="@layout/fragment_collection_details">
+        <argument
+            android:name="collectionId"
+            app:argType="string" />
+    </fragment>
 </navigation>

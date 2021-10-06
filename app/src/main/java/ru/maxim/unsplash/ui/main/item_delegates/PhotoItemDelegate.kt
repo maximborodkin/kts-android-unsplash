@@ -3,7 +3,6 @@ package ru.maxim.unsplash.ui.main.item_delegates
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnNextLayout
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
@@ -17,7 +16,8 @@ import ru.maxim.unsplash.ui.main.items.PhotoItem
 class PhotoItemDelegate(
     private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     private val onAddToCollection: (photoId: String) -> Unit,
-    private val onDownload: (photoId: String) -> Unit
+    private val onDownload: (photoId: String) -> Unit,
+    private val onOpenPhotoDetails: (photoId: String) -> Unit
 ) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
 
     override fun isForViewType(
@@ -43,25 +43,26 @@ class PhotoItemDelegate(
 
     inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(ItemPhotoBinding::bind)
-
+        private val context = itemView.context
         fun bind(photo: PhotoItem) {
             with(binding) {
                 this.photo = photo
+                root.setOnClickListener { onOpenPhotoDetails(photo.id) }
 
-                val imageRatio: Float = photo.width.toFloat() / photo.height.toFloat()
-                itemPhotoImage.apply {
-                    doOnNextLayout {
-                        layoutParams.height = (width * imageRatio).toInt()
-                    }
-                    //requestLayout()
+                // Set initial ImageView size to photo dimensions
+                val screenWidth = context.resources.displayMetrics.widthPixels
+                val imageRatio = photo.width.toDouble() / photo.height.toDouble()
+                itemPhotoImage.layoutParams.apply {
+                    width = screenWidth
+                    height = (screenWidth / imageRatio).toInt()
                 }
 
-                Glide.with(itemView.context)
+                Glide.with(context)
                     .load(photo.authorAvatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(itemPhotoAuthorAvatar)
 
-                Glide.with(itemView.context)
+                Glide.with(context)
                     .load(photo.regular)
                     .thumbnail(
                         Glide.with(itemView.context)

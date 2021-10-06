@@ -5,6 +5,7 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.maxim.unsplash.R
@@ -32,6 +33,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
             tab.setText(title)
         }.attach()
+    }
+
+    fun openPhotoDetails(photoId: String) {
+        val action = MainFragmentDirections.actionMainToPhotoDetails(photoId)
+        findNavController().navigate(action)
+    }
+
+    fun openCollectionDetails(collectionId: String) {
+        val action = MainFragmentDirections.actionMainToCollectionDetails(collectionId)
+        findNavController().navigate(action)
     }
 
     enum class ListMode(@StringRes val stringResource: Int) {

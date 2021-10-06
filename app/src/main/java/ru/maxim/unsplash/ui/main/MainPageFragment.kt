@@ -32,11 +32,14 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.lifecycleOwner = viewLifecycleOwner
+        val parentFragment = parentFragment as MainFragment
         mainRecyclerAdapter = MainRecyclerAdapter(
-            model::setLike,
-            model::addToCollection,
-            model::download,
-            model::shareCollection
+            onSetLike = model::setLike,
+            onAddToCollection = model::addToCollection,
+            onDownload = model::download,
+            onCollectionShare = model::shareCollection,
+            onOpenPhotoDetails = parentFragment::openPhotoDetails,
+            onOpenCollectionDetails = parentFragment::openCollectionDetails
         )
 
         with(binding.mainRecycler) {
@@ -44,9 +47,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             addOnScrollListener(
                 PaginationScrollListener(layoutManager as LinearLayoutManager, ::onLoadNextPage)
             )
-            // Disable change animation until notifyItemChanged called for every event
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
+
         with(model) {
             model.items.observe(viewLifecycleOwner) { items ->
                 mainRecyclerAdapter.items = items

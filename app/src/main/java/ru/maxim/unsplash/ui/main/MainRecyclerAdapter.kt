@@ -15,13 +15,15 @@ class MainRecyclerAdapter(
     onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     onAddToCollection: (photoId: String) -> Unit,
     onDownload: (photoId: String) -> Unit,
-    onCollectionShare: (collectionId: String) -> Unit
+    onCollectionShare: (collectionId: String) -> Unit,
+    onOpenPhotoDetails: (photoId: String) -> Unit,
+    onOpenCollectionDetails: (collectionId: String) -> Unit
 ) : AsyncListDifferDelegationAdapter<BaseMainListItem>(ComplexDiffCallback) {
 
     init {
         delegatesManager
-            .addDelegate(PhotoItemDelegate(onSetLike, onAddToCollection, onDownload))
-            .addDelegate(PhotosCollectionItemDelegate(onCollectionShare))
+            .addDelegate(PhotoItemDelegate(onSetLike, onAddToCollection, onDownload, onOpenPhotoDetails))
+            .addDelegate(PhotosCollectionItemDelegate(onCollectionShare, onOpenCollectionDetails))
             .addDelegate(InitialLoadingItemDelegate())
             .addDelegate(PageLoadingItemDelegate())
 

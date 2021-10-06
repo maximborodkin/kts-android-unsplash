@@ -13,7 +13,8 @@ import ru.maxim.unsplash.ui.main.items.BaseMainListItem
 import ru.maxim.unsplash.ui.main.items.PhotosCollectionItem
 
 class PhotosCollectionItemDelegate(
-    private val onShare: (collectionId: String) -> Unit
+    private val onShare: (collectionId: String) -> Unit,
+    private val onOpenCollectionDetails: (collectionId: String) -> Unit
 ) : BaseMainItemDelegate<PhotosCollectionItem, PhotosCollectionViewHolder>() {
 
     override fun isForViewType(
@@ -43,6 +44,8 @@ class PhotosCollectionItemDelegate(
         fun bind(collection: PhotosCollectionItem) {
             with(binding) {
                 this.collection = collection
+
+                root.setOnClickListener { onOpenCollectionDetails(collection.id) }
                 collection.authorAvatar.let {
                     Glide.with(itemView.context).load(it).into(itemCollectionAuthorAvatar)
                 }

@@ -16,8 +16,8 @@ class AuthService {
         AuthConfig.responseType,
         Uri.parse(AuthConfig.authCallback)
     ).setScope(AuthConfig.scope)
-    .setCodeVerifier(null)
-    .build()
+        .setCodeVerifier(null)
+        .build()
 
     fun performTokenRequest(
         authService: AuthorizationService,

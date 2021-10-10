@@ -6,7 +6,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainPageBinding
@@ -30,6 +30,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
 
         binding.lifecycleOwner = viewLifecycleOwner
         val parentFragment = parentFragment as MainFragment
@@ -52,6 +53,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
         with(model) {
             model.items.observe(viewLifecycleOwner) { items ->
                 mainRecyclerAdapter.items = items
+                mainRecyclerAdapter.notifyDataSetChanged()
+                startPostponedEnterTransition()
             }
 
             isInitialLoading.observe(viewLifecycleOwner) {
@@ -84,16 +87,11 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             }
 
             errorMessage.observe(viewLifecycleOwner) { it?.let { context?.toast(it) } }
-            loadNextPage()
+            if (savedInstanceState == null) loadNextPage()
         }
     }
 
     private fun onLoadNextPage() {
         model.loadNextPage()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding.mainRecycler.adapter = null
     }
 }

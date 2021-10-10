@@ -24,4 +24,16 @@
     <string name="editorial">Editorial</string>
     <string name="collections">Collections</string>
     <string name="following">Following</string>
+    <string name="unable_to_load_photo">Unable to load photo</string>
+    <string name="not_enough_rights_photo">Not enough rights to access this photo</string>
+    <string name="photo_not_found">Photo not found</string>
+    <string name="dimensions_placeholder" translatable="false">%d x %d</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="camera">Camera</string>
+    <string name="color">Color</string>
+    <string name="focal_length">Focal length</string>
+    <string name="length_mm_placeholder" translatable="false">%smm</string>
+    <string name="time_s_placeholder" translatable="false">%ss</string>
+    <string name="exposure">Exposure</string>
+    <string name="iso" translatable="false">ISO</string>
 </resources>

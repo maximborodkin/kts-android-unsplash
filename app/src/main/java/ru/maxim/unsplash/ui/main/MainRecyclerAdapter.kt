@@ -1,8 +1,10 @@
 package ru.maxim.unsplash.ui.main
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
+import ru.maxim.unsplash.databinding.ItemPhotoBinding
 import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingItemDelegate
 import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingItemDelegate
 import ru.maxim.unsplash.ui.main.item_delegates.PhotoItemDelegate
@@ -16,7 +18,7 @@ class MainRecyclerAdapter(
     onAddToCollection: (photoId: String) -> Unit,
     onDownload: (photoId: String) -> Unit,
     onCollectionShare: (collectionId: String) -> Unit,
-    onOpenPhotoDetails: (photoId: String) -> Unit,
+    onOpenPhotoDetails: (photoId: String, itemBinding: ItemPhotoBinding) -> Unit,
     onOpenCollectionDetails: (collectionId: String) -> Unit
 ) : AsyncListDifferDelegationAdapter<BaseMainListItem>(ComplexDiffCallback) {
 
@@ -26,7 +28,6 @@ class MainRecyclerAdapter(
             .addDelegate(PhotosCollectionItemDelegate(onCollectionShare, onOpenCollectionDetails))
             .addDelegate(InitialLoadingItemDelegate())
             .addDelegate(PageLoadingItemDelegate())
-
     }
 
     object ComplexDiffCallback : DiffUtil.ItemCallback<BaseMainListItem>() {

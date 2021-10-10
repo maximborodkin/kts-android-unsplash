@@ -11,6 +11,7 @@ import ru.maxim.unsplash.repository.remote.service.PhotoService
 
 object RetrofitClient {
     private const val baseUrl = "https://api.unsplash.com/"
+//    private const val baseUrl = "https://unsplash.free.beeceptor.com"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply { level = BODY })

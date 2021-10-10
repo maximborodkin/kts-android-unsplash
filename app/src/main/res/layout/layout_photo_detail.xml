@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="icon"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="value"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="6dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemPhotoDetailIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@{icon}"
+            android:tint="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_dimensions" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemPhotoDetailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:text="@{title}"
+            app:layout_constraintBottom_toTopOf="@id/itemPhotoDetailValue"
+            app:layout_constraintStart_toEndOf="@id/itemPhotoDetailIcon"
+            app:layout_constraintTop_toTopOf="@id/itemPhotoDetailIcon"
+            tools:text="Dimensions" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemPhotoDetailValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{value}"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/itemPhotoDetailIcon"
+            app:layout_constraintStart_toEndOf="@id/itemPhotoDetailIcon"
+            app:layout_constraintTop_toBottomOf="@id/itemPhotoDetailTitle"
+            tools:text="1920 x 1080" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

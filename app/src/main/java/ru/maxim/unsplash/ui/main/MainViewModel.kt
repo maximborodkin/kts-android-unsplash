@@ -79,7 +79,22 @@ class MainViewModel : ViewModel() {
     }
 
     fun setLike(photoId: String, itemPosition: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val photoItem = (_items.value?.get(itemPosition) as? PhotoItem) ?: return@launch
+            val response =
+                if (photoItem.likedByUser) photoService.removeLike(photoId)
+                else photoService.setLike(photoId)
 
+            val like = response.body()
+            if (response.isSuccessful && like != null) {
+                val newItem = (_items.value!![itemPosition] as PhotoItem).apply {
+                    likesCount = like.photo.likes
+                    likedByUser = like.photo.likedByUser
+                }
+                _items.value!![itemPosition] = newItem
+                _items.postValue(_items.value)
+            }
+        }
     }
 
     fun addToCollection(photoId: String) {

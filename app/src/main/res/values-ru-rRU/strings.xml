@@ -23,4 +23,12 @@
     <string name="editorial">Редакция</string>
     <string name="collections">Коллекции</string>
     <string name="following">Подписки</string>
+    <string name="unable_to_load_photo">Невозможно загрузить фото</string>
+    <string name="not_enough_rights_photo">Недостаточно проав для доступа к этому фото</string>
+    <string name="photo_not_found">Фото не найдено</string>
+    <string name="dimensions">Размер</string>
+    <string name="camera">Камера</string>
+    <string name="color">Цвет</string>
+    <string name="focal_length">Фокусное расстояние</string>
+    <string name="exposure">Экспозиция</string>
 </resources>

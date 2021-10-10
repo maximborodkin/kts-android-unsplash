@@ -2,28 +2,208 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ru.maxim.unsplash.ui.photo_details.PhotoDetailsFragment">
 
     <data>
+        <import type="android.view.View" />
+
         <variable
             name="photo"
             type="ru.maxim.unsplash.model.Photo" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/fragment_photo_details_scene"
+        app:applyMotionScene="true"
+        app:showPaths="true"
+        tools:showPaths="true">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/photoDetailsImage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="16:9"
-            android:scaleType="center"
-            app:layout_constraintStart_toStartOf="parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:transitionName="@string/photo_details_image_transition"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic"/>
+            tools:src="@tools:sample/backgrounds/scenic" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/photoDetailsDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:text="@{photo.createdAt}"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/photoDetailsImage"
+            app:layout_constraintStart_toStartOf="@id/photoDetailsImage"
+            tools:text="8 oct 2021 14:13" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/photoDetailsLikeBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_like"
+            android:transitionName="@string/photo_details_like_btn_transition"
+            android:tint="@{photo.likedByUser ? @color/red_500 : @color/grey}"
+            app:layout_constraintBottom_toBottomOf="@id/photoDetailsImage"
+            app:layout_constraintEnd_toStartOf="@id/photoDetailsLikesCount" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/photoDetailsLikesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:text="@{Integer.toString(photo.likes)}"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:transitionName="@string/photo_details_likes_count_transition"
+            app:layout_constraintBottom_toBottomOf="@id/photoDetailsLikeBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/photoDetailsLikeBtn"
+            tools:text="5" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/photoDetailsAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/photoDetailsImage">
+
+            <ru.maxim.unsplash.ui.view.AvatarView
+                android:id="@+id/photoDetailsAuthorAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:transitionName="@string/photo_details_author_avatar_transition"
+                app:image="@{photo.user.profileImage.medium}"
+                tools:src="@tools:sample/avatars" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="12dp"
+                android:transitionName="@string/photo_details_author_name_transition"
+                android:layout_weight="1"
+                android:text="@{photo.user.name}"
+                tools:text="@tools:sample/full_names" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_arrow_forward"
+                android:tint="@color/grey" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/photoDetailsDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:text="@{photo.description}"
+            android:textSize="14sp"
+            android:visibility="@{photo.description != null ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/photoDetailsAuthor"
+            tools:text="Example photo description" />
+
+        <GridLayout
+            android:id="@+id/photoDetailsItemsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alignmentMode="alignBounds"
+            android:columnCount="2"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/photoDetailsDescription">
+
+            <include
+                layout="@layout/layout_photo_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                app:icon="@{@drawable/ic_dimensions}"
+                app:title="@{@string/dimensions}"
+                app:value="@{@string/dimensions_placeholder(photo.width, photo.height)}" />
+
+            <include
+                layout="@layout/layout_photo_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:visibility="@{photo.exif.make != null || photo.exif.model != null ? View.VISIBLE : View.GONE}"
+                app:icon="@{@drawable/ic_camera}"
+                app:title="@{@string/camera}"
+                app:value='@{photo.exif.make.concat(" ").concat(photo.exif.model)}' />
+
+            <include
+                layout="@layout/layout_photo_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:visibility="@{photo.exif.focalLength != null ? View.VISIBLE : View.GONE}"
+                app:icon="@{@drawable/ic_ruler}"
+                app:title="@{@string/focal_length}"
+                app:value="@{@string/length_mm_placeholder(photo.exif.focalLength)}" />
+
+            <include
+                layout="@layout/layout_photo_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:visibility="@{photo.exif.exposureTime != null ? View.VISIBLE : View.GONE}"
+                app:icon="@{@drawable/ic_timer}"
+                app:title="@{@string/exposure}"
+                app:value="@{@string/time_s_placeholder(photo.exif.focalLength)}" />
+
+            <include
+                layout="@layout/layout_photo_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:visibility="@{photo.exif.iso != null ? View.VISIBLE : View.GONE}"
+                app:icon="@{@drawable/ic_light}"
+                app:title="@{@string/iso}"
+                app:value="@{String.valueOf(photo.exif.iso)}" />
+
+            <include
+                layout="@layout/layout_photo_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:visibility="@{photo.color != null ? View.VISIBLE : View.GONE}"
+                app:icon="@{@drawable/ic_color}"
+                app:title="@{@string/color}"
+                app:value="@{photo.color}" />
+        </GridLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/photoDetailsTagsScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{(photo.tags == null || photo.tags.size() == 0) ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/photoDetailsItemsLayout">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/photoDetailsTagsLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

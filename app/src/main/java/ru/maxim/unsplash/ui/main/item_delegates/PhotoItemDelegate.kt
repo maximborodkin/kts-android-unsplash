@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemPhotoBinding
 import ru.maxim.unsplash.ui.main.item_delegates.PhotoItemDelegate.PhotoViewHolder
@@ -17,15 +15,14 @@ class PhotoItemDelegate(
     private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     private val onAddToCollection: (photoId: String) -> Unit,
     private val onDownload: (photoId: String) -> Unit,
-    private val onOpenPhotoDetails: (photoId: String) -> Unit
+    private val onOpenPhotoDetails: (photoId: String, itemBinding: ItemPhotoBinding) -> Unit
 ) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
 
     override fun isForViewType(
         item: BaseMainListItem,
         items: MutableList<BaseMainListItem>,
         position: Int
-    ): Boolean =
-        item is PhotoItem
+    ): Boolean = item is PhotoItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PhotoViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -37,9 +34,7 @@ class PhotoItemDelegate(
         item: PhotoItem,
         holder: PhotoViewHolder,
         payloads: MutableList<Any>
-    ) {
-        holder.bind(item)
-    }
+    ) = holder.bind(item)
 
     inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(ItemPhotoBinding::bind)
@@ -47,7 +42,7 @@ class PhotoItemDelegate(
         fun bind(photo: PhotoItem) {
             with(binding) {
                 this.photo = photo
-                root.setOnClickListener { onOpenPhotoDetails(photo.id) }
+                root.setOnClickListener { onOpenPhotoDetails(photo.id, binding) }
 
                 // Set initial ImageView size to photo dimensions
                 val screenWidth = context.resources.displayMetrics.widthPixels
@@ -57,25 +52,10 @@ class PhotoItemDelegate(
                     height = (screenWidth / imageRatio).toInt()
                 }
 
-                Glide.with(context)
-                    .load(photo.authorAvatar)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(itemPhotoAuthorAvatar)
-
-                Glide.with(context)
-                    .load(photo.regular)
-                    .thumbnail(
-                        Glide.with(itemView.context)
-                            .load(photo.thumbnail)
-                    )
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(itemPhotoImage)
-
-                itemPhotoLikeBtn.setOnClickListener {
-                    onSetLike(photo.id, absoluteAdapterPosition)
-                }
+                itemPhotoLikeBtn.setOnClickListener { onSetLike(photo.id, absoluteAdapterPosition) }
                 itemPhotoAddBtn.setOnClickListener { onAddToCollection(photo.id) }
                 itemPhotoDownloadBtn.setOnClickListener { onDownload(photo.id) }
+                executePendingBindings()
             }
         }
     }

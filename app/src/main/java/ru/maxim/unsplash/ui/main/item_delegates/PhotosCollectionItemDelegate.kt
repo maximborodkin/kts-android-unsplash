@@ -21,8 +21,7 @@ class PhotosCollectionItemDelegate(
         item: BaseMainListItem,
         items: MutableList<BaseMainListItem>,
         position: Int
-    ): Boolean =
-        item is PhotosCollectionItem
+    ): Boolean = item is PhotosCollectionItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PhotosCollectionViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -34,9 +33,7 @@ class PhotosCollectionItemDelegate(
         item: PhotosCollectionItem,
         holder: PhotosCollectionViewHolder,
         payloads: MutableList<Any>
-    ) {
-        holder.bind(item)
-    }
+    ) = holder.bind(item)
 
     inner class PhotosCollectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(ItemPhotosCollectionBinding::bind)
@@ -46,12 +43,6 @@ class PhotosCollectionItemDelegate(
                 this.collection = collection
 
                 root.setOnClickListener { onOpenCollectionDetails(collection.id) }
-                collection.authorAvatar.let {
-                    Glide.with(itemView.context).load(it).into(itemCollectionAuthorAvatar)
-                }
-                collection.cover.let {
-                    Glide.with(itemView.context).load(it).into(itemCollectionCover)
-                }
                 itemCollectionShareBtn.setOnClickListener { onShare(collection.id) }
             }
         }

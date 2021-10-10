@@ -15,7 +15,7 @@ interface CollectionService {
         @Query("per_page") pageSize: Int = 10
     ): Response<ArrayList<PhotosCollection>>
 
-    @GET("/collections/:id")
+    @GET("/collections/{id}")
     suspend fun getById(@Path("id") id: Long): Response<PhotosCollection>
 
     @GET("search/collections")

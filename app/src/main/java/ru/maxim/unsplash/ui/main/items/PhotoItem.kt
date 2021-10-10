@@ -9,8 +9,8 @@ data class PhotoItem(
     val regular: String,
     val raw: String,
     val thumbnail: String,
-    val likesCount: Int,
-    val likedByUser: Boolean,
+    var likesCount: Int,
+    var likedByUser: Boolean,
     var authorName: String,
     val authorAvatar: String?
 ) : BaseMainListItem() {

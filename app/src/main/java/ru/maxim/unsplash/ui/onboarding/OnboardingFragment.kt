@@ -43,7 +43,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
                 } else {
                     binding.onboardingNextBtn.apply {
                         text = getString(R.string.next)
-                        setDrawableEnd(R.drawable.ic_arrow_forward_white)
+                        setDrawableEnd(R.drawable.ic_arrow_forward)
                     }
                 }
             }

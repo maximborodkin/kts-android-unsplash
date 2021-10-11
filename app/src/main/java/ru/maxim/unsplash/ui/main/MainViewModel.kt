@@ -1,5 +1,6 @@
 package ru.maxim.unsplash.ui.main
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,33 +26,40 @@ class MainViewModel : ViewModel() {
     val items: LiveData<ArrayList<BaseMainListItem>> = _items
     var currentPage = 1
         private set
-    var errorMessage = MutableLiveData<Int?>(null)
-    var isInitialLoading = MutableLiveData(false)
-    var isNextPageLoading = MutableLiveData(false)
+
+    private val _errorMessage = MutableLiveData<@StringRes Int>(null)
+    private val _isInitialLoading = MutableLiveData(false)
+    private val _isNextPageLoading = MutableLiveData(false)
+    private val _isRefreshing = MutableLiveData(false)
+    val errorMessage: LiveData<Int> = _errorMessage
+    val isInitialLoading: LiveData<Boolean> = _isInitialLoading
+    val isNextPageLoading: LiveData<Boolean> = _isNextPageLoading
+    val isRefreshing: LiveData<Boolean> = _isRefreshing
 
     private var currentPhotosOrderType = PhotosOrderType.Latest.queryParam
 
     fun loadNextPage() {
         // Load 30 elements for first page
         val pageSize = if (currentPage == 1) {
-            isInitialLoading.postValue(true)
+            _isInitialLoading.postValue(true)
             30
         } else {
-            isNextPageLoading.postValue(true)
+            _isNextPageLoading.postValue(true)
             10
         }
 
         viewModelScope.launch(Dispatchers.IO) {
             val response = when (currentListMode) {
                 ListMode.Editorial ->
-                    photoService.getAllPaginated(currentPage++, pageSize, currentPhotosOrderType)
+                    photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
                 ListMode.Collections ->
-                    collectionService.getAllPaginated(currentPage++, pageSize)
+                    collectionService.getAllPaginated(currentPage, pageSize)
                 ListMode.Following ->
-                    photoService.getAllPaginated(currentPage++, pageSize, currentPhotosOrderType)
+                    photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
             }
-            isInitialLoading.postValue(false)
-            isNextPageLoading.postValue(false)
+            _isInitialLoading.postValue(false)
+            _isNextPageLoading.postValue(false)
+            _isRefreshing.postValue(false)
             if (response.isSuccessful && response.body() != null) {
                 _items.postValue(_items.value?.apply {
                     addAll(response.body()!!.map {
@@ -62,6 +70,7 @@ class MainViewModel : ViewModel() {
                         }
                     })
                 })
+                currentPage++
             } else {
                 val error = when (response.code()) {
                     401 -> {
@@ -73,9 +82,16 @@ class MainViewModel : ViewModel() {
                     in 500..599 -> R.string.server_error
                     else -> null
                 }
-                errorMessage.postValue(error)
+                error?.let { _errorMessage.postValue(it) }
             }
         }
+    }
+
+    fun refresh() {
+        _isRefreshing.postValue(true)
+        currentPage = 1
+        _items.value?.clear()
+        loadNextPage()
     }
 
     fun setLike(photoId: String, itemPosition: Int) {

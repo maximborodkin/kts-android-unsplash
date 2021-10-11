@@ -6,8 +6,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.android.synthetic.main.fragment_main_page.*
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainPageBinding
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
@@ -32,7 +32,6 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
 
-        binding.lifecycleOwner = viewLifecycleOwner
         val parentFragment = parentFragment as MainFragment
         mainRecyclerAdapter = MainRecyclerAdapter(
             onSetLike = model::setLike,
@@ -43,11 +42,16 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             onOpenCollectionDetails = parentFragment::openCollectionDetails
         )
 
-        with(binding.mainRecycler) {
-            adapter = mainRecyclerAdapter
-            addOnScrollListener(
-                PaginationScrollListener(layoutManager as LinearLayoutManager, ::onLoadNextPage)
+        with(binding) {
+            lifecycleOwner = viewLifecycleOwner
+            mainRecycler.adapter = mainRecyclerAdapter
+            mainRecycler.addOnScrollListener(
+                PaginationScrollListener(
+                    mainRecycler.layoutManager as LinearLayoutManager,
+                    ::onLoadNextPage
+                )
             )
+            mainSwipeRefresh.setOnRefreshListener(model::refresh)
         }
 
         with(model) {
@@ -87,6 +91,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             }
 
             errorMessage.observe(viewLifecycleOwner) { it?.let { context?.toast(it) } }
+            isRefreshing.observe(viewLifecycleOwner) { mainSwipeRefresh.isRefreshing = it }
             if (savedInstanceState == null) loadNextPage()
         }
     }

@@ -9,6 +9,7 @@ import androidx.transition.ChangeBounds
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionSet
 import by.kirich1409.viewbindingdelegate.viewBinding
+import kotlinx.android.synthetic.main.fragment_photo_details.*
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentPhotoDetailsBinding
 import ru.maxim.unsplash.databinding.ItemTagBinding
@@ -39,6 +40,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
         with(binding) {
             lifecycleOwner = viewLifecycleOwner
             photoDetailsImage.layoutParams.height = args.photoHeight
+            photoDetailsSwipeRefresh.setOnRefreshListener { model.loadPhoto() }
             photoDetailsLikeBtn.setOnClickListener { model.setLike() }
         }
 
@@ -49,13 +51,14 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
                 binding.photoDetailsImage.load(photo.urls.regular) { startPostponedEnterTransition() }
 
                 photo.tags?.forEach { tag ->
-                    val tagBinding =
-                        ItemTagBinding.inflate(layoutInflater, binding.photoDetailsTagsLayout, true)
-                    tagBinding.text = tag.title
+                    ItemTagBinding
+                        .inflate(layoutInflater, binding.photoDetailsTagsLayout, true)
+                        .apply { text = tag.title }
                 }
             }
 
             error.observe(viewLifecycleOwner) { context?.toast(it) }
+            isRefreshing.observe(viewLifecycleOwner) { photoDetailsSwipeRefresh.isRefreshing = it }
             if (savedInstanceState == null) loadPhoto()
         }
     }

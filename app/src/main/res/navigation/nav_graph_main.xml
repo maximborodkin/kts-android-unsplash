@@ -61,6 +61,9 @@
         <argument
             android:name="photoId"
             app:argType="string" />
+        <argument
+            android:name="photoHeight"
+            app:argType="integer" />
     </fragment>
 
     <fragment

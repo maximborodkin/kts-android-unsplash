@@ -13,14 +13,17 @@ class PhotoDetailsViewModel(application: Application, private val photoId: Strin
     AndroidViewModel(application) {
 
     private val photoService = RetrofitClient.photoService
-    private val _error = MutableLiveData<@StringRes Int>()
     private val _photo = MutableLiveData<Photo>()
+    private val _error = MutableLiveData<@StringRes Int>()
+    private val _isRefreshing = MutableLiveData(false)
     val photo: LiveData<Photo> = _photo
     val error: LiveData<Int> = _error
+    val isRefreshing: LiveData<Boolean> = _isRefreshing
 
     fun loadPhoto() {
         viewModelScope.launch(Dispatchers.IO) {
             val response = photoService.getById(photoId)
+            _isRefreshing.postValue(false)
             if (response.isSuccessful && response.body() != null) {
                 _photo.postValue(response.body())
             } else {
@@ -37,6 +40,11 @@ class PhotoDetailsViewModel(application: Application, private val photoId: Strin
                 }
             }
         }
+    }
+
+    fun refresh() {
+        _isRefreshing.postValue(true)
+        loadPhoto()
     }
 
     fun setLike() {

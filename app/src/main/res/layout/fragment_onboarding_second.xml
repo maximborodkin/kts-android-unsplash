@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/cyan_100"
     android:paddingHorizontal="48dp"
-    tools:context="ru.maxim.unsplash.ui.onboarding.OnboardingSecondFragment">
+    tools:context="ru.maxim.unsplash.ui.onboarding.pages.OnboardingSecondFragment">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/onboardingPageImage"

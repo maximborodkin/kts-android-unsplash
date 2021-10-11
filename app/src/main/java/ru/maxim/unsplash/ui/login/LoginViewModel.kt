@@ -2,6 +2,7 @@ package ru.maxim.unsplash.ui.login
 
 import android.util.Patterns
 import androidx.lifecycle.*
+import ru.maxim.unsplash.util.SingleLiveEvent
 
 class LoginViewModel(private val state: SavedStateHandle) : ViewModel() {
     // Two-way data binding
@@ -12,8 +13,8 @@ class LoginViewModel(private val state: SavedStateHandle) : ViewModel() {
     val errorMessage: LiveData<String> = _errorMessage
     private val _isButtonEnabled = MediatorLiveData<Boolean>()
     val isButtonEnabled: LiveData<Boolean> = _isButtonEnabled
-    private val _isLoginAccepted = MutableLiveData(false)
-    val isLoginAccepted: LiveData<Boolean> = _isLoginAccepted
+    private val _isLoginAccepted = SingleLiveEvent<Boolean>()
+    val isLoginAccepted: SingleLiveEvent<Boolean> = _isLoginAccepted
 
     init {
         _isButtonEnabled.apply {

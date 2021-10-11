@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="BottomBarButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:drawableTint" tools:targetApi="m">?colorOnPrimary</item>
+    </style>
 </resources>

@@ -9,13 +9,11 @@ import androidx.transition.ChangeBounds
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionSet
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.Glide
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentPhotoDetailsBinding
 import ru.maxim.unsplash.databinding.ItemTagBinding
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsViewModelFactory
-import ru.maxim.unsplash.util.CacheGlideUrl
-import ru.maxim.unsplash.util.finishCallback
+import ru.maxim.unsplash.util.load
 import ru.maxim.unsplash.util.toast
 
 class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
@@ -48,11 +46,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
             photo.observe(viewLifecycleOwner) { photo ->
                 binding.photo = photo
 
-                Glide.with(requireContext())
-                    .load(CacheGlideUrl(photo.urls.regular))
-                    // Start deferred animation when photo is loaded
-                    .finishCallback { startPostponedEnterTransition() }
-                    .into(binding.photoDetailsImage)
+                binding.photoDetailsImage.load(photo.urls.regular) { startPostponedEnterTransition() }
 
                 photo.tags?.forEach { tag ->
                     val tagBinding =

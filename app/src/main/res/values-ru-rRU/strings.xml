@@ -16,7 +16,7 @@
     <string name="onboarding_third_title">Войдите для разблокирования всех функций</string>
     <string name="onboarding_third_description">Используйте свой аккаунт Unsplash чтобы смотреть, скачивать и делиться фотографиями, создавать собственные коллекции, менять данные аккаунта</string>
     <string name="unauthorized_error">Ошибка аутентификации. Требуется повторный вход</string>
-    <string name="common_error">Что-то пошло не так. Пожалуйста, попробуйте снова</string>
+    <string name="common_loading_error">Что-то пошло не так. Пожалуйста, попробуйте снова</string>
     <string name="server_error">Ошибка сервера. Пожалйста, попробуйте снова</string>
     <string name="timeout_error">Превышено время ожидания ответа. Проверьте соединение с интернетом</string>
     <string name="common_login_error">Ошибка при попытке входа. Пожалуйста, попробуйте снова</string>
@@ -31,4 +31,6 @@
     <string name="color">Цвет</string>
     <string name="focal_length">Фокусное расстояние</string>
     <string name="exposure">Экспозиция</string>
+    <string name="refresh">Обновить</string>
+    <string name="empty_list_notification">Этот список пустой. Попробуйте обновить страницу позже</string>
 </resources>

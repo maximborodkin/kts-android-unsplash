@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_main_page.*
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainPageBinding
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
-import ru.maxim.unsplash.ui.main.items.InitialLoaderItem
+import ru.maxim.unsplash.ui.main.items.InitialLoadingItem
 import ru.maxim.unsplash.ui.main.items.PageLoaderItem
 import ru.maxim.unsplash.util.PaginationScrollListener
 import ru.maxim.unsplash.util.autoCleared
@@ -39,7 +39,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             onDownload = model::download,
             onCollectionShare = model::shareCollection,
             onOpenPhotoDetails = parentFragment::openPhotoDetails,
-            onOpenCollectionDetails = parentFragment::openCollectionDetails
+            onOpenCollectionDetails = parentFragment::openCollectionDetails,
+            onRefresh = ::refreshPage
         )
 
         with(binding) {
@@ -51,7 +52,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                     ::onLoadNextPage
                 )
             )
-            mainSwipeRefresh.setOnRefreshListener(model::refresh)
+            mainSwipeRefresh.setOnRefreshListener(::refreshPage)
         }
 
         with(model) {
@@ -65,12 +66,12 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                 if (it) {
                     mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
                         clear()
-                        add(InitialLoaderItem())
+                        add(InitialLoadingItem)
                         mainRecyclerAdapter.notifyDataSetChanged()
                     }
                 } else {
                     mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
-                        removeAll { item -> item is InitialLoaderItem }
+                        removeAll { item -> item is InitialLoadingItem }
                         mainRecyclerAdapter.notifyDataSetChanged()
                     }
                 }
@@ -79,7 +80,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             isNextPageLoading.observe(viewLifecycleOwner) {
                 if (it) {
                     mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
-                        add(PageLoaderItem())
+                        add(PageLoaderItem)
                         mainRecyclerAdapter.notifyItemInserted(mainRecyclerAdapter.itemCount)
                     }
                 } else {
@@ -94,6 +95,10 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             isRefreshing.observe(viewLifecycleOwner) { mainSwipeRefresh.isRefreshing = it }
             if (savedInstanceState == null) loadNextPage()
         }
+    }
+
+    private fun refreshPage() {
+        model.refresh()
     }
 
     private fun onLoadNextPage() {

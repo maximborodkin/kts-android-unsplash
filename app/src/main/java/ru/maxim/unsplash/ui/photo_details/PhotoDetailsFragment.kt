@@ -53,7 +53,10 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
                 photo.tags?.forEach { tag ->
                     ItemTagBinding
                         .inflate(layoutInflater, binding.photoDetailsTagsLayout, true)
-                        .apply { text = tag.title }
+                        .apply {
+                            text = tag.title
+                            root.setOnClickListener { context?.toast(text) }
+                        }
                 }
             }
 

@@ -16,8 +16,7 @@ class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoaderItem, PageLoading
         item: BaseMainListItem,
         items: MutableList<BaseMainListItem>,
         position: Int
-    ): Boolean =
-        item is PageLoaderItem
+    ): Boolean = item is PageLoaderItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PageLoadingViewHolder {
         val layout = LinearLayout(parent.context).apply {
@@ -43,8 +42,7 @@ class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoaderItem, PageLoading
         item: PageLoaderItem,
         holder: PageLoadingViewHolder,
         payloads: MutableList<Any>
-    ) {
-    }
+    ) {}
 
     inner class PageLoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

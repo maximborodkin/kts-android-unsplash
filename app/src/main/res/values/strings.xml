@@ -17,7 +17,7 @@
     <string name="onboarding_third_title">Login to unlock all activities</string>
     <string name="onboarding_third_description">Use your Unsplash account to watch, download or share photos, create custom collections, manage account information</string>
     <string name="unauthorized_error">"Authentication failed. Relogin needed "</string>
-    <string name="common_error">Something went wrong. Please try again</string>
+    <string name="common_loading_error">An error occurred during download. Please try to refresh page</string>
     <string name="server_error">Server error. Please try again</string>
     <string name="timeout_error">Request timed out. Check your internet connection</string>
     <string name="common_login_error">Something went wrong while authentication process. Please try again</string>
@@ -36,4 +36,6 @@
     <string name="time_s_placeholder" translatable="false">%ss</string>
     <string name="exposure">Exposure</string>
     <string name="iso" translatable="false">ISO</string>
+    <string name="refresh">Refresh</string>
+    <string name="empty_list_notification">The list is empty. Try to refresh it later</string>
 </resources>

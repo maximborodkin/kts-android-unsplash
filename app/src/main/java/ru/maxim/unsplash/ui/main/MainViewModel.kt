@@ -12,40 +12,36 @@ import ru.maxim.unsplash.model.Photo
 import ru.maxim.unsplash.model.PhotosCollection
 import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.PhotoItem
-import ru.maxim.unsplash.ui.main.items.PhotosCollectionItem
+import ru.maxim.unsplash.ui.main.items.*
 
 class MainViewModel : ViewModel() {
     private val photoService = RetrofitClient.photoService
     private val collectionService = RetrofitClient.collectionService
 
-    var currentListMode = ListMode.Editorial
-
     private val _items = MutableLiveData<ArrayList<BaseMainListItem>>(arrayListOf())
-    val items: LiveData<ArrayList<BaseMainListItem>> = _items
-    var currentPage = 1
-        private set
-
     private val _errorMessage = MutableLiveData<@StringRes Int>(null)
     private val _isInitialLoading = MutableLiveData(false)
     private val _isNextPageLoading = MutableLiveData(false)
     private val _isRefreshing = MutableLiveData(false)
+    val items: LiveData<ArrayList<BaseMainListItem>> = _items
     val errorMessage: LiveData<Int> = _errorMessage
     val isInitialLoading: LiveData<Boolean> = _isInitialLoading
     val isNextPageLoading: LiveData<Boolean> = _isNextPageLoading
     val isRefreshing: LiveData<Boolean> = _isRefreshing
 
+    private var currentPage = 1
+    var currentListMode = ListMode.Editorial
     private var currentPhotosOrderType = PhotosOrderType.Latest.queryParam
 
     fun loadNextPage() {
         // Load 30 elements for first page
         val pageSize = if (currentPage == 1) {
-            _isInitialLoading.postValue(true)
-            30
+            // set isInitialLoading true if this loading is not called for refresh
+            _isInitialLoading.postValue(_isRefreshing.value?.not())
+            initialLoadSize
         } else {
             _isNextPageLoading.postValue(true)
-            10
+            pageSize
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -70,6 +66,9 @@ class MainViewModel : ViewModel() {
                         }
                     })
                 })
+                if (_items.value.isNullOrEmpty()) {
+                    _items.postValue(_items.value?.apply { add(EmptyListItem) })
+                }
                 currentPage++
             } else {
                 val error = when (response.code()) {
@@ -78,9 +77,12 @@ class MainViewModel : ViewModel() {
                         R.string.unauthorized_error
                     }
                     408 -> R.string.timeout_error
-                    in 400..499 -> R.string.common_error
+                    in 400..499 -> R.string.common_loading_error
                     in 500..599 -> R.string.server_error
                     else -> null
+                }
+                if (_items.value.isNullOrEmpty()) {
+                    _items.postValue(_items.value?.apply { add(LoadingErrorItem(_errorMessage.value)) })
                 }
                 error?.let { _errorMessage.postValue(it) }
             }
@@ -123,6 +125,11 @@ class MainViewModel : ViewModel() {
 
     fun shareCollection(collectionId: String) {
 
+    }
+
+    companion object {
+        private const val pageSize = 10
+        private const val initialLoadSize = 30
     }
 }
 

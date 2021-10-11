@@ -4,7 +4,7 @@
         <item name="android:textColor">?colorOnPrimary</item>
         <item name="drawableTint">?colorOnPrimary</item>
     </style>
-    <style name="LoginButton" parent="Widget.AppCompat.Button.Colored">
+    <style name="ColoredButton" parent="Widget.AppCompat.Button.Colored">
         <item name="backgroundTint">@drawable/login_button_selector</item>
         <item name="android:textColor">?colorOnPrimary</item>
     </style>

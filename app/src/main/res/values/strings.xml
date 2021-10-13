@@ -38,4 +38,6 @@
     <string name="iso" translatable="false">ISO</string>
     <string name="refresh">Refresh</string>
     <string name="empty_list_notification">The list is empty. Try to refresh it later</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="settings">Settings</string>
 </resources>

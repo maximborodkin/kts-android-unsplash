@@ -1,5 +1,6 @@
 package ru.maxim.unsplash.repository.remote
 
+import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,10 +28,11 @@ object RetrofitClient {
         }
         .build()
 
+    private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create()
     private val instance: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
     val photoService: PhotoService by lazy { instance.create(PhotoService::class.java) }

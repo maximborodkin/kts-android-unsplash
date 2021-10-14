@@ -74,3 +74,31 @@ fun ImageView.load(url: String, thumbnail: String? = null, onFinish: (() -> Unit
         .finishCallback { onFinish?.invoke() }
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .into(this)
+
+fun Date?.dateTimeString(): String? = this?.let { "${dateString()} ${timeString()}" }
+
+fun Date?.dateString(): String? =
+    this?.let { SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(this) }
+
+fun Date?.simpleDateString(): String? =
+    this?.let { SimpleDateFormat("d MMMM", Locale.getDefault()).format(this) }
+
+fun Date?.timeString(): String? =
+    this?.let { SimpleDateFormat("HH:mm", Locale.getDefault()).format(this) }
+
+/**
+ * Extension function for [java.util.Date] class.
+ * Provides date string based on current date.
+ * @return for today - only time,
+ *         for date in current year - date without year,
+ *         otherwise - full date.
+ * */
+fun Date?.adaptiveString(): String? = this?.let {
+    val today = Calendar.getInstance()
+    val date = Calendar.getInstance().apply { time = this@adaptiveString }
+    return when {
+        date[DATE] == today[DATE] -> timeString()
+        date[YEAR] == today[YEAR] -> simpleDateString()
+        else -> dateString()
+    }
+}

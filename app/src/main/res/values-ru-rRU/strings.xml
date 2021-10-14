@@ -35,4 +35,6 @@
     <string name="empty_list_notification">Этот список пустой. Попробуйте обновить страницу позже</string>
     <string name="no_internet">Нет сети</string>
     <string name="settings">Настройки</string>
+    <string name="login_page_start_message">Вы автоматически будете перенаправлены на страницу аутентификации в Unsplash. Если это не происходит, нажмите на кнопку войти</string>
+
 </resources>

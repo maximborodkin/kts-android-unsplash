@@ -3,47 +3,52 @@ package ru.maxim.unsplash.ui.login
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.TokenRequest
 import ru.maxim.unsplash.repository.remote.service.AuthService
-import ru.maxim.unsplash.util.SingleLiveEvent
+import ru.maxim.unsplash.ui.login.LoginViewModel.LoginState.*
+import ru.maxim.unsplash.util.NetworkUtils
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val authService = AuthService()
     private val authorizationService = AuthorizationService(application)
 
-    private val _openAuthPageEvent = SingleLiveEvent<Intent>()
-    private val _isAuthSuccess = SingleLiveEvent<Unit>()
-    private val _isAuthInProgress = MutableLiveData(false)
-    private val _error = MutableLiveData<String?>(null)
+    sealed class LoginState {
+        object Empty : LoginState()
+        object Success : LoginState()
+        data class Error(val message: String?) : LoginState()
+        data class Process(val loginIntent: Intent) : LoginState()
+    }
 
-    val openAuthPageEvent: LiveData<Intent> = _openAuthPageEvent
-    val isAuthSuccess: LiveData<Unit> = _isAuthSuccess
-    val isAuthInProgress: LiveData<Boolean> = _isAuthInProgress
-    val error: LiveData<String?> = _error
+    private val _loginState = MutableStateFlow<LoginState>(Empty)
+    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
     // Open OAuth2 authentication page in a browser tab
-    fun startLoginPage() {
-        _isAuthInProgress.postValue(true)
-        val authIntent = authorizationService.getAuthorizationRequestIntent(authService.authRequest)
-        _openAuthPageEvent.postValue(authIntent)
+    fun startLoginPage() = viewModelScope.launch {
+        NetworkUtils.networkStateFlow.collect {
+            if (it) {
+                val authIntent = authorizationService
+                    .getAuthorizationRequestIntent(authService.authRequest)
+                launch(Dispatchers.Main) { _loginState.emit(Process(authIntent)) }
+            }
+        }
     }
 
     fun onTokenRequestReceived(tokenRequest: TokenRequest) {
-        _isAuthInProgress.postValue(false)
         authService.performTokenRequest(
             authorizationService,
             tokenRequest,
-            onComplete = { _isAuthSuccess.postValue(Unit) },
-            onError = { message -> _error.postValue(message) }
+            onComplete = { viewModelScope.launch(Dispatchers.Main) { _loginState.emit(Success) } },
+            onError = { viewModelScope.launch(Dispatchers.Main) { _loginState.emit(Error(it)) } }
         )
     }
 
-    fun onAuthFailed(exception: AuthorizationException) {
-        _isAuthInProgress.postValue(false)
-        _error.postValue(exception.localizedMessage)
+    fun onAuthFailed(exception: AuthorizationException) = viewModelScope.launch(Dispatchers.Main) {
+        _loginState.emit(Error(exception.localizedMessage))
     }
 }

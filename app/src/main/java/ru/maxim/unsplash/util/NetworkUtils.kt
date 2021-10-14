@@ -12,7 +12,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 
 object NetworkUtils {
@@ -43,7 +43,7 @@ object NetworkUtils {
         }
     }
 
-    suspend fun hasNetworkConnection(): Boolean = networkStateFlow.last()
+    suspend fun hasNetworkConnection(): Boolean = mutableNetworkStateFlow.lastOrNull() == true
 
     private val networkCallback = object :
         ConnectivityManager.NetworkCallback() {

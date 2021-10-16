@@ -40,16 +40,24 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.root.doOnPreDraw { startPostponedEnterTransition() }
     }
 
-    fun openPhotoDetails(photoId: String, itemBinding: ItemPhotoBinding) {
-        val action = MainFragmentDirections.actionMainToPhotoDetails(photoId, itemBinding.itemPhotoImage.height)
-        val extras = FragmentNavigatorExtras(
-            itemBinding.itemPhotoImage to getString(R.string.photo_details_image_transition),
-            itemBinding.itemPhotoLikeBtn to getString(R.string.photo_details_like_btn_transition),
-            itemBinding.itemPhotoLikesCount to getString(R.string.photo_details_likes_count_transition),
-            itemBinding.itemPhotoAuthorAvatar to getString(R.string.photo_details_author_avatar_transition),
-            itemBinding.itemPhotoAuthorName to getString(R.string.photo_details_author_name_transition)
-        )
-        findNavController().navigate(action, extras)
+    fun openPhotoDetails(itemBinding: ItemPhotoBinding) {
+        val photo = itemBinding.photo
+        if (photo != null) {
+            val action = MainFragmentDirections.actionMainToPhotoDetails(
+                photo.id,
+                itemBinding.itemPhotoImage.height,
+                photo.color
+            )
+
+            val extras = FragmentNavigatorExtras(
+                itemBinding.itemPhotoImage to getString(R.string.photo_details_image_transition),
+                itemBinding.itemPhotoLikeBtn to getString(R.string.photo_details_like_btn_transition),
+                itemBinding.itemPhotoLikesCount to getString(R.string.photo_details_likes_count_transition),
+                itemBinding.itemPhotoAuthorAvatar to getString(R.string.photo_details_author_avatar_transition),
+                itemBinding.itemPhotoAuthorName to getString(R.string.photo_details_author_name_transition)
+            )
+            findNavController().navigate(action, extras)
+        }
     }
 
     fun openCollectionDetails(collectionId: String) {

@@ -18,7 +18,8 @@
         android:text="@{text}"
         android:textColor="@color/white"
         android:textSize="14sp"
-        tools:text="programming">
+        tools:text="programming"
+        android:layout_marginVertical="4dp">
 
     </androidx.appcompat.widget.AppCompatTextView>
 </layout>

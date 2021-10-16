@@ -64,6 +64,15 @@
         <argument
             android:name="photoHeight"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_photoDetails_to_ImageViewer"
+            app:destination="@id/fragmentImageViewer"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <argument
+            android:name="imageColor"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -73,6 +82,14 @@
         tools:layout="@layout/fragment_collection_details">
         <argument
             android:name="collectionId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentImageViewer"
+        android:name="ru.maxim.unsplash.ui.image_viewer.ImageViewerFragment"
+        android:label="FragmentImageViewer">
+        <argument
+            android:name="photoUrl"
             app:argType="string" />
     </fragment>
 </navigation>

@@ -15,7 +15,7 @@ class MainRecyclerAdapter(
     onAddToCollection: (photoId: String) -> Unit,
     onDownload: (photoId: String) -> Unit,
     onCollectionShare: (collectionId: String) -> Unit,
-    onOpenPhotoDetails: (photoId: String, itemBinding: ItemPhotoBinding) -> Unit,
+    onOpenPhotoDetails: (itemBinding: ItemPhotoBinding) -> Unit,
     onOpenCollectionDetails: (collectionId: String) -> Unit,
     onRefresh: () -> Unit
 ) : AsyncListDifferDelegationAdapter<BaseMainListItem>(ComplexDiffCallback) {

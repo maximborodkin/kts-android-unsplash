@@ -15,7 +15,7 @@ class PhotoItemDelegate(
     private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     private val onAddToCollection: (photoId: String) -> Unit,
     private val onDownload: (photoId: String) -> Unit,
-    private val onOpenPhotoDetails: (photoId: String, itemBinding: ItemPhotoBinding) -> Unit
+    private val onOpenPhotoDetails: (itemBinding: ItemPhotoBinding) -> Unit
 ) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
 
     override fun isForViewType(
@@ -42,7 +42,7 @@ class PhotoItemDelegate(
         fun bind(photo: PhotoItem) {
             with(binding) {
                 this.photo = photo
-                root.setOnClickListener { onOpenPhotoDetails(photo.id, binding) }
+                root.setOnClickListener { onOpenPhotoDetails(this) }
 
                 // Set initial ImageView size to photo dimensions
                 val screenWidth = context.resources.displayMetrics.widthPixels

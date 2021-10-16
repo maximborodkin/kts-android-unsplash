@@ -60,9 +60,12 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
                 }
             }
 
-            error.observe(viewLifecycleOwner) { context?.toast(it) }
-            isRefreshing.observe(viewLifecycleOwner) { photoDetailsSwipeRefresh.isRefreshing = it }
-            if (savedInstanceState == null) loadPhoto()
-        }
+    private fun openUserProfile(userId: String) {
+        context?.toast("Open profile with id: $userId")
+    }
+
+    private fun openPhotoViewer(photoUrl: String) {
+        val action = PhotoDetailsFragmentDirections.actionPhotoDetailsToImageViewer(photoUrl)
+        findNavController().navigate(action)
     }
 }

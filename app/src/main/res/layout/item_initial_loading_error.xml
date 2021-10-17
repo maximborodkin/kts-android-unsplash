@@ -20,7 +20,7 @@
             android:layout_height="128dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_warning"
-            app:layout_constraintBottom_toTopOf="@id/itemLoadingErrorMessage"
+            app:layout_constraintBottom_toTopOf="@id/itemInitialLoadingErrorMessage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +28,7 @@
             app:tint="@color/red_500" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/itemLoadingErrorMessage"
+            android:id="@+id/itemInitialLoadingErrorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="24dp"
@@ -44,7 +44,7 @@
             tools:text="@string/common_loading_error" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/itemLoadingErrorRefreshBtn"
+            android:id="@+id/itemInitialLoadingErrorRefreshBtn"
             style="@style/ColoredButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,6 +54,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/itemLoadingErrorMessage" />
+            app:layout_constraintTop_toBottomOf="@id/itemInitialLoadingErrorMessage" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

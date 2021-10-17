@@ -5,10 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import ru.maxim.unsplash.databinding.ItemPhotoBinding
 import ru.maxim.unsplash.ui.main.item_delegates.*
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.LoadingErrorItem
-import ru.maxim.unsplash.ui.main.items.PhotoItem
-import ru.maxim.unsplash.ui.main.items.PhotosCollectionItem
+import ru.maxim.unsplash.ui.main.items.*
 
 class MainRecyclerAdapter(
     onSetLike: (photoId: String, itemPosition: Int) -> Unit,
@@ -17,7 +14,8 @@ class MainRecyclerAdapter(
     onCollectionShare: (collectionId: String) -> Unit,
     onOpenPhotoDetails: (itemBinding: ItemPhotoBinding) -> Unit,
     onOpenCollectionDetails: (collectionId: String) -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onRetry: () -> Unit
 ) : AsyncListDifferDelegationAdapter<BaseMainListItem>(ComplexDiffCallback) {
 
     init {
@@ -27,7 +25,8 @@ class MainRecyclerAdapter(
             .addDelegate(InitialLoadingItemDelegate())
             .addDelegate(PageLoadingItemDelegate())
             .addDelegate(EmptyListItemDelegate(onRefresh))
-            .addDelegate(LoadingErrorItemDelegate(onRefresh))
+            .addDelegate(InitialLoadingErrorItemDelegate(onRefresh))
+            .addDelegate(PageLoadingErrorItemDelegate(onRetry))
     }
 
     object ComplexDiffCallback : DiffUtil.ItemCallback<BaseMainListItem>() {
@@ -35,7 +34,10 @@ class MainRecyclerAdapter(
             first.javaClass == second.javaClass && when (first) {
                 is PhotoItem -> first.id == (second as PhotoItem).id
                 is PhotosCollectionItem -> first.id == (second as PhotosCollectionItem).id
-                is LoadingErrorItem -> first.errorMessage == (second as LoadingErrorItem).errorMessage
+                is InitialLoadingErrorItem ->
+                    first.errorMessage == (second as InitialLoadingErrorItem).errorMessage
+                is PageLoadingErrorItem ->
+                    first.errorMessage == (second as PageLoadingErrorItem).errorMessage
                 else -> true
             }
 

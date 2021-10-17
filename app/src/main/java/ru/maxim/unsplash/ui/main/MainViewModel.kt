@@ -1,50 +1,70 @@
 package ru.maxim.unsplash.ui.main
 
 import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.model.Photo
 import ru.maxim.unsplash.model.PhotosCollection
 import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
+import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
 import ru.maxim.unsplash.ui.main.items.*
+import timber.log.Timber
 
 class MainViewModel : ViewModel() {
     private val photoService = RetrofitClient.photoService
     private val collectionService = RetrofitClient.collectionService
 
-    private val _items = MutableLiveData<ArrayList<BaseMainListItem>>(arrayListOf())
-    private val _errorMessage = MutableLiveData<@StringRes Int>(null)
-    private val _isInitialLoading = MutableLiveData(false)
-    private val _isNextPageLoading = MutableLiveData(false)
-    private val _isRefreshing = MutableLiveData(false)
-    val items: LiveData<ArrayList<BaseMainListItem>> = _items
-    val errorMessage: LiveData<Int> = _errorMessage
-    val isInitialLoading: LiveData<Boolean> = _isInitialLoading
-    val isNextPageLoading: LiveData<Boolean> = _isNextPageLoading
-    val isRefreshing: LiveData<Boolean> = _isRefreshing
+    private val items = arrayListOf<BaseMainListItem>()
+
+    private val _mainState = MutableStateFlow<MainState>(Empty)
+    val mainState: StateFlow<MainState> = _mainState.asStateFlow()
+
+    sealed class MainState {
+        object Empty : MainState()
+        object Refreshing : MainState()
+
+        object InitialLoading : MainState()
+        data class InitialLoadingSuccess(val items: ArrayList<BaseMainListItem>) : MainState()
+        data class InitialLoadingError(@StringRes val message: Int?) : MainState()
+
+        object PageLoading : MainState()
+        data class PageLoadingSuccess(val itemsAdded: ArrayList<BaseMainListItem>) : MainState()
+        data class PageLoadingError(@StringRes val message: Int?) : MainState()
+
+        data class SetLikeSuccess(val itemPosition: Int) : MainState()
+        data class SetLikeError(@StringRes val message: Int?) : MainState()
+    }
 
     private var currentPage = 1
     var currentListMode = ListMode.Editorial
     private var currentPhotosOrderType = PhotosOrderType.Latest.queryParam
 
-    fun loadNextPage() {
+    fun loadNextPage(page: Int? = null)  = viewModelScope.launch {
+        if (page != null) currentPage = page
+
         // Load 30 elements for first page
         val pageSize = if (currentPage == 1) {
             // set isInitialLoading true if this loading is not called for refresh
-            _isInitialLoading.postValue(_isRefreshing.value?.not())
+            if (_mainState.value !is Refreshing) {
+                _mainState.emit(InitialLoading)
+            }
             initialLoadSize
         } else {
-            _isNextPageLoading.postValue(true)
+            _mainState.emit(PageLoading)
             pageSize
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        withContext(IO) {
             val response = when (currentListMode) {
                 ListMode.Editorial ->
                     photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
@@ -53,21 +73,19 @@ class MainViewModel : ViewModel() {
                 ListMode.Following ->
                     photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
             }
-            _isInitialLoading.postValue(false)
-            _isNextPageLoading.postValue(false)
-            _isRefreshing.postValue(false)
-            if (response.isSuccessful && response.body() != null) {
-                _items.postValue(_items.value?.apply {
-                    addAll(response.body()!!.map {
-                        when (it) {
-                            is Photo -> PhotoItem.fromPhoto(it)
-                            is PhotosCollection -> PhotosCollectionItem.fromCollection(it)
-                            else -> throw IllegalArgumentException("Unknown item type")
-                        }
-                    })
-                })
-                if (_items.value.isNullOrEmpty()) {
-                    _items.postValue(_items.value?.apply { add(EmptyListItem) })
+
+            val responseBody = response.body()
+            if (response.isSuccessful && responseBody != null) {
+                if (_mainState.value is PageLoading) {
+                    val responseItems = mapResponse(responseBody)
+                    items.addAll(responseItems)
+                    withContext(Main) { _mainState.emit(PageLoadingSuccess(ArrayList(responseItems))) }
+                } else {
+                    items.clear()
+                    val responseItems = mapResponse(responseBody)
+                    if (responseItems.isEmpty()) items.add(EmptyListItem)
+                    items.addAll(responseItems)
+                    withContext(Main) { _mainState.emit(InitialLoadingSuccess(items)) }
                 }
                 currentPage++
             } else {
@@ -81,37 +99,57 @@ class MainViewModel : ViewModel() {
                     in 500..599 -> R.string.server_error
                     else -> null
                 }
-                if (_items.value.isNullOrEmpty()) {
-                    _items.postValue(_items.value?.apply { add(LoadingErrorItem(_errorMessage.value)) })
+
+                if (_mainState.value is PageLoading) {
+                    withContext(Main) { _mainState.emit(PageLoadingError(error)) }
+                } else {
+                    withContext(Main) { _mainState.emit(InitialLoadingError(error)) }
                 }
-                error?.let { _errorMessage.postValue(it) }
             }
         }
     }
 
-    fun refresh() {
-        _isRefreshing.postValue(true)
-        currentPage = 1
-        _items.value?.clear()
-        loadNextPage()
+    private fun mapResponse(response: List<Any>): List<BaseMainListItem> = response.map {
+            when (it) {
+                is Photo -> PhotoItem.fromPhoto(it)
+                is PhotosCollection -> PhotosCollectionItem.fromCollection(it)
+                else -> throw IllegalArgumentException("Unknown item type")
+            }
+        }
+
+    fun refresh() = viewModelScope.launch {
+        _mainState.emit(Refreshing)
+        loadNextPage(1)
     }
 
-    fun setLike(photoId: String, itemPosition: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val photoItem = (_items.value?.get(itemPosition) as? PhotoItem) ?: return@launch
-            val response =
-                if (photoItem.likedByUser) photoService.removeLike(photoId)
-                else photoService.setLike(photoId)
+    fun setLike(photoId: String, itemPosition: Int) = viewModelScope.launch(IO) {
+        if (items.size < itemPosition || items[itemPosition] !is PhotoItem) {
+            withContext(Main) { _mainState.emit(SetLikeError(R.string.unable_to_set_like)) }
+        }
+        val photoItem = items[itemPosition] as PhotoItem
+        val response =
+            if (photoItem.likedByUser) photoService.removeLike(photoId)
+            else photoService.setLike(photoId)
 
-            val like = response.body()
-            if (response.isSuccessful && like != null) {
-                val newItem = (_items.value!![itemPosition] as PhotoItem).apply {
-                    likesCount = like.photo.likes
-                    likedByUser = like.photo.likedByUser
-                }
-                _items.value!![itemPosition] = newItem
-                _items.postValue(_items.value)
+        val like = response.body()
+        if (response.isSuccessful && like != null) {
+            photoItem.apply {
+                likedByUser = like.photo.likedByUser
+                likesCount = like.photo.likes
             }
+            withContext(Main) { _mainState.emit(SetLikeSuccess(itemPosition)) }
+        } else {
+            val error = when (response.code()) {
+                401 -> {
+                    // TODO: update auth credentials
+                    R.string.unauthorized_error
+                }
+                408 -> R.string.timeout_error
+                in 400..499 -> R.string.unable_to_set_like
+                in 500..599 -> R.string.server_error
+                else -> null
+            }
+            withContext(Main) { _mainState.emit(SetLikeError(error)) }
         }
     }
 
@@ -125,6 +163,12 @@ class MainViewModel : ViewModel() {
 
     fun shareCollection(collectionId: String) {
 
+    }
+
+    fun retryPageLoading() {
+        if (items.lastOrNull() is PageLoadingErrorItem) {
+            loadNextPage()
+        }
     }
 
     companion object {

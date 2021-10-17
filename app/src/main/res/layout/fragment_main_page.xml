@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -14,17 +15,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/mainRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_photo"/>
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mainRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:scrollbarSize="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_photo"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

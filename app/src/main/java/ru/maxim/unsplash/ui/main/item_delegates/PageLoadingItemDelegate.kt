@@ -8,15 +8,15 @@ import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingItemDelegate.PageLoadingViewHolder
 import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.PageLoaderItem
+import ru.maxim.unsplash.ui.main.items.PageLoadingItem
 
-class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoaderItem, PageLoadingViewHolder>() {
+class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoadingItem, PageLoadingViewHolder>() {
 
     override fun isForViewType(
         item: BaseMainListItem,
         items: MutableList<BaseMainListItem>,
         position: Int
-    ): Boolean = item is PageLoaderItem
+    ): Boolean = item is PageLoadingItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PageLoadingViewHolder {
         val layout = LinearLayout(parent.context).apply {
@@ -39,7 +39,7 @@ class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoaderItem, PageLoading
     }
 
     override fun onBindViewHolder(
-        item: PageLoaderItem,
+        item: PageLoadingItem,
         holder: PageLoadingViewHolder,
         payloads: MutableList<Any>
     ) {}

@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import kotlinx.android.synthetic.main.fragment_main_page.*
+import kotlinx.coroutines.flow.collect
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainPageBinding
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
+import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
+import ru.maxim.unsplash.ui.main.items.InitialLoadingErrorItem
 import ru.maxim.unsplash.ui.main.items.InitialLoadingItem
-import ru.maxim.unsplash.ui.main.items.PageLoaderItem
+import ru.maxim.unsplash.ui.main.items.PageLoadingErrorItem
+import ru.maxim.unsplash.ui.main.items.PageLoadingItem
 import ru.maxim.unsplash.util.PaginationScrollListener
 import ru.maxim.unsplash.util.autoCleared
 import ru.maxim.unsplash.util.toast
@@ -40,7 +44,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             onCollectionShare = model::shareCollection,
             onOpenPhotoDetails = parentFragment::openPhotoDetails,
             onOpenCollectionDetails = parentFragment::openCollectionDetails,
-            onRefresh = ::refreshPage
+            onRefresh = ::loadInitialPage,
+            onRetry = ::retryLoading
         )
 
         with(binding) {
@@ -55,53 +60,87 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
             mainSwipeRefresh.setOnRefreshListener(::refreshPage)
         }
 
-        with(model) {
-            model.items.observe(viewLifecycleOwner) { items ->
-                mainRecyclerAdapter.items = items
-                mainRecyclerAdapter.notifyDataSetChanged()
-                startPostponedEnterTransition()
-            }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            model.mainState.collect { state ->
+                when(state) {
+                    is Empty -> { if (savedInstanceState == null) loadInitialPage() }
 
-            isInitialLoading.observe(viewLifecycleOwner) {
-                if (it) {
-                    mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
-                        clear()
-                        add(InitialLoadingItem)
+                    Refreshing -> { }
+
+                    InitialLoading -> {
+                        mainRecyclerAdapter.items = listOf(InitialLoadingItem)
+                    }
+
+                    is InitialLoadingSuccess -> {
+                        binding.mainSwipeRefresh.isRefreshing = false
+                        mainRecyclerAdapter.items = state.items
                         mainRecyclerAdapter.notifyDataSetChanged()
                     }
-                } else {
-                    mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
-                        removeAll { item -> item is InitialLoadingItem }
+
+                    is InitialLoadingError -> {
+                        binding.mainSwipeRefresh.isRefreshing = false
+                        mainRecyclerAdapter.items = listOf(
+                            InitialLoadingErrorItem(state.message?:R.string.common_loading_error)
+                        )
                         mainRecyclerAdapter.notifyDataSetChanged()
+                        state.message?.let { context?.toast(it) }
+                    }
+
+                    is PageLoading -> {
+                        with(mainRecyclerAdapter) {
+                            items = items.toMutableList() + PageLoadingItem
+                            notifyItemInserted(itemCount - 1)
+                        }
+                    }
+
+                    is PageLoadingSuccess -> {
+                        with(mainRecyclerAdapter) {
+                            items = items.toMutableList().apply {
+                                removeAll { it == PageLoadingItem || it is PageLoadingErrorItem }
+                            } + state.itemsAdded
+                            notifyDataSetChanged()
+                        //notifyItemRangeInserted(itemCount - state.itemsAdded.size, itemCount - 1)
+                        }
+                    }
+
+                    is PageLoadingError -> {
+                        with(mainRecyclerAdapter) {
+                            items = items.toMutableList().apply {
+                                if (lastOrNull() is PageLoadingItem) removeLast()
+                            } + PageLoadingErrorItem(state.message)
+                            notifyItemChanged(itemCount - 1)
+                        }
+                    }
+
+                    is SetLikeSuccess -> {
+                        mainRecyclerAdapter.notifyItemChanged(state.itemPosition)
+                    }
+
+                    is SetLikeError -> {
+                        state.message?.let { context?.toast(it) }
                     }
                 }
             }
-
-            isNextPageLoading.observe(viewLifecycleOwner) {
-                if (it) {
-                    mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
-                        add(PageLoaderItem)
-                        mainRecyclerAdapter.notifyItemInserted(mainRecyclerAdapter.itemCount)
-                    }
-                } else {
-                    mainRecyclerAdapter.items = mainRecyclerAdapter.items.toMutableList().apply {
-                        if (lastOrNull() is PageLoaderItem) removeLast()
-                        mainRecyclerAdapter.notifyItemRemoved(mainRecyclerAdapter.itemCount)
-                    }
-                }
-            }
-
-            errorMessage.observe(viewLifecycleOwner) { it?.let { context?.toast(it) } }
-            isRefreshing.observe(viewLifecycleOwner) { mainSwipeRefresh.isRefreshing = it }
-            if (savedInstanceState == null) loadNextPage()
         }
     }
 
+    private fun retryLoading() {
+        if (model.mainState.value is PageLoadingError)
+            model.retryPageLoading()
+    }
+
+    private fun loadInitialPage() {
+        if (model.mainState.value != InitialLoading)
+            model.loadNextPage(1)
+    }
+
     private fun refreshPage() {
-        model.refresh()
+        if (model.mainState.value != Refreshing)
+            model.refresh()
     }
 
     private fun onLoadNextPage() {
-        model.loadNextPage()
+        if (model.mainState.value !is PageLoading)
+            model.loadNextPage()
     }
 }

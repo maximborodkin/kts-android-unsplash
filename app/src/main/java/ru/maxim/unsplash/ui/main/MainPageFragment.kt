@@ -13,6 +13,7 @@ import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainPageBinding
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
 import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
+import ru.maxim.unsplash.ui.main.MainViewModel.MainViewModelFactory
 import ru.maxim.unsplash.ui.main.items.InitialLoadingErrorItem
 import ru.maxim.unsplash.ui.main.items.InitialLoadingItem
 import ru.maxim.unsplash.ui.main.items.PageLoadingErrorItem
@@ -23,13 +24,13 @@ import ru.maxim.unsplash.util.toast
 
 class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     private val binding by viewBinding(FragmentMainPageBinding::bind)
-    private val model: MainViewModel by viewModels()
-    private var mainRecyclerAdapter by autoCleared<MainRecyclerAdapter>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        model.currentListMode = (arguments?.get("list_mode") as? ListMode) ?: ListMode.Editorial
+    private val model: MainViewModel by viewModels {
+        MainViewModelFactory(
+            requireActivity().application,
+            arguments?.get("list_mode") as? ListMode ?: ListMode.Editorial
+        )
     }
+    private var mainRecyclerAdapter by autoCleared<MainRecyclerAdapter>()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,14 +63,12 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             model.mainState.collect { state ->
-                when(state) {
-                    is Empty -> { if (savedInstanceState == null) loadInitialPage() }
-
-                    Refreshing -> { }
-
-                    InitialLoading -> {
-                        mainRecyclerAdapter.items = listOf(InitialLoadingItem)
+                when (state) {
+                    Empty -> if (savedInstanceState == null) loadInitialPage()
+                    Refreshing -> {
                     }
+
+                    InitialLoading -> mainRecyclerAdapter.items = listOf(InitialLoadingItem)
 
                     is InitialLoadingSuccess -> {
                         binding.mainSwipeRefresh.isRefreshing = false
@@ -80,7 +79,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                     is InitialLoadingError -> {
                         binding.mainSwipeRefresh.isRefreshing = false
                         mainRecyclerAdapter.items = listOf(
-                            InitialLoadingErrorItem(state.message?:R.string.common_loading_error)
+                            InitialLoadingErrorItem(state.message ?: R.string.common_loading_error)
                         )
                         mainRecyclerAdapter.notifyDataSetChanged()
                         state.message?.let { context?.toast(it) }
@@ -99,7 +98,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                                 removeAll { it == PageLoadingItem || it is PageLoadingErrorItem }
                             } + state.itemsAdded
                             notifyDataSetChanged()
-                        //notifyItemRangeInserted(itemCount - state.itemsAdded.size, itemCount - 1)
+                            //notifyItemRangeInserted(itemCount - state.itemsAdded.size, itemCount - 1)
                         }
                     }
 
@@ -112,10 +111,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                         }
                     }
 
-                    is SetLikeSuccess -> {
-                        mainRecyclerAdapter.notifyItemChanged(state.itemPosition)
-                    }
-
+                    is SetLikeSuccess -> mainRecyclerAdapter.notifyItemChanged(state.itemPosition)
                     is SetLikeError -> {
                         state.message?.let { context?.toast(it) }
                     }
@@ -135,8 +131,10 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     }
 
     private fun refreshPage() {
-        if (model.mainState.value != Refreshing)
+        if (model.mainState.value != Refreshing && model.mainState.value != InitialLoading)
             model.refresh()
+        else
+            binding.mainSwipeRefresh.isRefreshing = false
     }
 
     private fun onLoadNextPage() {

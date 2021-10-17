@@ -1,11 +1,13 @@
 package ru.maxim.unsplash.ui.main
 
+import android.app.Application
 import androidx.annotation.StringRes
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,13 +20,16 @@ import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
 import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
 import ru.maxim.unsplash.ui.main.items.*
-import timber.log.Timber
 
-class MainViewModel : ViewModel() {
+class MainViewModel private constructor(application: Application, private val listMode: ListMode) :
+    AndroidViewModel(application) {
+
     private val photoService = RetrofitClient.photoService
     private val collectionService = RetrofitClient.collectionService
 
     private val items = arrayListOf<BaseMainListItem>()
+    private var currentPage = 1
+    private var currentPhotosOrderType = PhotosOrderType.Latest.queryParam
 
     private val _mainState = MutableStateFlow<MainState>(Empty)
     val mainState: StateFlow<MainState> = _mainState.asStateFlow()
@@ -45,11 +50,7 @@ class MainViewModel : ViewModel() {
         data class SetLikeError(@StringRes val message: Int?) : MainState()
     }
 
-    private var currentPage = 1
-    var currentListMode = ListMode.Editorial
-    private var currentPhotosOrderType = PhotosOrderType.Latest.queryParam
-
-    fun loadNextPage(page: Int? = null)  = viewModelScope.launch {
+    fun loadNextPage(page: Int? = null) = viewModelScope.launch {
         if (page != null) currentPage = page
 
         // Load 30 elements for first page
@@ -65,7 +66,7 @@ class MainViewModel : ViewModel() {
         }
 
         withContext(IO) {
-            val response = when (currentListMode) {
+            val response = when (listMode) {
                 ListMode.Editorial ->
                     photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
                 ListMode.Collections ->
@@ -110,12 +111,12 @@ class MainViewModel : ViewModel() {
     }
 
     private fun mapResponse(response: List<Any>): List<BaseMainListItem> = response.map {
-            when (it) {
-                is Photo -> PhotoItem.fromPhoto(it)
-                is PhotosCollection -> PhotosCollectionItem.fromCollection(it)
-                else -> throw IllegalArgumentException("Unknown item type")
-            }
+        when (it) {
+            is Photo -> PhotoItem.fromPhoto(it)
+            is PhotosCollection -> PhotosCollectionItem.fromCollection(it)
+            else -> throw IllegalArgumentException("Unknown item type")
         }
+    }
 
     fun refresh() = viewModelScope.launch {
         _mainState.emit(Refreshing)
@@ -174,6 +175,20 @@ class MainViewModel : ViewModel() {
     companion object {
         private const val pageSize = 10
         private const val initialLoadSize = 30
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    class MainViewModelFactory(
+        private val application: Application,
+        private val listMode: ListMode
+    ) : ViewModelProvider.AndroidViewModelFactory(application) {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                return MainViewModel(application, listMode) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")
+        }
     }
 }
 

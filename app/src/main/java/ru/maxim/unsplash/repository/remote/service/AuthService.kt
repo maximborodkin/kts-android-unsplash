@@ -2,6 +2,7 @@ package ru.maxim.unsplash.repository.remote.service
 
 import android.net.Uri
 import net.openid.appauth.*
+import ru.maxim.unsplash.repository.local.PreferencesManager
 import ru.maxim.unsplash.repository.remote.AuthConfig
 
 class AuthService {
@@ -26,9 +27,9 @@ class AuthService {
         onError: (message: String?) -> Unit
     ) {
         authService.performTokenRequest(tokenRequest, clientAuthentication) { response, exception ->
-            if (response != null && response.accessToken.orEmpty().isNotBlank()) {
+            if (response != null && !response.accessToken.isNullOrBlank()) {
+                PreferencesManager.accessToken = response.accessToken
                 onComplete()
-                AuthConfig.accessToken = response.accessToken
             } else {
                 onError(exception?.localizedMessage)
             }

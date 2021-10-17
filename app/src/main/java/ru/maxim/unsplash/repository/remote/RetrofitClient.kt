@@ -7,6 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.maxim.unsplash.repository.local.PreferencesManager
 import ru.maxim.unsplash.repository.remote.service.CollectionService
 import ru.maxim.unsplash.repository.remote.service.PhotoService
 
@@ -17,11 +18,12 @@ object RetrofitClient {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply { level = BODY })
         .addInterceptor { chain: Interceptor.Chain ->
-            if (AuthConfig.accessToken.isNullOrBlank()) {
+            val token = PreferencesManager.accessToken
+            if (token.isNullOrBlank()) {
                 chain.proceed(chain.request())
             } else {
                 val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ${AuthConfig.accessToken}")
+                    .addHeader("Authorization", "Bearer $token")
                     .build()
                 chain.proceed(request)
             }

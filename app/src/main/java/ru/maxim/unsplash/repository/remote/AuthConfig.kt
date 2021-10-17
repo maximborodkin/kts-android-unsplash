@@ -10,6 +10,4 @@ object AuthConfig {
     const val scope = "public read_user write_user read_photos write_photos write_likes write_followers read_collections write_collections"
     const val clientId = "clientId"
     const val clientSecret = "clientSecret"
-
-    var accessToken: String? = null
 }

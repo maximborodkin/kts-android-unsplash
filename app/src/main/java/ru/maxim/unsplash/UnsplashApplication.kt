@@ -2,6 +2,7 @@ package ru.maxim.unsplash
 
 import android.app.Application
 import kotlinx.coroutines.*
+import ru.maxim.unsplash.repository.local.PreferencesManager
 import ru.maxim.unsplash.util.NetworkUtils
 import timber.log.Timber
 
@@ -14,6 +15,7 @@ class UnsplashApplication : Application() {
             Timber.plant(Timber.DebugTree())
         }
         NetworkUtils.init(this, applicationScope)
+        PreferencesManager.init(applicationContext)
     }
 
     override fun onLowMemory() {

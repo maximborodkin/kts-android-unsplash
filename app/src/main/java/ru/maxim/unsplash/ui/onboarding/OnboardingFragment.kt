@@ -9,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentOnboardingBinding
+import ru.maxim.unsplash.repository.local.PreferencesManager
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
 
@@ -67,8 +68,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
 
     private fun finishOnboarding() {
-        //TODO: Set isOnboardingFinished property to true in SharedPreferences
-
+        PreferencesManager.isOnboardingDone = true
         findNavController().navigate(OnboardingFragmentDirections.actionOnboardingToLogin())
     }
 }

@@ -2,17 +2,27 @@ package ru.maxim.unsplash.ui.photo_details
 
 import android.app.Application
 import androidx.annotation.StringRes
-import androidx.lifecycle.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.model.Photo
 import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
 
-class PhotoDetailsViewModel private constructor(application: Application, private val photoId: String) :
-    AndroidViewModel(application) {
+class PhotoDetailsViewModel private constructor(
+    application: Application,
+    private val photoId: String
+) : AndroidViewModel(application) {
 
     private val photoService = RetrofitClient.photoService
     private val _photoDetailsState = MutableStateFlow<PhotoDetailsState>(Empty)
@@ -25,11 +35,11 @@ class PhotoDetailsViewModel private constructor(application: Application, privat
         data class Error(@StringRes val messageRes: Int?) : PhotoDetailsState()
     }
 
-    fun loadPhoto() = viewModelScope.launch(Dispatchers.IO) {
+    fun loadPhoto() = viewModelScope.launch(IO) {
         val response = photoService.getById(photoId)
         val responseBody = response.body()
         if (response.isSuccessful && responseBody != null) {
-            launch(Dispatchers.Main) { _photoDetailsState.emit(Success(responseBody)) }
+            withContext(Main) { _photoDetailsState.emit(Success(responseBody)) }
         } else {
             val messageRes = when (response.code()) {
                 401 -> {
@@ -42,16 +52,16 @@ class PhotoDetailsViewModel private constructor(application: Application, privat
                 in 500..599 -> R.string.server_error
                 else -> null
             }
-            launch { _photoDetailsState.emit(Error(messageRes)) }
+            withContext(Main) { _photoDetailsState.emit(Error(messageRes)) }
         }
     }
 
     fun refresh() = viewModelScope.launch {
-        _photoDetailsState.emit(Refreshing)
+        withContext(Main) { _photoDetailsState.emit(Refreshing) }
         loadPhoto()
     }
 
-    fun setLike() = viewModelScope.launch(Dispatchers.IO) {
+    fun setLike() = viewModelScope.launch(IO) {
         _photoDetailsState.collect { state ->
             // If current state is success, photo was loaded and available for update
             if (state is Success) {
@@ -64,12 +74,13 @@ class PhotoDetailsViewModel private constructor(application: Application, privat
                         likedByUser = like.photo.likedByUser
                         likes = like.photo.likes
                     }
-                    launch(Dispatchers.Main) { _photoDetailsState.emit(Success(updatedPhoto)) }
+                    withContext(Main) { _photoDetailsState.emit(Success(updatedPhoto)) }
                 }
             }
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     class PhotoDetailsViewModelFactory(
         private val application: Application,
         private val photoId: String

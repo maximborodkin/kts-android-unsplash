@@ -1,6 +1,5 @@
 package ru.maxim.unsplash.util
 
-import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -16,11 +15,8 @@ import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 
 object NetworkUtils {
-    private lateinit var application: Application
-    private lateinit var scope: CoroutineScope
-    private val connectivityManager by lazy {
-        application.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    }
+    private var scope: CoroutineScope? = null
+    private var connectivityManager: ConnectivityManager? = null
 
     private val mutableNetworkStateFlow = MutableSharedFlow<Boolean>(
         replay = 1,
@@ -29,30 +25,30 @@ object NetworkUtils {
     )
     val networkStateFlow: SharedFlow<Boolean> = mutableNetworkStateFlow.asSharedFlow()
 
-    fun init(application: Application, scope: CoroutineScope) {
-        this.application = application
+    fun init(context: Context, scope: CoroutineScope) {
         this.scope = scope
 
+        connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+            connectivityManager?.registerDefaultNetworkCallback(networkCallback)
         } else {
             val networkRequest = NetworkRequest.Builder()
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                 .build()
-            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+            connectivityManager?.registerNetworkCallback(networkRequest, networkCallback)
         }
     }
-
-    suspend fun hasNetworkConnection(): Boolean = mutableNetworkStateFlow.lastOrNull() == true
 
     private val networkCallback = object :
         ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            scope.launch { mutableNetworkStateFlow.emit(true) }
+            scope?.launch { mutableNetworkStateFlow.emit(true) }
         }
 
         override fun onLost(network: Network) {
-            scope.launch { mutableNetworkStateFlow.emit(false) }
+            scope?.launch { mutableNetworkStateFlow.emit(false) }
         }
     }
 }

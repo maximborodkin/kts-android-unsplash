@@ -2,9 +2,14 @@ package ru.maxim.unsplash.util
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
+import android.widget.Toast.LENGTH_SHORT
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -14,27 +19,36 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import ru.maxim.unsplash.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.Calendar
+import java.util.Calendar.DATE
+import java.util.Calendar.YEAR
 
 fun TextView.setDrawableStart(drawableResource: Int) =
-    setCompoundDrawablesRelativeWithIntrinsicBounds(drawableResource, 0, 0, 0)
+    setCompoundDrawablesRelativeWithIntrinsicBounds(
+        AppCompatResources.getDrawable(context, drawableResource), //start
+        compoundDrawablesRelative[1],                              //top
+        compoundDrawablesRelative[2],                              //end
+        compoundDrawablesRelative[3]                               //bottom
+    )
 
 fun TextView.setDrawableEnd(drawableResource: Int) =
-    setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, drawableResource, 0)
+    setCompoundDrawablesRelativeWithIntrinsicBounds(
+        this.compoundDrawablesRelative[0],                         //start
+        this.compoundDrawablesRelative[1],                         //top
+        AppCompatResources.getDrawable(context, drawableResource), //end
+        this.compoundDrawablesRelative[3]                          //bottom
+    )
 
 fun TextView.clearDrawables() =
     setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
 
-fun Context.toast(text: String?) =
-    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
-
-fun Context.toast(resource: Int) =
-    Toast.makeText(this, getString(resource), Toast.LENGTH_SHORT).show()
-
-fun Context.longToast(text: String?) =
-    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-
-fun Context.longToast(resource: Int) =
-    Toast.makeText(this, getString(resource), Toast.LENGTH_LONG).show()
+fun Context.toast(text: String?) = Toast.makeText(this, text, LENGTH_SHORT).show()
+fun Context.toast(resource: Int) = toast(getString(resource))
+fun Context.longToast(text: String?) = Toast.makeText(this, text, LENGTH_LONG).show()
+fun Context.longToast(resource: Int) = longToast(getString(resource))
 
 fun RequestBuilder<Drawable>.finishCallback(onFinish: () -> Unit): RequestBuilder<Drawable> {
     return listener(object : RequestListener<Drawable> {

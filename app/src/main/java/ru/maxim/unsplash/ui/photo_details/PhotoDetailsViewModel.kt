@@ -21,6 +21,7 @@ import ru.maxim.unsplash.repository.local.model.DatabasePhoto.Companion.fromPhot
 import ru.maxim.unsplash.repository.local.model.DatabaseTag.Companion.fromTag
 import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
+import timber.log.Timber
 
 class PhotoDetailsViewModel private constructor(
     application: Application,
@@ -61,9 +62,11 @@ class PhotoDetailsViewModel private constructor(
                 withContext(Main) { _photoDetailsState.emit(Error(messageRes)) }
             }
         }catch (e: Exception) {
+            Timber.e(e.message)
             try {
                 loadCache()
             } catch (e: Exception) {
+                Timber.e(e.message)
                 withContext(Main) { _photoDetailsState.emit(Error(null)) }
             }
         }

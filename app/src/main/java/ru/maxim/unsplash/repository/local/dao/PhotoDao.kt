@@ -21,11 +21,4 @@ interface PhotoDao {
 
     @Delete
     fun delete(photo: DatabasePhoto)
-
-
-//    fun insertPhotoWithRelations(photo: Photo) {
-//        insert(photo)
-//        Database.instance.userDao().insert(photo.user)
-//        photo.tags?.let { tags -> Database.instance.tagDao().insertAll(tags.map { tag -> tag.apply { photoId = photo.id } }) }
-//    }
 }

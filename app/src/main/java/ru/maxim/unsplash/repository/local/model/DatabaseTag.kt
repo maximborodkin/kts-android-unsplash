@@ -23,7 +23,7 @@ data class DatabaseTag (
     @ColumnInfo(name = TagContract.Columns.title) val title: String
 ) {
     companion object {
-        fun Tag.fromTag(photoId: String) = DatabaseTag(title, photoId)
+        fun Tag.fromTag(photoId: String) = DatabaseTag(photoId, title)
     }
 
     fun toTag() = Tag(title)

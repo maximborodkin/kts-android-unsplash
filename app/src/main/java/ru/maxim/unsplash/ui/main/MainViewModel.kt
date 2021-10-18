@@ -15,14 +15,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.model.Photo
-import ru.maxim.unsplash.model.PhotosCollection
+import ru.maxim.unsplash.model.Collection
+import ru.maxim.unsplash.repository.local.Database
+import ru.maxim.unsplash.repository.local.model.DatabaseCollection.Companion.fromCollection
+import ru.maxim.unsplash.repository.local.model.DatabasePhoto.Companion.fromPhoto
 import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
 import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
 import ru.maxim.unsplash.ui.main.items.*
+import java.lang.Exception
 
 class MainViewModel private constructor(application: Application, private val listMode: ListMode) :
     AndroidViewModel(application) {
+
+    val database = Database.instance
 
     private val photoService = RetrofitClient.photoService
     private val collectionService = RetrofitClient.collectionService
@@ -65,58 +71,115 @@ class MainViewModel private constructor(application: Application, private val li
             pageSize
         }
 
-        withContext(IO) {
-            val response = when (listMode) {
-                ListMode.Editorial ->
-                    photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
-                ListMode.Collections ->
-                    collectionService.getAllPaginated(currentPage, pageSize)
-                ListMode.Following ->
-                    photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
-            }
-
-            val responseBody = response.body()
-            if (response.isSuccessful && responseBody != null) {
-                if (_mainState.value is PageLoading) {
-                    val responseItems = mapResponse(responseBody)
-                    items.addAll(responseItems)
-                    withContext(Main) { _mainState.emit(PageLoadingSuccess(ArrayList(responseItems))) }
-                } else {
-                    items.clear()
-                    val responseItems = mapResponse(responseBody)
-                    if (responseItems.isEmpty()) items.add(EmptyListItem)
-                    items.addAll(responseItems)
-                    withContext(Main) { _mainState.emit(InitialLoadingSuccess(items)) }
-                }
-                currentPage++
+        try {
+            loadPage(pageSize)
+        } catch (e: Exception) {
+            if (currentPage == 1){
+                loadCache()
             } else {
-                val error = when (response.code()) {
-                    401 -> {
-                        // TODO: update auth credentials
-                        R.string.unauthorized_error
-                    }
-                    408 -> R.string.timeout_error
-                    in 400..499 -> R.string.common_loading_error
-                    in 500..599 -> R.string.server_error
-                    else -> null
-                }
+                withContext(Main) { _mainState.emit(InitialLoadingError(null)) }
+            }
+        }
+    }
 
-                if (_mainState.value is PageLoading) {
-                    withContext(Main) { _mainState.emit(PageLoadingError(error)) }
-                } else {
-                    withContext(Main) { _mainState.emit(InitialLoadingError(error)) }
+    private suspend fun loadPage(pageSize: Int) = withContext(IO) {
+        val response = when (listMode) {
+            ListMode.Editorial ->
+                photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
+            ListMode.Collections ->
+                collectionService.getAllPaginated(currentPage, pageSize)
+            ListMode.Following ->
+                photoService.getAllPaginated(currentPage, pageSize, currentPhotosOrderType)
+        }
+
+        val responseBody = response.body()
+        if (response.isSuccessful && responseBody != null) {
+            val responseItems = mapResponse(responseBody)
+            cacheResponse(responseBody)
+            if (_mainState.value is PageLoading) {
+                items.addAll(responseItems)
+                withContext(Main) {
+                    _mainState.emit(PageLoadingSuccess(responseItems))
+                }
+            } else {
+                items.clear()
+                if (responseItems.isEmpty()) items.add(EmptyListItem)
+                items.addAll(responseItems)
+                withContext(Main) { _mainState.emit(InitialLoadingSuccess(items)) }
+            }
+            currentPage++
+        } else {
+            val error = when (response.code()) {
+                401 -> {
+                    // TODO: update auth credentials
+                    R.string.unauthorized_error
+                }
+                408 -> R.string.timeout_error
+                in 400..499 -> R.string.common_loading_error
+                in 500..599 -> R.string.server_error
+                else -> null
+            }
+
+            if (_mainState.value is PageLoading) {
+                withContext(Main) { _mainState.emit(PageLoadingError(error)) }
+            } else {
+                withContext(Main) { _mainState.emit(InitialLoadingError(error)) }
+            }
+        }
+    }
+
+    private suspend fun cacheResponse(response: List<Any>) = withContext(IO) {
+        val photoDao = database.photoDao()
+        val collectionDao = database.collectionDao()
+        for(item in response) {
+            when(item) {
+                is Photo -> {
+                    photoDao.insert(item.fromPhoto())
+                }
+                is Collection -> {
+                    collectionDao.insert(item.fromCollection())
                 }
             }
         }
     }
 
-    private fun mapResponse(response: List<Any>): List<BaseMainListItem> = response.map {
-        when (it) {
-            is Photo -> PhotoItem.fromPhoto(it)
-            is PhotosCollection -> PhotosCollectionItem.fromCollection(it)
-            else -> throw IllegalArgumentException("Unknown item type")
+    private suspend fun loadCache() = withContext(IO) {
+        try {
+            when (listMode) {
+                ListMode.Editorial -> {
+                    val photoDao = database.photoDao()
+                    val photos = photoDao.getAll().map { it.toPhoto() }
+                    withContext(Main) { _mainState.emit(InitialLoadingSuccess(mapResponse(photos))) }
+                }
+
+                ListMode.Collections -> {
+                    val collectionDao = database.collectionDao()
+                    val collections = collectionDao.getAll().map { it.toCollection() }
+                    withContext(Main) {
+                        _mainState.emit(InitialLoadingSuccess(mapResponse(collections)))
+                    }
+                }
+
+                ListMode.Following -> {
+                    val photoDao = database.photoDao()
+                    val photos = photoDao.getAll().map { it.toPhoto() }
+                    withContext(Main) { _mainState.emit(InitialLoadingSuccess(mapResponse(photos))) }
+                }
+            }
+        } catch (e: Exception) {
+            withContext(Main) { _mainState.emit(InitialLoadingError((null))) }
         }
     }
+
+    private fun mapResponse(response: List<Any>) = ArrayList(
+        response.map {
+            when (it) {
+                is Photo -> PhotoItem.fromPhoto(it)
+                is Collection -> CollectionItem.fromCollection(it)
+                else -> throw IllegalArgumentException("Unknown item type")
+            }
+        }
+    )
 
     fun refresh() = viewModelScope.launch {
         _mainState.emit(Refreshing)

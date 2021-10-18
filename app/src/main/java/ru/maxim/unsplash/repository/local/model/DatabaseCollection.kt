@@ -103,7 +103,6 @@ data class DatabaseCollection(
             const val coverPhotoId = "cover_photo_id"
             const val totalPhotos = "total_photos"
             const val userId = "user_id"
-            const val links = "links"
         }
     }
 }

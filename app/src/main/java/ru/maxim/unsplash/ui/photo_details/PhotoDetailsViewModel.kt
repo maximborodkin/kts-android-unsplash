@@ -16,6 +16,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.model.Photo
+import ru.maxim.unsplash.repository.local.Database
+import ru.maxim.unsplash.repository.local.model.DatabasePhoto.Companion.fromPhoto
+import ru.maxim.unsplash.repository.local.model.DatabaseTag.Companion.fromTag
 import ru.maxim.unsplash.repository.remote.RetrofitClient
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
 
@@ -24,6 +27,7 @@ class PhotoDetailsViewModel private constructor(
     private val photoId: String
 ) : AndroidViewModel(application) {
 
+    val database = Database.instance
     private val photoService = RetrofitClient.photoService
     private val _photoDetailsState = MutableStateFlow<PhotoDetailsState>(Empty)
     val photoDetailsState: StateFlow<PhotoDetailsState> = _photoDetailsState.asStateFlow()
@@ -36,23 +40,51 @@ class PhotoDetailsViewModel private constructor(
     }
 
     fun loadPhoto() = viewModelScope.launch(IO) {
-        val response = photoService.getById(photoId)
-        val responseBody = response.body()
-        if (response.isSuccessful && responseBody != null) {
-            withContext(Main) { _photoDetailsState.emit(Success(responseBody)) }
-        } else {
-            val messageRes = when (response.code()) {
-                401 -> {
-                    //TODO: update auth credentials
-                    R.string.unauthorized_error
+        try {
+            val response = photoService.getById(photoId)
+            val responseBody = response.body()
+            if (response.isSuccessful && responseBody != null) {
+                cacheResponse(responseBody)
+                withContext(Main) { _photoDetailsState.emit(Success(responseBody)) }
+            } else {
+                val messageRes = when (response.code()) {
+                    401 -> {
+                        //TODO: update auth credentials
+                        R.string.unauthorized_error
+                    }
+                    403 -> R.string.not_enough_rights_photo
+                    404 -> R.string.photo_not_found
+                    408 -> R.string.timeout_error
+                    in 500..599 -> R.string.server_error
+                    else -> null
                 }
-                403 -> R.string.not_enough_rights_photo
-                404 -> R.string.photo_not_found
-                408 -> R.string.timeout_error
-                in 500..599 -> R.string.server_error
-                else -> null
+                withContext(Main) { _photoDetailsState.emit(Error(messageRes)) }
             }
-            withContext(Main) { _photoDetailsState.emit(Error(messageRes)) }
+        }catch (e: Exception) {
+            try {
+                loadCache()
+            } catch (e: Exception) {
+                withContext(Main) { _photoDetailsState.emit(Error(null)) }
+            }
+        }
+    }
+
+    private suspend fun cacheResponse(photo: Photo) = withContext(IO) {
+        val photoDao = database.photoDao()
+        val tagDao = database.tagDao()
+        photoDao.insert(photo.fromPhoto())
+        photo.tags?.let {
+            tagDao.insertAll(it.map { tag -> tag.fromTag(photoId = photo.id) })
+        }
+    }
+
+    private suspend fun loadCache() = withContext(IO) {
+        val photoDao = database.photoDao()
+        val photo = photoDao.getById(photoId)?.toPhoto()
+        if (photo != null) {
+            withContext(Main) { _photoDetailsState.emit(Success(photo)) }
+        } else {
+            withContext(Main) { _photoDetailsState.emit(Error(null)) }
         }
     }
 

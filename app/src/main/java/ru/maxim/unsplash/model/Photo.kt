@@ -5,25 +5,19 @@ import java.util.Date
 
 data class Photo(
     val id: String,
-    @SerializedName("created_at")
-    val createdAt: Date,
-    @SerializedName("updated_at")
-    val updatedAt: Date,
+    @SerializedName("created_at") val createdAt: Date,
+    @SerializedName("updated_at") val updatedAt: Date,
     val width: Int,
     val height: Int,
     val color: String?,
-    @SerializedName("blur_hash")
-    val blurHash: String,
+    @SerializedName("blur_hash") val blurHash: String,
     var likes: Int,
-    @SerializedName("liked_by_user")
-    var likedByUser: Boolean,
+    @SerializedName("liked_by_user") var likedByUser: Boolean,
     val description: String?,
     val exif: Exif?,
     val location: Location?,
     val tags: ArrayList<Tag>?,
-    val user: User,
-    @SerializedName("current_user_collections")
-    val currentUserCollections: ArrayList<PhotosCollection>?,
+    val user: User?,
     val urls: Urls,
     val links: Links
 ) {
@@ -31,7 +25,7 @@ data class Photo(
         val self: String,
         val html: String,
         val download: String,
-        val downloadLocation: String
+        @SerializedName("download_location") val downloadLocation: String
     )
 
     data class Urls (
@@ -45,11 +39,9 @@ data class Photo(
     data class Exif (
         val make: String?,
         val model: String?,
-        @SerializedName("exposure_time")
-        val exposureTime: String?,
+        @SerializedName("exposure_time") val exposureTime: String?,
         val aperture: String?,
-        @SerializedName("focal_length")
-        val focalLength: String?,
+        @SerializedName("focal_length") val focalLength: String?,
         val iso: Int?
     )
 

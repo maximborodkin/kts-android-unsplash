@@ -21,7 +21,7 @@ class MainRecyclerAdapter(
     init {
         delegatesManager
             .addDelegate(PhotoItemDelegate(onSetLike, onAddToCollection, onDownload, onOpenPhotoDetails))
-            .addDelegate(PhotosCollectionItemDelegate(onCollectionShare, onOpenCollectionDetails))
+            .addDelegate(CollectionItemDelegate(onCollectionShare, onOpenCollectionDetails))
             .addDelegate(InitialLoadingItemDelegate())
             .addDelegate(PageLoadingItemDelegate())
             .addDelegate(EmptyListItemDelegate(onRefresh))
@@ -33,7 +33,7 @@ class MainRecyclerAdapter(
         override fun areItemsTheSame(first: BaseMainListItem, second: BaseMainListItem): Boolean =
             first.javaClass == second.javaClass && when (first) {
                 is PhotoItem -> first.id == (second as PhotoItem).id
-                is PhotosCollectionItem -> first.id == (second as PhotosCollectionItem).id
+                is CollectionItem -> first.id == (second as CollectionItem).id
                 is InitialLoadingErrorItem ->
                     first.errorMessage == (second as InitialLoadingErrorItem).errorMessage
                 is PageLoadingErrorItem ->

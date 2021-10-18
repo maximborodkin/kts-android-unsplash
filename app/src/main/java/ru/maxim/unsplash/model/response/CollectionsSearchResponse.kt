@@ -1,9 +1,9 @@
 package ru.maxim.unsplash.model.response
 
-import ru.maxim.unsplash.model.PhotosCollection
+import ru.maxim.unsplash.model.Collection
 
 data class CollectionsSearchResponse (
     val total: Int,
     val pages: Int,
-    val results: ArrayList<PhotosCollection>
+    val results: ArrayList<Collection>
 )

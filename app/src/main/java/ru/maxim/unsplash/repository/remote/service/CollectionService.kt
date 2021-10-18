@@ -4,7 +4,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import ru.maxim.unsplash.model.PhotosCollection
+import ru.maxim.unsplash.model.Collection
 import ru.maxim.unsplash.model.response.CollectionsSearchResponse
 
 interface CollectionService {
@@ -13,10 +13,10 @@ interface CollectionService {
     suspend fun getAllPaginated(
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
-    ): Response<ArrayList<PhotosCollection>>
+    ): Response<ArrayList<Collection>>
 
     @GET("/collections/{id}")
-    suspend fun getById(@Path("id") id: Long): Response<PhotosCollection>
+    suspend fun getById(@Path("id") id: Long): Response<Collection>
 
     @GET("search/collections")
     suspend fun getSearchPaginated(

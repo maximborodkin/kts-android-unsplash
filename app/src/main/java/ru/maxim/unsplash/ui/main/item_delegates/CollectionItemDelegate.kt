@@ -5,23 +5,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.Glide
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemPhotosCollectionBinding
-import ru.maxim.unsplash.ui.main.item_delegates.PhotosCollectionItemDelegate.PhotosCollectionViewHolder
+import ru.maxim.unsplash.ui.main.item_delegates.CollectionItemDelegate.PhotosCollectionViewHolder
 import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.PhotosCollectionItem
+import ru.maxim.unsplash.ui.main.items.CollectionItem
 
-class PhotosCollectionItemDelegate(
+class CollectionItemDelegate(
     private val onShare: (collectionId: String) -> Unit,
     private val onOpenCollectionDetails: (collectionId: String) -> Unit
-) : BaseMainItemDelegate<PhotosCollectionItem, PhotosCollectionViewHolder>() {
+) : BaseMainItemDelegate<CollectionItem, PhotosCollectionViewHolder>() {
 
     override fun isForViewType(
         item: BaseMainListItem,
         items: MutableList<BaseMainListItem>,
         position: Int
-    ): Boolean = item is PhotosCollectionItem
+    ): Boolean = item is CollectionItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PhotosCollectionViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -30,7 +29,7 @@ class PhotosCollectionItemDelegate(
     }
 
     override fun onBindViewHolder(
-        item: PhotosCollectionItem,
+        item: CollectionItem,
         holder: PhotosCollectionViewHolder,
         payloads: MutableList<Any>
     ) = holder.bind(item)
@@ -38,7 +37,7 @@ class PhotosCollectionItemDelegate(
     inner class PhotosCollectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(ItemPhotosCollectionBinding::bind)
 
-        fun bind(collection: PhotosCollectionItem) {
+        fun bind(collection: CollectionItem) {
             with(binding) {
                 this.collection = collection
 

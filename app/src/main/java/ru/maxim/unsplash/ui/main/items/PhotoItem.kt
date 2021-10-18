@@ -12,7 +12,7 @@ data class PhotoItem(
     val color: String?,
     var likesCount: Int,
     var likedByUser: Boolean,
-    var authorName: String,
+    var authorName: String?,
     val authorAvatar: String?
 ) : BaseMainListItem() {
     companion object {
@@ -28,8 +28,8 @@ data class PhotoItem(
                 color = photo.color,
                 likesCount = photo.likes,
                 likedByUser = photo.likedByUser,
-                authorName = photo.user.name,
-                authorAvatar = photo.user.profileImage.small
+                authorName = photo.user?.name,
+                authorAvatar = photo.user?.profileImage?.small
             )
     }
 }

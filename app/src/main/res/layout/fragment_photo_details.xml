@@ -12,6 +12,9 @@
         <variable
             name="photo"
             type="ru.maxim.unsplash.model.Photo" />
+        <variable
+            name="isCache"
+            type="Boolean" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -213,6 +216,14 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/photoDetailsItemsLayout" />
+
+                <include
+                    android:id="@+id/photoDetailsCacheWarning"
+                    layout="@layout/item_cache_shown"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="@{isCache ? View.VISIBLE : View.GONE}"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

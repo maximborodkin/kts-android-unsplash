@@ -36,7 +36,7 @@ class PhotoDetailsViewModel private constructor(
     sealed class PhotoDetailsState {
         object Empty : PhotoDetailsState()
         object Refreshing : PhotoDetailsState()
-        data class Success(val photo: Photo) : PhotoDetailsState()
+        data class Success(val photo: Photo, val isCache: Boolean = false) : PhotoDetailsState()
         data class Error(@StringRes val messageRes: Int?) : PhotoDetailsState()
     }
 
@@ -85,7 +85,7 @@ class PhotoDetailsViewModel private constructor(
         val photoDao = database.photoDao()
         val photo = photoDao.getById(photoId)?.toPhoto()
         if (photo != null) {
-            withContext(Main) { _photoDetailsState.emit(Success(photo)) }
+            withContext(Main) { _photoDetailsState.emit(Success(photo, true)) }
         } else {
             withContext(Main) { _photoDetailsState.emit(Error(null)) }
         }

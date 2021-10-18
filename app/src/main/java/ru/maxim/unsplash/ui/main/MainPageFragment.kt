@@ -14,10 +14,7 @@ import ru.maxim.unsplash.databinding.FragmentMainPageBinding
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
 import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
 import ru.maxim.unsplash.ui.main.MainViewModel.MainViewModelFactory
-import ru.maxim.unsplash.ui.main.items.InitialLoadingErrorItem
-import ru.maxim.unsplash.ui.main.items.InitialLoadingItem
-import ru.maxim.unsplash.ui.main.items.PageLoadingErrorItem
-import ru.maxim.unsplash.ui.main.items.PageLoadingItem
+import ru.maxim.unsplash.ui.main.items.*
 import ru.maxim.unsplash.util.PaginationScrollListener
 import ru.maxim.unsplash.util.autoCleared
 import ru.maxim.unsplash.util.toast
@@ -72,7 +69,9 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
                     is InitialLoadingSuccess -> {
                         binding.mainSwipeRefresh.isRefreshing = false
-                        mainRecyclerAdapter.items = state.items
+                        val newItems = state.items
+                        if (state.isCache) newItems.add(0, CacheShownItem)
+                        mainRecyclerAdapter.items = newItems
                         mainRecyclerAdapter.notifyDataSetChanged()
                     }
 
@@ -138,7 +137,9 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     }
 
     private fun onLoadNextPage() {
-        if (model.mainState.value !is PageLoading)
+        val currentState = model.mainState.value
+        if (currentState !is PageLoading ||
+            currentState is InitialLoadingSuccess && !currentState.isCache)
             model.loadNextPage()
     }
 }

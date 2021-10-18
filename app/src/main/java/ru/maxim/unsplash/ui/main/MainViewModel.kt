@@ -45,7 +45,8 @@ class MainViewModel private constructor(application: Application, private val li
         object Refreshing : MainState()
 
         object InitialLoading : MainState()
-        data class InitialLoadingSuccess(val items: ArrayList<BaseMainListItem>) : MainState()
+        data class InitialLoadingSuccess(val items: ArrayList<BaseMainListItem>,
+                                         val isCache: Boolean = false) : MainState()
         data class InitialLoadingError(@StringRes val message: Int?) : MainState()
 
         object PageLoading : MainState()
@@ -149,21 +150,25 @@ class MainViewModel private constructor(application: Application, private val li
                 ListMode.Editorial -> {
                     val photoDao = database.photoDao()
                     val photos = photoDao.getAll().map { it.toPhoto() }
-                    withContext(Main) { _mainState.emit(InitialLoadingSuccess(mapResponse(photos))) }
+                    withContext(Main) {
+                        _mainState.emit(InitialLoadingSuccess(mapResponse(photos), true))
+                    }
                 }
 
                 ListMode.Collections -> {
                     val collectionDao = database.collectionDao()
                     val collections = collectionDao.getAll().map { it.toCollection() }
                     withContext(Main) {
-                        _mainState.emit(InitialLoadingSuccess(mapResponse(collections)))
+                        _mainState.emit(InitialLoadingSuccess(mapResponse(collections), true))
                     }
                 }
 
                 ListMode.Following -> {
                     val photoDao = database.photoDao()
                     val photos = photoDao.getAll().map { it.toPhoto() }
-                    withContext(Main) { _mainState.emit(InitialLoadingSuccess(mapResponse(photos))) }
+                    withContext(Main) {
+                        _mainState.emit(InitialLoadingSuccess(mapResponse(photos), true))
+                    }
                 }
             }
         } catch (e: Exception) {

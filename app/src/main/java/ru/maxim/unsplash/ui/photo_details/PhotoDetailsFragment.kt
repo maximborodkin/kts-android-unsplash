@@ -53,6 +53,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
             photoDetailsLikeBtn.setOnClickListener { model.setLike() }
             photoDetailsBackBtn.setOnClickListener { findNavController().popBackStack() }
             photoDetailsAuthor.setOnClickListener { photo?.user?.id?.let {openUserProfile(it)} }
+            photoDetailsCacheWarning.itemCacheShownRefreshBtn.setOnClickListener { model.refresh() }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -69,10 +70,11 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
 
                     is PhotoDetailsViewModel.PhotoDetailsState.Refreshing -> {}
 
-                    is PhotoDetailsViewModel.PhotoDetailsState.Success -> {
-                        binding.photoDetailsSwipeRefresh.isRefreshing = false
-                        binding.photo = state.photo
-                        binding.photoDetailsImage.load(state.photo.urls.regular)
+                    is PhotoDetailsViewModel.PhotoDetailsState.Success -> with(binding) {
+                        photoDetailsSwipeRefresh.isRefreshing = false
+                        photo = state.photo
+                        photoDetailsImage.load(state.photo.urls.regular)
+                        isCache = state.isCache
                         state.photo.tags?.let { drawTags(it) }
                     }
                 }

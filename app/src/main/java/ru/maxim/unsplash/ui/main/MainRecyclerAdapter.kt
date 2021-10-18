@@ -27,6 +27,7 @@ class MainRecyclerAdapter(
             .addDelegate(EmptyListItemDelegate(onRefresh))
             .addDelegate(InitialLoadingErrorItemDelegate(onRefresh))
             .addDelegate(PageLoadingErrorItemDelegate(onRetry))
+            .addDelegate(CacheShownItemDelegate(onRefresh))
     }
 
     object ComplexDiffCallback : DiffUtil.ItemCallback<BaseMainListItem>() {

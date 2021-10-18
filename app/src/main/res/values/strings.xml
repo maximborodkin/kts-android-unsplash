@@ -43,4 +43,5 @@
     <string name="login_page_start_message">You will be automatically redirected to the Unsplash login page. If it doesn\'t happening, please press the login button</string>
     <string name="unable_to_set_like">Unable to set like</string>
     <string name="cached_data_shown">Cached data shown</string>
+    <string name="logout">Logout</string>
 </resources>

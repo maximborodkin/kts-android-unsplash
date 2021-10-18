@@ -36,13 +36,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         with(binding) {
             lifecycleOwner = viewLifecycleOwner
             loginBtn.setOnClickListener { model.startLoginPage() }
+            /* Логаут работает только здесь. Я пока не разобрался почему. Вообще в документации
+            * ничего не написано, но он срабатывает по адресу, который используется для
+            * этого на сайте. Правда пока не удаётся обработать успешный логаут и перенаправить на
+            * страницу входа.
+            * Сейчас страницы профиля ещё нет, поэтому кнопка действия здесь
+            *  */
+            logoutBtn.setOnClickListener { model.logout() }
             message = getString(R.string.login_page_start_message) // Initial message
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             model.loginState.collect { state ->
                 when(state) {
-                    is Empty -> { model.startLoginPage() }
+                    is Empty -> { /*model.startLoginPage()*/ }
                     is Error -> { binding.message = state.message }
                     is Process -> { authActivityResult.launch(state.loginIntent) }
                     is Success -> {

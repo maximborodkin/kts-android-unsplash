@@ -38,6 +38,9 @@
             app:popExitAnim="@android:anim/fade_out"
             app:popUpTo="@id/nav_graph.xml"
             app:popUpToInclusive="true" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="school://ru.maxim.unsplash/oauth2/logout_callback" />
     </fragment>
 
     <fragment

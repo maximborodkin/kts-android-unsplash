@@ -38,5 +38,6 @@
     <string name="login_page_start_message">Вы автоматически будете перенаправлены на страницу аутентификации в Unsplash. Если это не происходит, нажмите на кнопку войти</string>
     <string name="unable_to_set_like">Невозможно поставить лайк</string>
     <string name="cached_data_shown">Показаны данные из кэша</string>
+    <string name="logout">Выйти</string>
 
 </resources>

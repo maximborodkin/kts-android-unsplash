@@ -8,6 +8,7 @@ data class CollectionItem(
     val description: String?,
     val totalPhotos: Int,
     val cover: String?,
+    val coverHash: String?,
     val authorName: String?,
     val authorAvatar: String?,
 ) : BaseMainListItem() {
@@ -20,6 +21,7 @@ data class CollectionItem(
                 description = collection.description,
                 totalPhotos = collection.totalPhotos,
                 cover = collection.coverPhoto?.urls?.regular,
+                coverHash = collection.coverPhoto?.blurHash,
                 authorName = collection.user?.name,
                 authorAvatar = collection.user?.profileImage?.small
             )

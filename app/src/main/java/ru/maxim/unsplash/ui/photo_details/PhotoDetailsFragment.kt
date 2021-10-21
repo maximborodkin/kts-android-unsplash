@@ -1,12 +1,10 @@
 package ru.maxim.unsplash.ui.photo_details
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.MATCH_PARENT
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.WRAP_CONTENT
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,18 +40,18 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
         with(binding) {
             lifecycleOwner = viewLifecycleOwner
             photoDetailsImage.apply {
-                layoutParams.height = args.photoHeight
+                layoutParams.apply {
+                    width = args.imageWidth
+                    height = args.imageHeight
+                }
                 setOnClickListener { photo?.urls?.full?.let { openPhotoViewer(it) } }
-                val color =
-                    if (args.imageColor != null) Color.parseColor(args.imageColor)
-                    else ContextCompat.getColor(requireContext(), R.color.light_grey)
-                setBackgroundColor(color)
+                load(url = args.photoUrl, blurHash = args.blurHash)
             }
-            photoDetailsSwipeRefresh.setOnRefreshListener { model.refresh() }
+            photoDetailsSwipeRefresh.setOnRefreshListener { refresh() }
             photoDetailsLikeBtn.setOnClickListener { model.setLike() }
             photoDetailsBackBtn.setOnClickListener { findNavController().popBackStack() }
             photoDetailsAuthor.setOnClickListener { photo?.user?.id?.let {openUserProfile(it)} }
-            photoDetailsCacheWarning.itemCacheShownRefreshBtn.setOnClickListener { model.refresh() }
+            photoDetailsCacheWarning.itemCacheShownRefreshBtn.setOnClickListener { refresh() }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -73,7 +71,6 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
                     is PhotoDetailsViewModel.PhotoDetailsState.Success -> with(binding) {
                         photoDetailsSwipeRefresh.isRefreshing = false
                         photo = state.photo
-                        photoDetailsImage.load(state.photo.urls.regular)
                         isCache = state.isCache
                         state.photo.tags?.let { drawTags(it) }
                     }
@@ -96,6 +93,11 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
         binding.photoDetailsTagsScroll.addView(linearLayout)
     }
 
+    private fun refresh() {
+        binding.photoDetailsImage.load(url = args.photoUrl, blurHash = args.blurHash)
+        model.refresh()
+    }
+
     private fun searchByTag(tag: String) {
         context?.toast(tag)
     }
@@ -105,7 +107,8 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
     }
 
     private fun openPhotoViewer(photoUrl: String) {
-        val action = PhotoDetailsFragmentDirections.actionPhotoDetailsToImageViewer(photoUrl)
+        val action =
+            PhotoDetailsFragmentDirections.actionPhotoDetailsToImageViewer(photoUrl, args.blurHash)
         findNavController().navigate(action)
     }
 }

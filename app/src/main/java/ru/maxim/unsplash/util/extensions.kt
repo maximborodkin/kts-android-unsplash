@@ -1,15 +1,15 @@
 package ru.maxim.unsplash.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.toDrawable
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -20,9 +20,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import ru.maxim.unsplash.R
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.Calendar
+import java.util.*
 import java.util.Calendar.DATE
 import java.util.Calendar.YEAR
 
@@ -75,19 +73,47 @@ fun RequestBuilder<Drawable>.finishCallback(onFinish: () -> Unit): RequestBuilde
     })
 }
 
-fun ImageView.load(url: String, thumbnail: String? = null, onFinish: (() -> Unit)? = null) =
-    Glide.with(this)
-        .load(CacheGlideUrl(url))
-        .thumbnail(Glide.with(this).load(thumbnail))
-        .placeholder(CircularProgressDrawable(this.context).apply {
+/**
+ * Extension function for [ImageView] class.
+ * Loads image by [url] into current view.
+ * Has additional parameters [thumbnail] and [blurHash] to using it as placeholder.
+ * Using [blurHash] is preferably because in this case placeholder will be created without network
+ * request and faster then thumbnail loading.
+ * [onFinish] callback called after loading finished independently of result.
+ * */
+@SuppressLint("CheckResult")
+fun ImageView.load(
+    url: String,
+    thumbnail: String? = null,
+    blurHash: String? = null,
+    onFinish: (() -> Unit)? = null
+) {
+    val requestBuilder = Glide.with(context).load(CacheGlideUrl(url))
+
+    if (!blurHash.isNullOrBlank()) {
+        val blurredPlaceholder = BlurHashDecoder.decode(
+            blurHash = blurHash,
+            width = 30,
+            height = (layoutParams.height.toFloat() * 30 / layoutParams.width).toInt(),
+            punch = 1F,
+            useCache = false
+        )
+        requestBuilder.thumbnail(Glide.with(context).load(blurredPlaceholder).fitCenter())
+    } else if (!thumbnail.isNullOrBlank()) {
+        requestBuilder.thumbnail(Glide.with(context).load(thumbnail))
+    } else {
+        requestBuilder.placeholder(CircularProgressDrawable(context).apply {
             strokeWidth = 3F
             centerRadius = 64F
             start()
         })
+    }
+    requestBuilder
         .error(R.drawable.ic_warning)
         .finishCallback { onFinish?.invoke() }
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
         .into(this)
+}
 
 fun Date?.dateTimeString(): String? = this?.let { "${dateString()} ${timeString()}" }
 

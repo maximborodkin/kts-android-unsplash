@@ -44,9 +44,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         val photo = itemBinding.photo
         if (photo != null) {
             val action = MainFragmentDirections.actionMainToPhotoDetails(
-                photo.id,
-                itemBinding.itemPhotoImage.height,
-                photo.color
+                photoId = photo.id,
+                photoUrl = photo.regular,
+                imageWidth = itemBinding.itemPhotoImage.width,
+                imageHeight = itemBinding.itemPhotoImage.height,
+                blurHash = photo.blurHash
             )
 
             val extras = FragmentNavigatorExtras(

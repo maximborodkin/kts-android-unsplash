@@ -1,19 +1,13 @@
 package ru.maxim.unsplash.ui.image_viewer
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import ru.maxim.unsplash.R
 import ru.maxim.unsplash.ui.view.ScaleImageView
 import ru.maxim.unsplash.util.load
 import ru.maxim.unsplash.util.toast
@@ -37,7 +31,7 @@ class ImageViewerFragment : Fragment() {
        val scaleImageView = ScaleImageView(requireContext()).apply {
            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
            setOnDismissListener { findNavController().popBackStack() }
-           load(args.photoUrl)
+           load(url = args.photoUrl, blurHash = args.blurHash)
        }
         return scaleImageView
     }

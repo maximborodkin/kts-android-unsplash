@@ -26,6 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:image="@{collection.cover}"
+            app:blurHash="@{collection.coverHash}"
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <TextView

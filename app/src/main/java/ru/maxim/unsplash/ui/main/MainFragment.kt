@@ -42,24 +42,24 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     fun openPhotoDetails(itemBinding: ItemPhotoBinding) {
         val photo = itemBinding.photo
-        if (photo != null) {
-            val action = MainFragmentDirections.actionMainToPhotoDetails(
-                photoId = photo.id,
-                photoUrl = photo.regular,
-                imageWidth = itemBinding.itemPhotoImage.width,
-                imageHeight = itemBinding.itemPhotoImage.height,
-                blurHash = photo.blurHash
-            )
+        val photoUrl = photo?.regular?:return
 
-            val extras = FragmentNavigatorExtras(
-                itemBinding.itemPhotoImage to getString(R.string.photo_details_image_transition),
-                itemBinding.itemPhotoLikeBtn to getString(R.string.photo_details_like_btn_transition),
-                itemBinding.itemPhotoLikesCount to getString(R.string.photo_details_likes_count_transition),
-                itemBinding.itemPhotoAuthorAvatar to getString(R.string.photo_details_author_avatar_transition),
-                itemBinding.itemPhotoAuthorName to getString(R.string.photo_details_author_name_transition)
-            )
-            findNavController().navigate(action, extras)
-        }
+        val action = MainFragmentDirections.actionMainToPhotoDetails(
+            photoId = photo.id,
+            photoUrl = photoUrl,
+            imageWidth = itemBinding.itemPhotoImage.width,
+            imageHeight = itemBinding.itemPhotoImage.height,
+            blurHash = photo.blurHash
+        )
+
+        val extras = FragmentNavigatorExtras(
+            itemBinding.itemPhotoImage to getString(R.string.photo_details_image_transition),
+            itemBinding.itemPhotoLikeBtn to getString(R.string.photo_details_like_btn_transition),
+            itemBinding.itemPhotoLikesCount to getString(R.string.photo_details_likes_count_transition),
+            itemBinding.itemPhotoAuthorAvatar to getString(R.string.photo_details_author_avatar_transition),
+            itemBinding.itemPhotoAuthorName to getString(R.string.photo_details_author_name_transition)
+        )
+        findNavController().navigate(action, extras)
     }
 
     fun openCollectionDetails(collectionId: String) {

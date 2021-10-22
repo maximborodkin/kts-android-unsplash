@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.TokenRequest
-import ru.maxim.unsplash.repository.remote.service.AuthService
+import ru.maxim.unsplash.network.service.AuthService
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginState.*
 import ru.maxim.unsplash.util.NetworkUtils
 

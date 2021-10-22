@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import kotlinx.coroutines.flow.collect
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ActivityMainBinding
-import ru.maxim.unsplash.repository.local.PreferencesManager
+import ru.maxim.unsplash.database.PreferencesManager
 import ru.maxim.unsplash.util.NetworkUtils
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {

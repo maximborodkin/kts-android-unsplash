@@ -11,7 +11,7 @@
 
         <variable
             name="collection"
-            type="ru.maxim.unsplash.model.Collection" />
+            type="ru.maxim.unsplash.domain.model.Collection" />
 
         <variable
             name="isCache"

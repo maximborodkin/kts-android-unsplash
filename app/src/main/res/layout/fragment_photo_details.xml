@@ -11,7 +11,7 @@
 
         <variable
             name="photo"
-            type="ru.maxim.unsplash.model.Photo" />
+            type="ru.maxim.unsplash.domain.model.Photo" />
         <variable
             name="isCache"
             type="Boolean" />

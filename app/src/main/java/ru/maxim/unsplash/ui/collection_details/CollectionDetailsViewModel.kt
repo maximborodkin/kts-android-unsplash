@@ -14,10 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
-import ru.maxim.unsplash.model.Collection
-import ru.maxim.unsplash.repository.local.Database
-import ru.maxim.unsplash.repository.local.model.DatabaseCollection.Companion.fromCollection
-import ru.maxim.unsplash.repository.remote.RetrofitClient
+import ru.maxim.unsplash.database.Database
+import ru.maxim.unsplash.domain.model.Collection
+import ru.maxim.unsplash.network.RetrofitClient
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsState.*
 
 class CollectionDetailsViewModel private constructor(

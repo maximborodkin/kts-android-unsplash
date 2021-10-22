@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collect
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentPhotoDetailsBinding
 import ru.maxim.unsplash.databinding.ItemTagBinding
-import ru.maxim.unsplash.model.Tag
+import ru.maxim.unsplash.domain.model.Tag
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsViewModelFactory
 import ru.maxim.unsplash.util.load
 import ru.maxim.unsplash.util.toast
@@ -79,7 +79,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
         }
     }
 
-    private fun drawTags(tags: ArrayList<Tag>) {
+    private fun drawTags(tags: List<Tag>) {
         val linearLayout = LinearLayoutCompat(requireContext()).apply {
             layoutParams = LinearLayoutCompat.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         }

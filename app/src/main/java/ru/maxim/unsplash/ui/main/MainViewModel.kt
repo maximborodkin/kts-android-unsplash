@@ -14,12 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
-import ru.maxim.unsplash.model.Photo
-import ru.maxim.unsplash.model.Collection
-import ru.maxim.unsplash.repository.local.Database
-import ru.maxim.unsplash.repository.local.model.DatabaseCollection.Companion.fromCollection
-import ru.maxim.unsplash.repository.local.model.DatabasePhoto.Companion.fromPhoto
-import ru.maxim.unsplash.repository.remote.RetrofitClient
+import ru.maxim.unsplash.domain.model.Photo
+import ru.maxim.unsplash.domain.model.Collection
+import ru.maxim.unsplash.database.Database
+import ru.maxim.unsplash.network.RetrofitClient
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
 import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
 import ru.maxim.unsplash.ui.main.items.*

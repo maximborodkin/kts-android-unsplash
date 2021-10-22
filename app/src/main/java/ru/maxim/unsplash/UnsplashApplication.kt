@@ -2,8 +2,11 @@ package ru.maxim.unsplash
 
 import android.app.Application
 import kotlinx.coroutines.*
-import ru.maxim.unsplash.repository.local.Database
-import ru.maxim.unsplash.repository.local.PreferencesManager
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import ru.maxim.unsplash.di.appModule
+import ru.maxim.unsplash.database.Database
+import ru.maxim.unsplash.database.PreferencesManager
 import ru.maxim.unsplash.util.NetworkUtils
 import timber.log.Timber
 

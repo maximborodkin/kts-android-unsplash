@@ -1,6 +1,6 @@
 package ru.maxim.unsplash.ui.main.items
 
-import ru.maxim.unsplash.model.Collection
+import ru.maxim.unsplash.domain.model.Collection
 
 data class CollectionItem(
     val id: String,

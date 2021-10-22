@@ -26,7 +26,9 @@
     <string name="following">Following</string>
     <string name="unable_to_load_photo">Unable to load photo</string>
     <string name="not_enough_rights_photo">Not enough rights to access this photo</string>
+    <string name="not_enough_rights_collection">Not enough rights to access this collection</string>
     <string name="photo_not_found">Photo not found</string>
+    <string name="collection_not_found">Collection not found</string>
     <string name="dimensions_placeholder" translatable="false">%d x %d</string>
     <string name="dimensions">Dimensions</string>
     <string name="camera">Camera</string>
@@ -44,4 +46,12 @@
     <string name="unable_to_set_like">Unable to set like</string>
     <string name="cached_data_shown">Cached data shown</string>
     <string name="logout">Logout</string>
+    <string name="published_at_placeholder">Published %s</string>
+    <string name="last_update_placeholder">Last update %s</string>
+
+    <plurals name="photos_count">
+        <item quantity="zero">No photos yet</item>
+        <item quantity="one">%d photo</item>
+        <item quantity="other">%d photos</item>
+    </plurals>
 </resources>

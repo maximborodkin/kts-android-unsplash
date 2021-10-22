@@ -16,7 +16,7 @@ interface CollectionService {
     ): Response<ArrayList<Collection>>
 
     @GET("/collections/{id}")
-    suspend fun getById(@Path("id") id: Long): Response<Collection>
+    suspend fun getById(@Path("id") id: String): Response<Collection>
 
     @GET("search/collections")
     suspend fun getSearchPaginated(

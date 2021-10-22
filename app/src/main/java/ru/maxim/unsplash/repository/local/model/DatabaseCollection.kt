@@ -11,7 +11,8 @@ import ru.maxim.unsplash.repository.local.model.DatabaseUser.Companion.fromUser
 import ru.maxim.unsplash.repository.local.model.DatabaseUser.UserContract
 import java.util.*
 
-@Entity(tableName = CollectionContract.tableName,
+@Entity(
+    tableName = CollectionContract.tableName,
     foreignKeys = [
         ForeignKey(
             entity = DatabaseUser::class,
@@ -23,17 +24,20 @@ import java.util.*
             parentColumns = [PhotoContract.Columns.id],
             childColumns = [CollectionContract.Columns.coverPhotoId]
         )
-    ])
+    ]
+)
 data class DatabaseCollection(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = CollectionContract.Columns.id) val id: String,
     @ColumnInfo(name = CollectionContract.Columns.title) val title: String,
     @ColumnInfo(name = CollectionContract.Columns.description) val description: String?,
-    @ColumnInfo(name = CollectionContract.Columns.createdAt) val createdAt: Date?,
+    @ColumnInfo(name = CollectionContract.Columns.publishedAt) val publishedAt: Date?,
     @ColumnInfo(name = CollectionContract.Columns.updatedAt) val updatedAt: Date?,
-    @ColumnInfo(name = CollectionContract.Columns.coverPhotoId) val coverPhotoId: String?,
     @ColumnInfo(name = CollectionContract.Columns.totalPhotos) val totalPhotos: Int,
+    @ColumnInfo(name = CollectionContract.Columns.isPrivate) val isPrivate: Boolean,
+    @ColumnInfo(name = CollectionContract.Columns.shareKey) val shareKey: String,
     @ColumnInfo(name = CollectionContract.Columns.userId) val userId: String?,
+    @ColumnInfo(name = CollectionContract.Columns.coverPhotoId) val coverPhotoId: String?,
     @Embedded val links: Links
 ) {
     companion object {
@@ -48,29 +52,34 @@ data class DatabaseCollection(
                 id = id,
                 title = title,
                 description = description,
-                createdAt = createdAt,
+                publishedAt = publishedAt,
                 updatedAt = updatedAt,
-                coverPhotoId = coverPhoto?.id,
                 totalPhotos = totalPhotos,
+                isPrivate = isPrivate,
+                shareKey = shareKey,
                 userId = user?.id,
+                coverPhotoId = coverPhoto?.id,
                 links = links.fromLinks()
             )
         }
     }
 
     fun toCollection(): Collection =
-        Collection(id,
-            title,
-            description,
-            createdAt,
-            updatedAt,
-            coverPhotoId?.let { Database.instance.photoDao().getById(it)?.toPhoto() },
-            totalPhotos,
-            userId?.let { Database.instance.userDao().getById(userId)?.toUser() },
-            links.toLinks()
+        Collection(
+            id = id,
+            title = title,
+            description = description,
+            publishedAt = publishedAt,
+            updatedAt = updatedAt,
+            totalPhotos = totalPhotos,
+            isPrivate = isPrivate,
+            shareKey = shareKey,
+            coverPhoto = coverPhotoId?.let { Database.instance.photoDao().getById(it)?.toPhoto() },
+            user = userId?.let { Database.instance.userDao().getById(userId)?.toUser() },
+            links = links.toLinks(),
         )
 
-    data class Links (
+    data class Links(
         @ColumnInfo(name = CollectionLinksContract.Columns.self) val self: String,
         @ColumnInfo(name = CollectionLinksContract.Columns.html) val html: String,
         @ColumnInfo(name = CollectionLinksContract.Columns.photos) val photos: String,
@@ -94,14 +103,17 @@ data class DatabaseCollection(
 
     object CollectionContract {
         const val tableName = "collections"
+
         object Columns {
             const val id = "id"
             const val title = "title"
             const val description = "description"
-            const val createdAt = "created_at"
+            const val publishedAt = "published_at"
             const val updatedAt = "updated_at"
-            const val coverPhotoId = "cover_photo_id"
             const val totalPhotos = "total_photos"
+            const val isPrivate = "is_private"
+            const val shareKey = "share_key"
+            const val coverPhotoId = "cover_photo_id"
             const val userId = "user_id"
         }
     }

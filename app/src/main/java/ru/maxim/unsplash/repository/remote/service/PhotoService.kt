@@ -33,4 +33,11 @@ interface PhotoService {
 
     @DELETE("/photos/{id}/like")
     suspend fun removeLike(@Path("id") photoId: String): Response<LikeResponse>
+
+    @GET("collections/{id}/photos")
+    suspend fun getCollectionPhotos(
+        @Path("id") collectionId: String,
+        @Query("page") page: Int,
+        @Query("per_page") pageSize: Int = 10
+    ): Response<ArrayList<Photo>>
 }

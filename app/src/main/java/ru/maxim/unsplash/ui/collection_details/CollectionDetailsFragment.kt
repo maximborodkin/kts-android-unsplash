@@ -4,23 +4,21 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentCollectionDetailsBinding
-import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsViewModelFactory
 import ru.maxim.unsplash.ui.main.MainFragment
 import ru.maxim.unsplash.ui.main.MainPageFragment
 
 class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details) {
     private val binding by viewBinding(FragmentCollectionDetailsBinding::bind)
-    private val model: CollectionDetailsViewModel by viewModels {
-        CollectionDetailsViewModelFactory(requireActivity().application, args.collectionId)
-    }
     private val args: CollectionDetailsFragmentArgs by navArgs()
+    private val model: CollectionDetailsViewModel by viewModel { parametersOf(args.collectionId) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

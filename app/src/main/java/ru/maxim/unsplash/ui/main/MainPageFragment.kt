@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
 import ru.maxim.unsplash.R
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import ru.maxim.unsplash.databinding.FragmentMainPageBinding
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
 import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
-import ru.maxim.unsplash.ui.main.MainViewModel.MainViewModelFactory
 import ru.maxim.unsplash.ui.main.items.*
 import ru.maxim.unsplash.util.PaginationScrollListener
 import ru.maxim.unsplash.util.autoCleared
@@ -21,11 +22,8 @@ import ru.maxim.unsplash.util.toast
 
 class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     private val binding by viewBinding(FragmentMainPageBinding::bind)
-    private val model: MainViewModel by viewModels {
-        MainViewModelFactory(
-            requireActivity().application,
-            arguments?.get("list_mode") as? ListMode ?: ListMode.Editorial
-        )
+    private val model: MainViewModel by viewModel {
+        parametersOf(arguments?.get("list_mode") as? ListMode ?: ListMode.Editorial)
     }
     private var mainRecyclerAdapter by autoCleared<MainRecyclerAdapter>()
 

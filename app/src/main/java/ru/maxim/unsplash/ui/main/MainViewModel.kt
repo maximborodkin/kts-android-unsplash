@@ -7,29 +7,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.maxim.unsplash.R
-import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.domain.model.Collection
-import ru.maxim.unsplash.database.Database
-import ru.maxim.unsplash.network.RetrofitClient
+import ru.maxim.unsplash.repository.CollectionRepository
+import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.main.MainFragment.ListMode
-import ru.maxim.unsplash.ui.main.MainViewModel.MainState.*
-import ru.maxim.unsplash.ui.main.items.*
-import java.lang.Exception
+import ru.maxim.unsplash.ui.main.MainViewModel.MainState.Empty
+import ru.maxim.unsplash.ui.main.items.BaseMainListItem
+import ru.maxim.unsplash.ui.main.items.PageLoadingErrorItem
 
-class MainViewModel private constructor(application: Application, private val listMode: ListMode) :
-    AndroidViewModel(application) {
-
-    val database = Database.instance
-
-    private val photoService = RetrofitClient.photoService
-    private val collectionService = RetrofitClient.collectionService
+class MainViewModel private constructor(
+    application: Application,
+    private val photoRepository: PhotoRepository,
+    private val collectionRepository: CollectionRepository,
+    private val listMode: ListMode
+) : AndroidViewModel(application) {
 
     private val items = arrayListOf<BaseMainListItem>()
     private var currentPage = 1
@@ -43,8 +38,11 @@ class MainViewModel private constructor(application: Application, private val li
         object Refreshing : MainState()
 
         object InitialLoading : MainState()
-        data class InitialLoadingSuccess(val items: ArrayList<BaseMainListItem>,
-                                         val isCache: Boolean = false) : MainState()
+        data class InitialLoadingSuccess(
+            val items: ArrayList<BaseMainListItem>,
+            val isCache: Boolean = false
+        ) : MainState()
+
         data class InitialLoadingError(@StringRes val message: Int?) : MainState()
 
         object PageLoading : MainState()
@@ -246,12 +244,19 @@ class MainViewModel private constructor(application: Application, private val li
     @Suppress("UNCHECKED_CAST")
     class MainViewModelFactory(
         private val application: Application,
+        private val photoRepository: PhotoRepository,
+        private val collectionRepository: CollectionRepository,
         private val listMode: ListMode
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                return MainViewModel(application, listMode) as T
+                return MainViewModel(
+                    application,
+                    photoRepository,
+                    collectionRepository,
+                    listMode
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")
         }

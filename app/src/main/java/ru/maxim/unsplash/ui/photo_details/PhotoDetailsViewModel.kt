@@ -16,18 +16,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.database.Database
 import ru.maxim.unsplash.network.RetrofitClient
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
 import timber.log.Timber
 
 class PhotoDetailsViewModel private constructor(
     application: Application,
+    private val photoRepository: PhotoRepository,
     private val photoId: String
 ) : AndroidViewModel(application) {
 
-    val database = Database.instance
-    private val photoService = RetrofitClient.photoService
     private val _photoDetailsState = MutableStateFlow<PhotoDetailsState>(Empty)
     val photoDetailsState: StateFlow<PhotoDetailsState> = _photoDetailsState.asStateFlow()
 
@@ -116,12 +114,13 @@ class PhotoDetailsViewModel private constructor(
     @Suppress("UNCHECKED_CAST")
     class PhotoDetailsViewModelFactory(
         private val application: Application,
+        private val photoRepository: PhotoRepository,
         private val photoId: String
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PhotoDetailsViewModel::class.java)) {
-                return PhotoDetailsViewModel(application, photoId) as T
+                return PhotoDetailsViewModel(application, photoRepository, photoId) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")
         }

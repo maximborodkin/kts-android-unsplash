@@ -1,30 +1,34 @@
 package ru.maxim.unsplash
 
 import android.app.Application
-import kotlinx.coroutines.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import ru.maxim.unsplash.di.appModule
-import ru.maxim.unsplash.database.Database
-import ru.maxim.unsplash.database.PreferencesManager
-import ru.maxim.unsplash.util.NetworkUtils
+import ru.maxim.unsplash.di.*
 import timber.log.Timber
 
 class UnsplashApplication : Application() {
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+//    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate() {
         super.onCreate()
         if(BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        NetworkUtils.init(applicationContext, applicationScope)
-        PreferencesManager.init(applicationContext)
-        Database.init(applicationContext)
+
+        startKoin {
+            androidContext(applicationContext)
+            modules(listOf(
+                appModule,
+                dataModule,
+                networkModule,
+                persistenceModule,
+                presentationModule
+            ))
+        }
     }
 
-    override fun onLowMemory() {
-        super.onLowMemory()
-        applicationScope.cancel("onLowMemory called in application class")
-    }
+//    override fun onLowMemory() {
+//        super.onLowMemory()
+//        applicationScope.cancel("onLowMemory called in application class")
+//    }
 }

@@ -13,14 +13,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.maxim.unsplash.R
-import ru.maxim.unsplash.database.Database
 import ru.maxim.unsplash.domain.model.Collection
-import ru.maxim.unsplash.network.RetrofitClient
+import ru.maxim.unsplash.repository.CollectionRepository
+import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsState.*
 
 class CollectionDetailsViewModel private constructor(
     application: Application,
+    private val collectionRepository: CollectionRepository,
+    private val photoRepository: PhotoRepository,
     private val collectionId: String
 ) : AndroidViewModel(application) {
 
@@ -100,12 +101,19 @@ class CollectionDetailsViewModel private constructor(
     @Suppress("UNCHECKED_CAST")
     class CollectionDetailsViewModelFactory(
         private val application: Application,
+        private val collectionRepository: CollectionRepository,
+        private val photoRepository: PhotoRepository,
         private val collectionId: String
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(CollectionDetailsViewModel::class.java)) {
-                return CollectionDetailsViewModel(application, collectionId) as T
+                return CollectionDetailsViewModel(
+                    application,
+                    collectionRepository,
+                    photoRepository,
+                    collectionId
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")
         }

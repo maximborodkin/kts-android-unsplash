@@ -3,9 +3,14 @@ package ru.maxim.unsplash.ui.login
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthorizationException
@@ -15,8 +20,12 @@ import ru.maxim.unsplash.network.service.AuthService
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginState.*
 import ru.maxim.unsplash.util.NetworkUtils
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
-    private val authorizationService = AuthorizationService(application)
+class LoginViewModel private constructor(
+    application: Application,
+    private val authService: AuthService,
+    private val authorizationService: AuthorizationService,
+    private val networkUtils: NetworkUtils
+) : AndroidViewModel(application) {
 
     sealed class LoginState {
         object Empty : LoginState()
@@ -55,5 +64,26 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onAuthFailed(exception: AuthorizationException) = viewModelScope.launch(Main) {
         _loginState.emit(Error(exception.localizedMessage))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    class LoginViewModelFactory(
+        private val application: Application,
+        private val authService: AuthService,
+        private val authorizationService: AuthorizationService,
+        private val networkUtils: NetworkUtils
+    ) : ViewModelProvider.AndroidViewModelFactory(application) {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+                return LoginViewModel(
+                    application,
+                    authService,
+                    authorizationService,
+                    networkUtils
+                ) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")
+        }
     }
 }

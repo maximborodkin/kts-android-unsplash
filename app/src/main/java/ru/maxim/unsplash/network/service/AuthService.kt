@@ -5,7 +5,9 @@ import net.openid.appauth.*
 import ru.maxim.unsplash.database.PreferencesManager
 import ru.maxim.unsplash.network.AuthConfig
 
-object AuthService {
+class AuthService(
+    private val preferencesManager: PreferencesManager
+) {
     private val clientAuthentication = ClientSecretPost(AuthConfig.clientSecret)
     private val authorizationService = AuthorizationServiceConfiguration(
         Uri.parse(AuthConfig.authUri),
@@ -26,7 +28,7 @@ object AuthService {
     val logoutRequest = EndSessionRequest.Builder(
         authorizationService
     )
-        .setIdTokenHint(PreferencesManager.accessToken)
+        .setIdTokenHint(preferencesManager.accessToken)
         .setPostLogoutRedirectUri(Uri.parse(AuthConfig.logoutCallback))
         .build()
 
@@ -38,8 +40,8 @@ object AuthService {
     ) {
         authService.performTokenRequest(tokenRequest, clientAuthentication) { response, exception ->
             if (response != null && !response.accessToken.isNullOrBlank()) {
-                PreferencesManager.accessToken = response.accessToken
-                PreferencesManager.refreshToken = response.refreshToken
+                preferencesManager.accessToken = response.accessToken
+                preferencesManager.refreshToken = response.refreshToken
                 onComplete()
             } else {
                 onError(exception?.localizedMessage)

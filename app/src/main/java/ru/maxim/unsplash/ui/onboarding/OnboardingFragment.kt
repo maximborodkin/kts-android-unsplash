@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
+import org.koin.android.ext.android.inject
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentOnboardingBinding
 import ru.maxim.unsplash.database.PreferencesManager
@@ -15,6 +16,7 @@ import ru.maxim.unsplash.util.setDrawableEnd
 
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     private val binding by viewBinding(FragmentOnboardingBinding::bind)
+    private val preferencesManager: PreferencesManager by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,7 +70,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
 
     private fun finishOnboarding() {
-        PreferencesManager.isOnboardingDone = true
+        preferencesManager.isOnboardingDone = true
         findNavController().navigate(OnboardingFragmentDirections.actionOnboardingToLogin())
     }
 }

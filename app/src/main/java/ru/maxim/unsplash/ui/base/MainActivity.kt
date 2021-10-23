@@ -11,6 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import kotlinx.coroutines.flow.collect
+import org.koin.android.ext.android.inject
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ActivityMainBinding
 import ru.maxim.unsplash.database.PreferencesManager
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var navController: NavController? = null
     private val binding by viewBinding(ActivityMainBinding::bind)
     private var noInternetSnackbar: Snackbar? = null
+    private val preferencesManager: PreferencesManager by inject()
+    private val networkUtils: NetworkUtils by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,14 +32,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         val graph = navHostFragment.navController.navInflater.inflate(R.navigation.nav_graph_main)
         graph.startDestination = when {
-            !PreferencesManager.isOnboardingDone -> R.id.onboardingFragment
-            PreferencesManager.accessToken.isNullOrBlank() -> R.id.loginFragment
+            !preferencesManager.isOnboardingDone -> R.id.onboardingFragment
+            preferencesManager.accessToken.isNullOrBlank() -> R.id.loginFragment
             else -> R.id.mainFragment
         }
         navHostFragment.navController.graph = graph
 
         lifecycleScope.launchWhenStarted {
-            NetworkUtils.networkStateFlow.collect { isOnline ->
+            networkUtils.networkStateFlow.collect { isOnline ->
                 if (!isOnline) {
                     noInternetSnackbar = Snackbar
                         .make(binding.root, R.string.no_internet, LENGTH_INDEFINITE)

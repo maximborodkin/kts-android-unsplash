@@ -13,7 +13,7 @@ class PhotoDtoMapper(
     private val linksDtoMapper: DomainMapper<LinksDto, Links>
 ) : DomainMapper<PhotoDto, Photo> {
 
-    override fun toDomainModel(model: PhotoDto) =
+    override suspend fun toDomainModel(model: PhotoDto) =
         Photo(
             id = model.id,
             createdAt = model.createdAt,
@@ -33,7 +33,7 @@ class PhotoDtoMapper(
             links = linksDtoMapper.toDomainModel(model.links)
         )
 
-    override fun fromDomainModel(domainModel: Photo, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Photo, vararg params: String) =
         PhotoDto(
             id = domainModel.id,
             createdAt = domainModel.createdAt,

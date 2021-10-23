@@ -1,5 +1,7 @@
 package ru.maxim.unsplash.database.mapper
 
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.database.dao.TagDao
 import ru.maxim.unsplash.database.dao.UserDao
 import ru.maxim.unsplash.database.model.*
@@ -17,7 +19,7 @@ class PhotoEntityMapper(
     private val linksEntityMapper: DomainMapper<LinksEntity, Links>,
 ) : DomainMapper<PhotoEntity, Photo> {
 
-    override fun toDomainModel(model: PhotoEntity): Photo {
+    override suspend fun toDomainModel(model: PhotoEntity) = withContext(IO) {
         val tags = ArrayList(tagEntityMapper.toDomainModelList(tagDao.getByPhotoId(model.id)))
         val user = model.userId?.let { userId ->
             userDao.getById(userId)?.let { userEntity ->
@@ -25,7 +27,7 @@ class PhotoEntityMapper(
             }
         }
 
-        return Photo(
+        return@withContext Photo(
             id = model.id,
             createdAt = model.createdAt,
             updatedAt = model.updatedAt,
@@ -47,26 +49,28 @@ class PhotoEntityMapper(
         )
     }
 
-    override fun fromDomainModel(domainModel: Photo, vararg params: String): PhotoEntity {
-        domainModel.user?.let { user ->
-            userDao.insert(userEntityMapper.fromDomainModel(user))
+    override suspend fun fromDomainModel(domainModel: Photo, vararg params: String) =
+        withContext(IO) {
+            domainModel.user?.let { user ->
+                userDao.insert(userEntityMapper.fromDomainModel(user))
+            }
+
+            return@withContext PhotoEntity(
+                id = domainModel.id,
+                createdAt = domainModel.createdAt,
+                updatedAt = domainModel.updatedAt,
+                width = domainModel.width,
+                height = domainModel.height,
+                color = domainModel.color,
+                blurHash = domainModel.blurHash,
+                likes = domainModel.likes,
+                likedByUser = domainModel.likedByUser,
+                description = domainModel.description,
+                userId = domainModel.user?.id,
+                location = domainModel.location?.let { locationEntityMapper.fromDomainModel(it) },
+                exif = domainModel.exif?.let { exifEntityMapper.fromDomainModel(it) },
+                urls = urlsEntityMapper.fromDomainModel(domainModel.urls),
+                links = linksEntityMapper.fromDomainModel(domainModel.links)
+            )
         }
-        return PhotoEntity(
-            id = domainModel.id,
-            createdAt = domainModel.createdAt,
-            updatedAt = domainModel.updatedAt,
-            width = domainModel.width,
-            height = domainModel.height,
-            color = domainModel.color,
-            blurHash = domainModel.blurHash,
-            likes = domainModel.likes,
-            likedByUser = domainModel.likedByUser,
-            description = domainModel.description,
-            userId = domainModel.user?.id,
-            location = domainModel.location?.let { locationEntityMapper.fromDomainModel(it) },
-            exif = domainModel.exif?.let { exifEntityMapper.fromDomainModel(it) },
-            urls = urlsEntityMapper.fromDomainModel(domainModel.urls),
-            links = linksEntityMapper.fromDomainModel(domainModel.links)
-        )
-    }
 }

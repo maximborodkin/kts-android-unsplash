@@ -6,13 +6,13 @@ import ru.maxim.unsplash.domain.model.Tag
 
 class TagEntityMapper : DomainMapper<TagEntity, Tag> {
 
-    override fun toDomainModel(model: TagEntity) =
+    override suspend fun toDomainModel(model: TagEntity) =
         Tag(
             type = model.type,
             title = model.title
         )
 
-    override fun fromDomainModel(domainModel: Tag, vararg params: String): TagEntity {
+    override suspend fun fromDomainModel(domainModel: Tag, vararg params: String): TagEntity {
         val photoId = params.firstOrNull()
             ?: throw IllegalArgumentException("Photo id is required as second argument")
 

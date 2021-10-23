@@ -6,7 +6,7 @@ import ru.maxim.unsplash.network.model.ExifDto
 
 class ExifDtoMapper : DomainMapper<ExifDto, Exif> {
 
-    override fun toDomainModel(model: ExifDto) =
+    override suspend fun toDomainModel(model: ExifDto) =
         Exif(
             make = model.make,
             model = model.model,
@@ -16,7 +16,7 @@ class ExifDtoMapper : DomainMapper<ExifDto, Exif> {
             iso = model.iso
         )
 
-    override fun fromDomainModel(domainModel: Exif, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Exif, vararg params: String) =
         ExifDto(
             make = domainModel.make,
             model = domainModel.model,

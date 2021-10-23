@@ -1,5 +1,7 @@
 package ru.maxim.unsplash.database.mapper
 
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.database.dao.PhotoDao
 import ru.maxim.unsplash.database.dao.UserDao
 import ru.maxim.unsplash.database.model.CollectionEntity
@@ -20,7 +22,7 @@ class CollectionEntityMapper(
     private val photoDao: PhotoDao
 ) : DomainMapper<CollectionEntity, Collection> {
 
-    override fun toDomainModel(model: CollectionEntity): Collection {
+    override suspend fun toDomainModel(model: CollectionEntity) = withContext(IO) {
         val user = model.userId?.let { userId ->
             userDao.getById(userId)?.let { userEntity ->
                 userEntityMapper.toDomainModel(userEntity)
@@ -33,7 +35,7 @@ class CollectionEntityMapper(
             }
         }
 
-        return Collection(
+        return@withContext Collection(
             id = model.id,
             title = model.title,
             description = model.description,
@@ -48,27 +50,28 @@ class CollectionEntityMapper(
         )
     }
 
-    override fun fromDomainModel(domainModel: Collection, vararg params: String): CollectionEntity {
-        domainModel.user?.let { user ->
-            userDao.insert(userEntityMapper.fromDomainModel(user))
-        }
+    override suspend fun fromDomainModel(domainModel: Collection, vararg params: String) =
+        withContext(IO) {
+            domainModel.user?.let { user ->
+                userDao.insert(userEntityMapper.fromDomainModel(user))
+            }
 
-        domainModel.coverPhoto?.let { photo ->
-            photoDao.insert(photoEntityMapper.fromDomainModel(photo))
-        }
+            domainModel.coverPhoto?.let { photo ->
+                photoDao.insert(photoEntityMapper.fromDomainModel(photo))
+            }
 
-        return CollectionEntity(
-            id = domainModel.id,
-            title = domainModel.title,
-            description = domainModel.description,
-            publishedAt = domainModel.publishedAt,
-            updatedAt = domainModel.updatedAt,
-            totalPhotos = domainModel.totalPhotos,
-            isPrivate = domainModel.isPrivate,
-            shareKey = domainModel.shareKey,
-            userId = domainModel.user?.id,
-            coverPhotoId = domainModel.coverPhoto?.id,
-            links = linksEntityMapper.fromDomainModel(domainModel.links)
-        )
-    }
+            return@withContext CollectionEntity(
+                id = domainModel.id,
+                title = domainModel.title,
+                description = domainModel.description,
+                publishedAt = domainModel.publishedAt,
+                updatedAt = domainModel.updatedAt,
+                totalPhotos = domainModel.totalPhotos,
+                isPrivate = domainModel.isPrivate,
+                shareKey = domainModel.shareKey,
+                userId = domainModel.user?.id,
+                coverPhotoId = domainModel.coverPhoto?.id,
+                links = linksEntityMapper.fromDomainModel(domainModel.links)
+            )
+        }
 }

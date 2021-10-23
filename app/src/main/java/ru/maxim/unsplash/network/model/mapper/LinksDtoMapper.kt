@@ -6,7 +6,7 @@ import ru.maxim.unsplash.network.model.LinksDto
 
 class LinksDtoMapper : DomainMapper<LinksDto, Links> {
 
-    override fun toDomainModel(model: LinksDto) =
+    override suspend fun toDomainModel(model: LinksDto) =
         Links(
             self = model.self,
             html = model.html,
@@ -18,7 +18,7 @@ class LinksDtoMapper : DomainMapper<LinksDto, Links> {
             portfolio = model.portfolio
         )
 
-    override fun fromDomainModel(domainModel: Links, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Links, vararg params: String) =
         LinksDto(
             self = domainModel.self,
             html = domainModel.html,

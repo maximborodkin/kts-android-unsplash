@@ -6,13 +6,13 @@ import ru.maxim.unsplash.domain.model.Position
 
 class PositionEntityMapper : DomainMapper<PositionEntity, Position> {
 
-    override fun toDomainModel(model: PositionEntity) =
+    override suspend fun toDomainModel(model: PositionEntity) =
         Position(
             latitude = model.latitude,
             longitude = model.longitude
         )
 
-    override fun fromDomainModel(domainModel: Position, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Position, vararg params: String) =
         PositionEntity(
             latitude = domainModel.latitude,
             longitude = domainModel.longitude

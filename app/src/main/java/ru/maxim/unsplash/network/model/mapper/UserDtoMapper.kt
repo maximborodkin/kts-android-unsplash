@@ -13,7 +13,7 @@ class UserDtoMapper(
     private val linksDtoMapper: DomainMapper<LinksDto, Links>
 ) : DomainMapper<UserDto, User> {
 
-    override fun toDomainModel(model: UserDto) =
+    override suspend fun toDomainModel(model: UserDto) =
         User(
             id = model.id,
             username = model.username,
@@ -28,7 +28,7 @@ class UserDtoMapper(
             links = linksDtoMapper.toDomainModel(model.links)
     )
 
-    override fun fromDomainModel(domainModel: User, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: User, vararg params: String) =
         UserDto(
             id = domainModel.id,
             username = domainModel.username,

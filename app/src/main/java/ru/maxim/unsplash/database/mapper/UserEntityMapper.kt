@@ -1,5 +1,7 @@
 package ru.maxim.unsplash.database.mapper
 
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.database.model.LinksEntity
 import ru.maxim.unsplash.database.model.UrlsEntity
 import ru.maxim.unsplash.database.model.UserEntity
@@ -13,7 +15,7 @@ class UserEntityMapper(
     private val linksEntityMapper: DomainMapper<LinksEntity, Links>,
 ) : DomainMapper<UserEntity, User> {
 
-    override fun toDomainModel(model: UserEntity) =
+    override suspend fun toDomainModel(model: UserEntity) = withContext(IO) {
         User(
             id = model.id,
             username = model.username,
@@ -27,19 +29,22 @@ class UserEntityMapper(
             profileImage = urlsEntityMapper.toDomainModel(model.profileImage),
             links = linksEntityMapper.toDomainModel(model.links)
         )
+    }
 
-    override fun fromDomainModel(domainModel: User, vararg params: String) =
-        UserEntity(
-            id = domainModel.id,
-            username = domainModel.username,
-            name = domainModel.name,
-            portfolioUrl = domainModel.portfolioUrl,
-            bio = domainModel.bio,
-            location = domainModel.location,
-            totalLikes = domainModel.totalLikes,
-            totalPhotos = domainModel.totalPhotos,
-            totalCollections = domainModel.totalCollections,
-            profileImage = urlsEntityMapper.fromDomainModel(domainModel.profileImage),
-            links = linksEntityMapper.fromDomainModel(domainModel.links)
-        )
+    override suspend fun fromDomainModel(domainModel: User, vararg params: String) =
+        withContext(IO) {
+            UserEntity(
+                id = domainModel.id,
+                username = domainModel.username,
+                name = domainModel.name,
+                portfolioUrl = domainModel.portfolioUrl,
+                bio = domainModel.bio,
+                location = domainModel.location,
+                totalLikes = domainModel.totalLikes,
+                totalPhotos = domainModel.totalPhotos,
+                totalCollections = domainModel.totalCollections,
+                profileImage = urlsEntityMapper.fromDomainModel(domainModel.profileImage),
+                links = linksEntityMapper.fromDomainModel(domainModel.links)
+            )
+        }
 }

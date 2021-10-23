@@ -10,14 +10,14 @@ class LocationDtoMapper(
     private val positionDtoMapper: DomainMapper<PositionDto, Position>
 ) : DomainMapper<LocationDto, Location> {
 
-    override fun toDomainModel(model: LocationDto) =
+    override suspend fun toDomainModel(model: LocationDto) =
         Location(
             city = model.city,
             country = model.country,
             position = positionDtoMapper.toDomainModel(model.position)
         )
 
-    override fun fromDomainModel(domainModel: Location, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Location, vararg params: String) =
         LocationDto(
             city = domainModel.city,
             country = domainModel.country,

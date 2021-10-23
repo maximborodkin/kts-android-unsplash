@@ -6,7 +6,7 @@ import ru.maxim.unsplash.domain.model.Links
 
 class LinksEntityMapper : DomainMapper<LinksEntity, Links> {
 
-    override fun toDomainModel(model: LinksEntity) =
+    override suspend fun toDomainModel(model: LinksEntity) =
         Links(
             self = model.self,
             html = model.html,
@@ -18,7 +18,7 @@ class LinksEntityMapper : DomainMapper<LinksEntity, Links> {
             portfolio = model.portfolio
         )
 
-    override fun fromDomainModel(domainModel: Links, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Links, vararg params: String) =
         LinksEntity(
             self = domainModel.self,
             html = domainModel.html,

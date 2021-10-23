@@ -10,14 +10,14 @@ class LocationEntityMapper(
     private val positionEntityMapper: DomainMapper<PositionEntity, Position>
 ) : DomainMapper<LocationEntity, Location> {
 
-    override fun toDomainModel(model: LocationEntity) =
+    override suspend fun toDomainModel(model: LocationEntity) =
         Location(
             city = model.city,
             country = model.country,
             position = positionEntityMapper.toDomainModel(model.position)
         )
 
-    override fun fromDomainModel(domainModel: Location, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Location, vararg params: String) =
         LocationEntity(
             city = domainModel.city,
             country = domainModel.country,

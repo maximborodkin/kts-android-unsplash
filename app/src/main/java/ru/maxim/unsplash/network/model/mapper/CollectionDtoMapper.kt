@@ -16,7 +16,7 @@ class CollectionDtoMapper(
     private val linksDtoMapper: DomainMapper<LinksDto, Links>
 ) : DomainMapper<CollectionDto, Collection> {
 
-    override fun toDomainModel(model: CollectionDto) =
+    override suspend fun toDomainModel(model: CollectionDto) =
         Collection(
             id = model.id,
             title = model.title,
@@ -31,7 +31,7 @@ class CollectionDtoMapper(
             links = linksDtoMapper.toDomainModel(model.links),
         )
 
-    override fun fromDomainModel(domainModel: Collection, vararg params: String) =
+    override suspend fun fromDomainModel(domainModel: Collection, vararg params: String) =
         CollectionDto(
             id = domainModel.id,
             title = domainModel.title,

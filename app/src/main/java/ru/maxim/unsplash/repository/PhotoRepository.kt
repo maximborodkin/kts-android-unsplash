@@ -1,29 +1,20 @@
 package ru.maxim.unsplash.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.ui.main.PhotosOrderType
-import ru.maxim.unsplash.ui.main.PhotosSearchOrderType
+import ru.maxim.unsplash.util.Result
 
 interface PhotoRepository {
 
-    suspend fun getAllPaginated(page: Int, pageSize: Int, order: PhotosOrderType): List<Photo>
+    suspend fun getFeedPage(page: Int): Flow<Result<List<Photo>>>
 
-    suspend fun getById(photoId: String): Photo?
+    suspend fun getById(photoId: String): Flow<Result<Photo?>>
 
-    suspend fun getSearchPaginated(
-        query: String,
-        page: Int,
-        pageSize: Int,
-        order: PhotosSearchOrderType
-    ): List<Photo>
+    suspend fun getSearchPage(query: String, page: Int): Flow<Result<List<Photo>>>
 
-    suspend fun setLike(photoId: String): Photo
+    suspend fun setLike(photoId: String): Flow<Result<Photo>>
 
-    suspend fun removeLike(photoId: String): Photo
+    suspend fun removeLike(photoId: String): Flow<Result<Photo>>
 
-    suspend fun getCollectionPhotosPaginated(
-        collectionId: String,
-        page: Int,
-        pageSize: Int
-    ): List<Photo>
+    suspend fun getCollectionPhotosPage(collectionId: String, page: Int): Flow<Result<List<Photo>>>
 }

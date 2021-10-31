@@ -1,6 +1,7 @@
 package ru.maxim.unsplash.database.model
 
 import androidx.room.*
+import androidx.room.ForeignKey.*
 import ru.maxim.unsplash.database.model.CollectionEntity.CollectionContract
 import ru.maxim.unsplash.database.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.database.model.UserEntity.UserContract
@@ -12,12 +13,14 @@ import java.util.*
         ForeignKey(
             entity = UserEntity::class,
             parentColumns = [UserContract.Columns.id],
-            childColumns = [CollectionContract.Columns.userId]
+            childColumns = [CollectionContract.Columns.userId],
+            onDelete = CASCADE, onUpdate = NO_ACTION
         ),
         ForeignKey(
             entity = PhotoEntity::class,
             parentColumns = [PhotoContract.Columns.id],
-            childColumns = [CollectionContract.Columns.coverPhotoId]
+            childColumns = [CollectionContract.Columns.coverPhotoId],
+            onDelete = CASCADE, onUpdate = NO_ACTION
         )
     ]
 )
@@ -45,7 +48,7 @@ data class CollectionEntity(
     val isPrivate: Boolean,
 
     @ColumnInfo(name = CollectionContract.Columns.shareKey)
-    val shareKey: String,
+    val shareKey: String?,
 
     @ColumnInfo(name = CollectionContract.Columns.userId)
     val userId: String?,
@@ -54,7 +57,11 @@ data class CollectionEntity(
     val coverPhotoId: String?,
 
     @Embedded
-    val links: LinksEntity
+    val links: LinksEntity,
+
+    //Used for ordering cached items in lists
+    @ColumnInfo(name = CollectionContract.Columns.cacheTime)
+    val cacheTime: Long
 ) {
     object CollectionContract {
         const val tableName = "collections"
@@ -70,6 +77,7 @@ data class CollectionEntity(
             const val shareKey = "share_key"
             const val coverPhotoId = "cover_photo_id"
             const val userId = "user_id"
+            const val cacheTime = "cache_time"
         }
     }
 }

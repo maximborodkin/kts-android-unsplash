@@ -12,19 +12,21 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentLoginBinding
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginState.*
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
     private val binding: FragmentLoginBinding by viewBinding(FragmentLoginBinding::bind)
-    private val model: LoginViewModel by viewModels()
+    private val model: LoginViewModel by viewModel()
     private val authActivityResult = registerForActivityResult(StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val tokenRequest = AuthorizationResponse.fromIntent(result.data!!)
-                ?.createTokenExchangeRequest()
+        val resultData = result.data
+        if (result.resultCode == Activity.RESULT_OK && resultData != null) {
+            val tokenRequest =
+                AuthorizationResponse.fromIntent(resultData)?.createTokenExchangeRequest()
             if (tokenRequest == null) {
-                AuthorizationException.fromIntent(result.data!!)?.let { model::onAuthFailed }
+                AuthorizationException.fromIntent(resultData)?.let { model::onAuthFailed }
             } else {
                 model.onTokenRequestReceived(tokenRequest)
             }
@@ -36,20 +38,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         with(binding) {
             lifecycleOwner = viewLifecycleOwner
             loginBtn.setOnClickListener { model.startLoginPage() }
-            /* Логаут работает только здесь. Я пока не разобрался почему. Вообще в документации
-            * ничего не написано, но он срабатывает по адресу, который используется для
-            * этого на сайте. Правда пока не удаётся обработать успешный логаут и перенаправить на
-            * страницу входа.
-            * Сейчас страницы профиля ещё нет, поэтому кнопка действия здесь
-            *  */
-            logoutBtn.setOnClickListener { model.logout() }
             message = getString(R.string.login_page_start_message) // Initial message
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             model.loginState.collect { state ->
                 when(state) {
-                    is Empty -> { /*model.startLoginPage()*/ }
+                    is Empty -> { model.startLoginPage() }
                     is Error -> { binding.message = state.message }
                     is Process -> { authActivityResult.launch(state.loginIntent) }
                     is Success -> {

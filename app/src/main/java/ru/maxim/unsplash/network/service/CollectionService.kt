@@ -10,7 +10,7 @@ import ru.maxim.unsplash.network.model.response.CollectionsSearchResponse
 interface CollectionService {
 
     @GET("/collections")
-    suspend fun getAllPaginated(
+    suspend fun getPage(
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<List<CollectionDto>>
@@ -19,7 +19,7 @@ interface CollectionService {
     suspend fun getById(@Path("id") id: String): Response<CollectionDto>
 
     @GET("search/collections")
-    suspend fun getSearchPaginated(
+    suspend fun getSearchPage(
         @Query("query") query: String,
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10

@@ -3,6 +3,8 @@ package ru.maxim.unsplash.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.NO_ACTION
 import ru.maxim.unsplash.database.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.database.model.TagEntity.TagContract
 
@@ -13,7 +15,8 @@ import ru.maxim.unsplash.database.model.TagEntity.TagContract
         ForeignKey(
             entity = PhotoEntity::class,
             parentColumns = [PhotoContract.Columns.id],
-            childColumns = [TagContract.Columns.photoId]
+            childColumns = [TagContract.Columns.photoId],
+            onDelete = CASCADE, onUpdate = NO_ACTION
         )
     ]
 )

@@ -1,7 +1,6 @@
 package ru.maxim.unsplash.database.mapper
 
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.first
 import ru.maxim.unsplash.database.dao.PhotoDao
 import ru.maxim.unsplash.database.dao.UserDao
 import ru.maxim.unsplash.database.model.CollectionEntity
@@ -22,7 +21,7 @@ class CollectionEntityMapper(
     private val photoDao: PhotoDao
 ) : DomainMapper<CollectionEntity, Collection> {
 
-    override suspend fun toDomainModel(model: CollectionEntity) = withContext(IO) {
+    override suspend fun toDomainModel(model: CollectionEntity): Collection {
         val user = model.userId?.let { userId ->
             userDao.getById(userId)?.let { userEntity ->
                 userEntityMapper.toDomainModel(userEntity)
@@ -30,12 +29,12 @@ class CollectionEntityMapper(
         }
 
         val coverPhoto = model.coverPhotoId?.let { photoId ->
-            photoDao.getById(photoId)?.let { photoEntity ->
+            photoDao.getById(photoId).first()?.let { photoEntity ->
                 photoEntityMapper.toDomainModel(photoEntity)
             }
         }
 
-        return@withContext Collection(
+        return Collection(
             id = model.id,
             title = model.title,
             description = model.description,
@@ -50,28 +49,32 @@ class CollectionEntityMapper(
         )
     }
 
-    override suspend fun fromDomainModel(domainModel: Collection, vararg params: String) =
-        withContext(IO) {
-            domainModel.user?.let { user ->
-                userDao.insert(userEntityMapper.fromDomainModel(user))
-            }
-
-            domainModel.coverPhoto?.let { photo ->
-                photoDao.insert(photoEntityMapper.fromDomainModel(photo))
-            }
-
-            return@withContext CollectionEntity(
-                id = domainModel.id,
-                title = domainModel.title,
-                description = domainModel.description,
-                publishedAt = domainModel.publishedAt,
-                updatedAt = domainModel.updatedAt,
-                totalPhotos = domainModel.totalPhotos,
-                isPrivate = domainModel.isPrivate,
-                shareKey = domainModel.shareKey,
-                userId = domainModel.user?.id,
-                coverPhotoId = domainModel.coverPhoto?.id,
-                links = linksEntityMapper.fromDomainModel(domainModel.links)
-            )
+    override suspend fun fromDomainModel(
+        domainModel: Collection,
+        vararg params: String
+    ): CollectionEntity {
+        domainModel.user?.let { user ->
+            userDao.insert(userEntityMapper.fromDomainModel(user))
         }
+
+        domainModel.coverPhoto?.let { photo ->
+            val photoEntity = photoEntityMapper.fromDomainModel(photo)
+            photoDao.insert(photoEntity)
+        }
+
+        return CollectionEntity(
+            id = domainModel.id,
+            title = domainModel.title,
+            description = domainModel.description,
+            publishedAt = domainModel.publishedAt,
+            updatedAt = domainModel.updatedAt,
+            totalPhotos = domainModel.totalPhotos,
+            isPrivate = domainModel.isPrivate,
+            shareKey = domainModel.shareKey,
+            userId = domainModel.user?.id,
+            coverPhotoId = domainModel.coverPhoto?.id,
+            links = linksEntityMapper.fromDomainModel(domainModel.links),
+            System.currentTimeMillis()
+        )
+    }
 }

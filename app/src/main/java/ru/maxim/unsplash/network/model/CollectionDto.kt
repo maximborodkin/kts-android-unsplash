@@ -26,7 +26,7 @@ data class CollectionDto(
     val isPrivate: Boolean,
 
     @SerializedName("share_key")
-    val shareKey: String,
+    val shareKey: String?,
 
     @SerializedName("cover_photo")
     val coverPhoto: PhotoDto?,

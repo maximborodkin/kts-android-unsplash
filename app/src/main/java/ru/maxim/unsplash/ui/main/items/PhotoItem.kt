@@ -14,22 +14,4 @@ data class PhotoItem(
     var likedByUser: Boolean,
     var authorName: String?,
     val authorAvatar: String?
-) : BaseMainListItem() {
-    companion object {
-        @JvmStatic
-        fun fromPhoto(photo: Photo): PhotoItem =
-            PhotoItem(
-                id = photo.id,
-                width = photo.width,
-                height = photo.height,
-                regular = photo.urls.regular,
-                raw = photo.urls.raw,
-                thumbnail = photo.urls.thumb,
-                blurHash = photo.blurHash,
-                likesCount = photo.likes,
-                likedByUser = photo.likedByUser,
-                authorName = photo.user?.name,
-                authorAvatar = photo.user?.profileImage?.small
-            )
-    }
-}
+) : BaseMainListItem()

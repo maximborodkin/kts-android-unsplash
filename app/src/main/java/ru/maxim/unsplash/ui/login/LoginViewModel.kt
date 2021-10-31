@@ -39,22 +39,17 @@ class LoginViewModel private constructor(
 
     // Open OAuth2 authentication page in a browser tab
     fun startLoginPage() = viewModelScope.launch {
-        NetworkUtils.networkStateFlow.collect {
+        networkUtils.networkStateFlow.collect {
             if (it) {
                 val authIntent = authorizationService
-                    .getAuthorizationRequestIntent(AuthService.authRequest)
+                    .getAuthorizationRequestIntent(authService.authRequest)
                 launch(Main) { _loginState.emit(Process(authIntent)) }
             }
         }
     }
 
-    fun logout() = viewModelScope.launch {
-        val logoutIntent = authorizationService.getEndSessionRequestIntent(AuthService.logoutRequest)
-        withContext(Main) { _loginState.emit(Process(logoutIntent)) }
-    }
-
     fun onTokenRequestReceived(tokenRequest: TokenRequest) {
-        AuthService.performTokenRequest(
+        authService.performTokenRequest(
             authorizationService,
             tokenRequest,
             onComplete = { viewModelScope.launch(Main) { _loginState.emit(Success) } },

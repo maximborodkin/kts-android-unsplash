@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  **/
 class NetworkUtils(
     private val scope: CoroutineScope,
-    private val connectivityManager: ConnectivityManager
+    connectivityManager: ConnectivityManager
 ) {
     private val mutableNetworkStateFlow = MutableSharedFlow<Boolean>(
         replay = 1,

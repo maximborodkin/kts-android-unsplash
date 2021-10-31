@@ -10,7 +10,7 @@ data class Collection(
     val updatedAt: Date?,
     val totalPhotos: Int,
     val isPrivate: Boolean,
-    val shareKey: String,
+    val shareKey: String?,
     val coverPhoto: Photo?,
     val user: User?,
     val links: Links,

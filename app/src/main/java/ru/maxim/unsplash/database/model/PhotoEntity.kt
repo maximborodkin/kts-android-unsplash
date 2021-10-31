@@ -1,6 +1,8 @@
 package ru.maxim.unsplash.database.model
 
 import androidx.room.*
+import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.NO_ACTION
 import ru.maxim.unsplash.database.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.database.model.UserEntity.UserContract
 import java.util.*
@@ -11,7 +13,8 @@ import java.util.*
         ForeignKey(
             entity = UserEntity::class,
             parentColumns = [UserContract.Columns.id],
-            childColumns = [PhotoContract.Columns.userId]
+            childColumns = [PhotoContract.Columns.userId],
+            onDelete = CASCADE, onUpdate = NO_ACTION
         )
     ]
 )
@@ -61,6 +64,10 @@ data class PhotoEntity(
 
     @Embedded(prefix = "links")
     val links: LinksEntity,
+
+    //Used for ordering cached items in lists
+    @ColumnInfo(name = PhotoContract.Columns.cacheTime)
+    val cacheTime: Long
 ) {
     object PhotoContract {
         const val tableName = "photos"
@@ -78,6 +85,7 @@ data class PhotoEntity(
             const val description = "description"
             const val tags = "tags"
             const val userId = "user_id"
+            const val cacheTime = "cache_time"
         }
     }
 }

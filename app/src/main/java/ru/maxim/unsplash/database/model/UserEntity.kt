@@ -41,7 +41,11 @@ data class UserEntity(
     val profileImage: UrlsEntity,
 
     @Embedded
-    val links: LinksEntity
+    val links: LinksEntity,
+
+    //Used for ordering cached items in lists
+    @ColumnInfo(name = CollectionEntity.CollectionContract.Columns.cacheTime)
+    val cacheTime: Long
 ) {
     object UserContract {
         const val tableName = "users"
@@ -58,6 +62,7 @@ data class UserEntity(
             const val totalCollections = "total_collections"
             const val profileImage = "profile_image"
             const val links = "links"
+            const val cacheTime = "cache_time"
         }
     }
 }

@@ -8,6 +8,6 @@ interface DomainMapper<T, DomainModel> {
 
     suspend fun toDomainModelList(model: List<T>): List<DomainModel> = model.map { toDomainModel(it) }
 
-    suspend fun fromDomainModelList(domainModel: List<DomainModel>): List<T> =
-        domainModel.map { fromDomainModel(it) }
+    suspend fun fromDomainModelList(domainModel: List<DomainModel>, vararg params: String): List<T> =
+        domainModel.map { fromDomainModel(it, *params) }
 }

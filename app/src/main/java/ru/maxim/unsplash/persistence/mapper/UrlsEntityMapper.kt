@@ -1,8 +1,8 @@
 package ru.maxim.unsplash.persistence.mapper
 
-import ru.maxim.unsplash.persistence.model.UrlsEntity
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Urls
+import ru.maxim.unsplash.persistence.model.UrlsEntity
 
 class UrlsEntityMapper : DomainMapper<UrlsEntity, Urls> {
 

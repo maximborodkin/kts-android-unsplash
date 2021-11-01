@@ -43,7 +43,7 @@ data class UserEntity(
     @Embedded
     val links: LinksEntity,
 
-    //Used for ordering cached items in lists
+    //Used for ordering cached items to retain fetched items order
     @ColumnInfo(name = CollectionEntity.CollectionContract.Columns.cacheTime)
     val cacheTime: Long
 ) {

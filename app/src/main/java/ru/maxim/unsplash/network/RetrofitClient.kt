@@ -7,13 +7,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.network.service.CollectionService
 import ru.maxim.unsplash.network.service.PhotoService
+import ru.maxim.unsplash.persistence.PreferencesManager
 
-class RetrofitClient(
-    private val preferencesManager: PreferencesManager
-) {
+class RetrofitClient(private val preferencesManager: PreferencesManager) {
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply { level = BODY })
@@ -30,11 +28,14 @@ class RetrofitClient(
         }
         .build()
 
-    private val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create()
     private val instance: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create(gson))
+        .addConverterFactory(
+            GsonConverterFactory.create(
+                GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create()
+            )
+        )
         .build()
 
     val photoService: PhotoService by lazy { instance.create(PhotoService::class.java) }
@@ -42,6 +43,5 @@ class RetrofitClient(
 
     companion object {
         private const val baseUrl = "https://api.unsplash.com/"
-//    private const val baseUrl = "https://unsplash.free.beeceptor.com"
     }
 }

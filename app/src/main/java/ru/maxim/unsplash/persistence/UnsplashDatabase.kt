@@ -4,7 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.maxim.unsplash.persistence.converter.DateConverter
-import ru.maxim.unsplash.persistence.dao.*
+import ru.maxim.unsplash.persistence.dao.CollectionDao
+import ru.maxim.unsplash.persistence.dao.PhotoDao
+import ru.maxim.unsplash.persistence.dao.TagDao
+import ru.maxim.unsplash.persistence.dao.UserDao
 import ru.maxim.unsplash.persistence.model.*
 
 @Database(

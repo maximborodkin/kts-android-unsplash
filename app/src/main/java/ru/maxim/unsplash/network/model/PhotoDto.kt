@@ -51,8 +51,4 @@ data class PhotoDto(
 
     @SerializedName("links")
     val links: LinksDto
-) {
-
-
-
-}
+)

@@ -11,8 +11,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainBinding
-import ru.maxim.unsplash.ui.feed.FeedFragment
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
+import ru.maxim.unsplash.ui.feed.FeedFragment
+import ru.maxim.unsplash.ui.feed.FeedFragment.ListMode
 
 class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
     private val binding by viewBinding(FragmentMainBinding::bind)
@@ -67,12 +68,5 @@ class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
     ) {
         val action = MainFragmentDirections.actionMainToCollectionDetails(collectionId)
         findNavController().navigate(action)
-    }
-
-    enum class ListMode {
-        Editorial,
-        Collections,
-        Profile,
-        CollectionPhotos
     }
 }

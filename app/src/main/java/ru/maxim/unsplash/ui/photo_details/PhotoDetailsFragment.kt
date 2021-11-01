@@ -49,7 +49,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
             photoDetailsSwipeRefresh.setOnRefreshListener { refresh() }
             photoDetailsLikeBtn.setOnClickListener { model.setLike() }
             photoDetailsBackBtn.setOnClickListener { findNavController().popBackStack() }
-            photoDetailsAuthor.setOnClickListener { photo?.user?.id?.let {openUserProfile(it)} }
+            photoDetailsAuthor.setOnClickListener { photo?.user?.id?.let { openUserProfile(it) } }
             photoDetailsCacheWarning.itemCacheShownRefreshBtn.setOnClickListener { refresh() }
         }
 

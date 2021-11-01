@@ -5,10 +5,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsViewModelFactory
+import ru.maxim.unsplash.ui.feed.FeedViewModel
+import ru.maxim.unsplash.ui.feed.FeedViewModel.FeedViewModelFactory
 import ru.maxim.unsplash.ui.login.LoginViewModel
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginViewModelFactory
-import ru.maxim.unsplash.ui.feed.FeedViewModel
-import ru.maxim.unsplash.ui.feed.FeedViewModel.MainViewModelFactory
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsViewModelFactory
 
@@ -26,7 +26,7 @@ val presentationModule = module(createdAtStart = true) {
     }
 
     viewModel { parameters ->
-        MainViewModelFactory(
+        FeedViewModelFactory(
             application = androidApplication(),
             photoRepository = get(),
             collectionRepository = get(),

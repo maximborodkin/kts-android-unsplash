@@ -6,14 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Photo
 import ru.maxim.unsplash.network.exception.*
@@ -40,7 +37,7 @@ class PhotoDetailsViewModel private constructor(
 
     fun loadPhoto() = viewModelScope.launch {
         photoRepository.getById(photoId).collect { result ->
-            when(result) {
+            when (result) {
                 is Result.Loading -> {
                     result.data?.let { _photoDetailsState.emit(Success(it)) }
                 }
@@ -68,27 +65,12 @@ class PhotoDetailsViewModel private constructor(
     }
 
     fun refresh() = viewModelScope.launch {
-        withContext(Main) { _photoDetailsState.emit(Refreshing) }
+        _photoDetailsState.emit(Refreshing)
         loadPhoto()
     }
 
-    fun setLike() = viewModelScope.launch(IO) {
-//        _photoDetailsState.collect { state ->
-//            // If current state is success, photo was loaded and available for update
-//            if (state is Success) {
-//                val response =
-//                    if (state.photo.likedByUser) photoService.removeLike(photoId)
-//                    else photoService.setLike(photoId)
-//                val like = response.body()
-//                if (response.isSuccessful && like != null) {
-//                    val updatedPhoto = state.photo.apply {
-//                        likedByUser = like.photo.likedByUser
-//                        likes = like.photo.likes
-//                    }
-//                    withContext(Main) { _photoDetailsState.emit(Success(updatedPhoto)) }
-//                }
-//            }
-//        }
+    fun setLike() = viewModelScope.launch {
+
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="text"
             type="String" />
@@ -11,15 +12,15 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/tag_background"
-        android:paddingVertical="6dp"
-        android:paddingHorizontal="12dp"
         android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="4dp"
+        android:background="@drawable/tag_background"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
         android:text="@{text}"
         android:textColor="@color/white"
         android:textSize="14sp"
-        tools:text="programming"
-        android:layout_marginVertical="4dp">
+        tools:text="programming">
 
     </androidx.appcompat.widget.AppCompatTextView>
 </layout>

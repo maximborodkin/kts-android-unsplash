@@ -22,7 +22,9 @@ class PageLoadingErrorItemDelegate(private val onRetry: () -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup): PageLoadingErrorViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return PageLoadingErrorViewHolder(inflater.inflate(R.layout.item_page_loading_error, parent, false))
+        return PageLoadingErrorViewHolder(
+            inflater.inflate(R.layout.item_page_loading_error, parent, false)
+        )
     }
 
     override fun onBindViewHolder(

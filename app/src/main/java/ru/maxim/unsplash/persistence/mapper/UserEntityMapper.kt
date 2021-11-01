@@ -1,12 +1,12 @@
 package ru.maxim.unsplash.persistence.mapper
 
-import ru.maxim.unsplash.persistence.model.LinksEntity
-import ru.maxim.unsplash.persistence.model.UrlsEntity
-import ru.maxim.unsplash.persistence.model.UserEntity
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Links
 import ru.maxim.unsplash.domain.model.Urls
 import ru.maxim.unsplash.domain.model.User
+import ru.maxim.unsplash.persistence.model.LinksEntity
+import ru.maxim.unsplash.persistence.model.UrlsEntity
+import ru.maxim.unsplash.persistence.model.UserEntity
 
 class UserEntityMapper(
     private val urlsEntityMapper: DomainMapper<UrlsEntity, Urls>,

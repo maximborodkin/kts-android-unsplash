@@ -1,7 +1,7 @@
 package ru.maxim.unsplash.network.model
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
+import java.util.Date
 
 data class CollectionDto(
     @SerializedName("id")

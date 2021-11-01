@@ -15,7 +15,6 @@ import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Collection
 import ru.maxim.unsplash.network.exception.*
 import ru.maxim.unsplash.repository.CollectionRepository
-import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsState.*
 import ru.maxim.unsplash.util.Result
 
@@ -32,13 +31,14 @@ class CollectionDetailsViewModel private constructor(
         object Empty : CollectionDetailsState()
         object Refreshing : CollectionDetailsState()
         data class Success(val collection: Collection) : CollectionDetailsState()
-        data class Error(@StringRes val messageRes: Int, val cache: Collection?) : CollectionDetailsState()
+        data class Error(@StringRes val messageRes: Int, val cache: Collection?) :
+            CollectionDetailsState()
     }
 
     fun loadCollection() = viewModelScope.launch {
         val collection = collectionRepository.getById(collectionId)
         collection.collect { result ->
-            when(result) {
+            when (result) {
                 is Result.Loading -> {
                     result.data?.let { _collectionDetailsState.emit(Success(it)) }
                 }

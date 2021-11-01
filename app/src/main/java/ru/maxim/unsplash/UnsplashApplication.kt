@@ -7,7 +7,6 @@ import ru.maxim.unsplash.di.*
 import timber.log.Timber
 
 class UnsplashApplication : Application() {
-//    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate() {
         super.onCreate()
@@ -26,9 +25,4 @@ class UnsplashApplication : Application() {
             ))
         }
     }
-
-//    override fun onLowMemory() {
-//        super.onLowMemory()
-//        applicationScope.cancel("onLowMemory called in application class")
-//    }
 }

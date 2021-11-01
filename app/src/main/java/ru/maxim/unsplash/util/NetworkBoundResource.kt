@@ -1,15 +1,12 @@
 package ru.maxim.unsplash.util
 
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import ru.maxim.unsplash.network.exception.*
-import ru.maxim.unsplash.network.model.PhotoDto
 import timber.log.Timber
 import java.io.IOException
-import java.lang.Exception
 
 fun <DomainType, ResponseType> networkBoundResource(
     query: suspend () -> Flow<DomainType>,
@@ -30,7 +27,7 @@ fun <DomainType, ResponseType> networkBoundResource(
                 withContext(IO) { cacheFetchResult(responseBody) }
                 query().flowOn(IO).map { Result.Success(it) }
             } else {
-                throw when(response.code()) {
+                throw when (response.code()) {
                     401 -> UnauthorizedException(response)
                     403 -> ForbiddenException(response)
                     404 -> NotFoundException(response)

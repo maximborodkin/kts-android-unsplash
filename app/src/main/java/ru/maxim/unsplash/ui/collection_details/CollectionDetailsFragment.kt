@@ -17,7 +17,7 @@ import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentCollectionDetailsBinding
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
 import ru.maxim.unsplash.ui.feed.FeedFragment
-import ru.maxim.unsplash.ui.main.MainFragment.ListMode
+import ru.maxim.unsplash.ui.feed.FeedFragment.ListMode
 import ru.maxim.unsplash.util.longToast
 
 class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details),

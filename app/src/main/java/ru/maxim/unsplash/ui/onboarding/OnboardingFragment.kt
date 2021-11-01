@@ -26,31 +26,29 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
             Fragment(R.layout.fragment_onboarding_third)
         )
 
-        binding.onboardingPager.adapter = OnboardingPagerAdapter(
-            childFragmentManager,
-            lifecycle,
-            fragments
-        )
+        binding.onboardingPager.adapter =
+            OnboardingPagerAdapter(childFragmentManager, lifecycle, fragments)
 
-        binding.onboardingPager.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                binding.onboardingBackBtn.isVisible = position > 0
-                // Change next button to finish button on last fragment
-                if (position == fragments.size - 1) {
-                    binding.onboardingNextBtn.apply {
-                        text = getString(R.string.finish)
-                        clearDrawables()
-                    }
-                } else {
-                    binding.onboardingNextBtn.apply {
-                        text = getString(R.string.next)
-                        setDrawableEnd(R.drawable.ic_arrow_forward)
+        binding.onboardingPager.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    binding.onboardingBackBtn.isVisible = position > 0
+                    // Change label on next button to finish button on last fragment
+                    // and next for others
+                    if (position == fragments.size - 1) {
+                        binding.onboardingNextBtn.apply {
+                            text = getString(R.string.finish)
+                            clearDrawables()
+                        }
+                    } else {
+                        binding.onboardingNextBtn.apply {
+                            text = getString(R.string.next)
+                            setDrawableEnd(R.drawable.ic_arrow_forward)
+                        }
                     }
                 }
-            }
-        })
+            })
 
         binding.onboardingNextBtn.setOnClickListener {
             // Navigate to next fragment if its possible

@@ -11,7 +11,6 @@ import ru.maxim.unsplash.persistence.model.TagEntity.TagContract
 @Dao
 interface PhotoDao {
 
-
     @Query("SELECT * FROM ${PhotoContract.tableName} ORDER BY ${PhotoContract.Columns.cacheTime}")
     fun getAll(): Flow<List<PhotoEntity>>
 
@@ -23,22 +22,24 @@ interface PhotoDao {
         SELECT * FROM ${PhotoContract.tableName} 
         INNER JOIN ${CollectionPhotoContract.tableName}
         ON 
-            ${PhotoContract.tableName}.${PhotoContract.Columns.id} = 
+            ${PhotoContract.tableName}.${PhotoContract.Columns.id}=
             ${CollectionPhotoContract.tableName}.${CollectionPhotoContract.Columns.photoId}
-        WHERE ${CollectionPhotoContract.tableName}.${CollectionPhotoContract.Columns.collectionId}=:collectionId
+        WHERE ${CollectionPhotoContract.tableName}.${CollectionPhotoContract.Columns.collectionId}=
+            :collectionId
         ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.cacheTime}"""
     )
     fun getByCollectionId(collectionId: String): Flow<List<PhotoEntity>>
 
     @Query(
-        """SELECT * FROM ${PhotoContract.tableName}
-              INNER JOIN ${TagContract.tableName}
-                  ON 
-                      ${PhotoContract.tableName}.${PhotoContract.Columns.id} = 
-                      ${TagContract.tableName}.${TagContract.Columns.photoId} 
-              WHERE ${PhotoContract.tableName}.${PhotoContract.Columns.description} LIKE :query 
-              OR ${TagContract.tableName}.${TagContract.Columns.title} LIKE :query
-              ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.cacheTime}"""
+        """
+        SELECT * FROM ${PhotoContract.tableName}
+          INNER JOIN ${TagContract.tableName}
+              ON 
+                  ${PhotoContract.tableName}.${PhotoContract.Columns.id}=
+                  ${TagContract.tableName}.${TagContract.Columns.photoId} 
+          WHERE ${PhotoContract.tableName}.${PhotoContract.Columns.description} LIKE :query 
+          OR ${TagContract.tableName}.${TagContract.Columns.title} LIKE :query
+          ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.cacheTime}"""
     )
     fun search(query: String): Flow<List<PhotoEntity>>
 

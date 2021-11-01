@@ -1,8 +1,8 @@
 package ru.maxim.unsplash.persistence.mapper
 
-import ru.maxim.unsplash.persistence.model.TagEntity
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Tag
+import ru.maxim.unsplash.persistence.model.TagEntity
 
 class TagEntityMapper : DomainMapper<TagEntity, Tag> {
 

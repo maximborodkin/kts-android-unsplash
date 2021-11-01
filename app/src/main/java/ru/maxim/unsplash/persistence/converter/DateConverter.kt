@@ -1,7 +1,7 @@
 package ru.maxim.unsplash.persistence.converter
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.util.Date
 
 object DateConverter {
     @TypeConverter

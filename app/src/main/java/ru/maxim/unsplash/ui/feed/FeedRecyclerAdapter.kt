@@ -19,9 +19,19 @@ class FeedRecyclerAdapter(
     init {
         delegatesManager
             .addDelegate(
-                PhotoItemDelegate(onSetLike, onAddToCollection, onDownload, feedActionsListener::openPhotoDetails)
+                PhotoItemDelegate(
+                    onSetLike,
+                    onAddToCollection,
+                    onDownload,
+                    feedActionsListener::openPhotoDetails
+                )
             )
-            .addDelegate(CollectionItemDelegate(onCollectionShare, feedActionsListener::openCollectionDetails))
+            .addDelegate(
+                CollectionItemDelegate(
+                    onCollectionShare,
+                    feedActionsListener::openCollectionDetails
+                )
+            )
             .addDelegate(InitialLoadingItemDelegate())
             .addDelegate(PageLoadingItemDelegate())
             .addDelegate(EmptyListItemDelegate(onRefresh))

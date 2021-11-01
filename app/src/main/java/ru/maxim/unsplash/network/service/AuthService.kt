@@ -2,18 +2,15 @@ package ru.maxim.unsplash.network.service
 
 import android.net.Uri
 import net.openid.appauth.*
-import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.network.AuthConfig
+import ru.maxim.unsplash.persistence.PreferencesManager
 
-class AuthService(
-    private val preferencesManager: PreferencesManager
-) {
+class AuthService(private val preferencesManager: PreferencesManager) {
+
     private val clientAuthentication = ClientSecretPost(AuthConfig.clientSecret)
     private val authorizationService = AuthorizationServiceConfiguration(
         Uri.parse(AuthConfig.authUri),
-        Uri.parse(AuthConfig.tokenUri),
-        null,
-        Uri.parse(AuthConfig.logoutUri)
+        Uri.parse(AuthConfig.tokenUri)
     )
 
     val authRequest = AuthorizationRequest.Builder(

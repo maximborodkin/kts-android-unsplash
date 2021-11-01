@@ -18,13 +18,13 @@
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/collectionSwipeRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:id="@+id/collectionSwipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/collectionDetailsTitle"
@@ -123,11 +123,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/collectionPublishedAt"
                 app:layout_constraintBottom_toBottomOf="parent"
-                tools:layout="@layout/fragment_main_page"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/collectionPublishedAt"
+                tools:layout="@layout/fragment_feed" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

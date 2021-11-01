@@ -8,10 +8,18 @@ import ru.maxim.unsplash.persistence.model.CollectionEntity.CollectionContract
 @Dao
 interface CollectionDao {
 
-    @Query("SELECT * FROM ${CollectionContract.tableName} ORDER BY ${CollectionContract.Columns.cacheTime}")
+    @Query(
+        """
+        SELECT * FROM ${CollectionContract.tableName}
+        ORDER BY ${CollectionContract.Columns.cacheTime}"""
+    )
     fun getAll(): Flow<List<CollectionEntity>>
 
-    @Query("SELECT * FROM ${CollectionContract.tableName} WHERE ${CollectionContract.Columns.id}=:id")
+    @Query(
+        """
+        SELECT * FROM ${CollectionContract.tableName} 
+        WHERE ${CollectionContract.Columns.id}=:id"""
+    )
     fun getById(id: String): Flow<CollectionEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

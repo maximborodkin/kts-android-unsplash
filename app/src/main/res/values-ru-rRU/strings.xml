@@ -42,7 +42,7 @@
     <string name="forbidden_collection">Недостаточно прав для доступа к этой коллекции</string>
     <string name="collection_not_found">Коллекция не найдена</string>
 
-    <plurals name="photos_count">
+    <plurals name="photos_count" tools:ignore="UnusedQuantity">
         <item quantity="zero" tools:ignore="UnusedQuantity">Пока нет фото</item>
         <item quantity="one">%d фото</item>
         <item quantity="few">%d фотографии</item>

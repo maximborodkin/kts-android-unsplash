@@ -1,17 +1,17 @@
 package ru.maxim.unsplash.persistence.mapper
 
 import kotlinx.coroutines.flow.first
+import ru.maxim.unsplash.domain.DomainMapper
+import ru.maxim.unsplash.domain.model.Collection
+import ru.maxim.unsplash.domain.model.Links
+import ru.maxim.unsplash.domain.model.Photo
+import ru.maxim.unsplash.domain.model.User
 import ru.maxim.unsplash.persistence.dao.PhotoDao
 import ru.maxim.unsplash.persistence.dao.UserDao
 import ru.maxim.unsplash.persistence.model.CollectionEntity
 import ru.maxim.unsplash.persistence.model.LinksEntity
 import ru.maxim.unsplash.persistence.model.PhotoEntity
 import ru.maxim.unsplash.persistence.model.UserEntity
-import ru.maxim.unsplash.domain.DomainMapper
-import ru.maxim.unsplash.domain.model.Collection
-import ru.maxim.unsplash.domain.model.Links
-import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.domain.model.User
 
 class CollectionEntityMapper(
     private val userEntityMapper: DomainMapper<UserEntity, User>,

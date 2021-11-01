@@ -26,7 +26,7 @@ class UserDtoMapper(
             totalCollections = model.totalCollections,
             profileImage = urlsDtoMapper.toDomainModel(model.profileImage),
             links = linksDtoMapper.toDomainModel(model.links)
-    )
+        )
 
     override suspend fun fromDomainModel(domainModel: User, vararg params: String) =
         UserDto(

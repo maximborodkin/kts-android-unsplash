@@ -4,13 +4,13 @@ import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import ru.maxim.unsplash.domain.DomainMapper
+import ru.maxim.unsplash.domain.model.*
+import ru.maxim.unsplash.domain.model.Collection
 import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.persistence.UnsplashDatabase
 import ru.maxim.unsplash.persistence.mapper.*
 import ru.maxim.unsplash.persistence.model.*
-import ru.maxim.unsplash.domain.DomainMapper
-import ru.maxim.unsplash.domain.model.*
-import ru.maxim.unsplash.domain.model.Collection
 
 
 val persistenceModule = module(createdAtStart = true) {

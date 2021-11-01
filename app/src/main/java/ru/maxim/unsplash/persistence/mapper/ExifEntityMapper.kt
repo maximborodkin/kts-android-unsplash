@@ -1,8 +1,8 @@
 package ru.maxim.unsplash.persistence.mapper
 
-import ru.maxim.unsplash.persistence.model.ExifEntity
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Exif
+import ru.maxim.unsplash.persistence.model.ExifEntity
 
 class ExifEntityMapper : DomainMapper<ExifEntity, Exif> {
 

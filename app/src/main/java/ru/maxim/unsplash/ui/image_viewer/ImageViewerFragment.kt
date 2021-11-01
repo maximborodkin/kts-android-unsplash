@@ -28,11 +28,11 @@ class ImageViewerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-       val scaleImageView = ScaleImageView(requireContext()).apply {
-           layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-           setOnDismissListener { findNavController().popBackStack() }
-           load(url = args.photoUrl, blurHash = args.blurHash)
-       }
+        val scaleImageView = ScaleImageView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+            setOnDismissListener { findNavController().popBackStack() }
+            load(url = args.photoUrl, blurHash = args.blurHash)
+        }
         return scaleImageView
     }
 }

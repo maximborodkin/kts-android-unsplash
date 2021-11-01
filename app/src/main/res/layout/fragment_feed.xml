@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/mainSwipeRefresh"
+        android:id="@+id/feedSwipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mainRecycler"
+            android:id="@+id/feedRecycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
             android:scrollbarSize="12dp"
+            android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_photo"/>
+            tools:listitem="@layout/item_photo" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

@@ -1,10 +1,10 @@
 package ru.maxim.unsplash.persistence.mapper
 
+import ru.maxim.unsplash.domain.DomainMapper
+import ru.maxim.unsplash.domain.model.*
 import ru.maxim.unsplash.persistence.dao.TagDao
 import ru.maxim.unsplash.persistence.dao.UserDao
 import ru.maxim.unsplash.persistence.model.*
-import ru.maxim.unsplash.domain.DomainMapper
-import ru.maxim.unsplash.domain.model.*
 
 class PhotoEntityMapper(
     private val tagDao: TagDao,

@@ -1,11 +1,12 @@
 package ru.maxim.unsplash.persistence.model
 
 import androidx.room.*
-import androidx.room.ForeignKey.*
+import androidx.room.ForeignKey.NO_ACTION
+import androidx.room.ForeignKey.SET_NULL
 import ru.maxim.unsplash.persistence.model.CollectionEntity.CollectionContract
 import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
-import java.util.*
+import java.util.Date
 
 @Entity(
     tableName = CollectionContract.tableName,
@@ -59,7 +60,7 @@ data class CollectionEntity(
     @Embedded
     val links: LinksEntity,
 
-    //Used for ordering cached items in lists
+    //Used for ordering cached items to retain fetched items order
     @ColumnInfo(name = CollectionContract.Columns.cacheTime)
     val cacheTime: Long
 ) {

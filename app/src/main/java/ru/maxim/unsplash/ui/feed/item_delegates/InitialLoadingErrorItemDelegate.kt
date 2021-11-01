@@ -22,7 +22,9 @@ class InitialLoadingErrorItemDelegate(private val onRefresh: () -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup): InitialLoadingErrorViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return InitialLoadingErrorViewHolder(inflater.inflate(R.layout.item_initial_loading_error, parent, false))
+        return InitialLoadingErrorViewHolder(
+            inflater.inflate(R.layout.item_initial_loading_error, parent, false)
+        )
     }
 
     override fun onBindViewHolder(

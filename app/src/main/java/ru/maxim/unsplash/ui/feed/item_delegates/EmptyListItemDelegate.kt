@@ -35,7 +35,7 @@ class EmptyListItemDelegate(private val onRefresh: () -> Unit) :
         private val binding by viewBinding(ItemEmptyListBinding::bind)
 
         fun bind() {
-            binding.itemEmptyListRefreshBtn.setOnClickListener{ onRefresh() }
+            binding.itemEmptyListRefreshBtn.setOnClickListener { onRefresh() }
         }
     }
 }

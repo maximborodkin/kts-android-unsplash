@@ -9,7 +9,6 @@ import android.graphics.Matrix
 import android.graphics.Matrix.*
 import android.graphics.PointF
 import android.graphics.RectF
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -19,9 +18,7 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.OnScaleGestureListener
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
 import androidx.core.view.ScaleGestureDetectorCompat
-import ru.maxim.unsplash.R
 
 /**
  * ScaleImageView is a extension of [AppCompatImageView], providing a pinch-to-zoom and

@@ -1,6 +1,6 @@
 package ru.maxim.unsplash.domain.model
 
-import java.util.*
+import java.util.Date
 
 data class Collection(
     val id: String,

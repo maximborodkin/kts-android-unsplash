@@ -2,7 +2,7 @@ package ru.maxim.unsplash.network.service
 
 import android.net.Uri
 import net.openid.appauth.*
-import ru.maxim.unsplash.database.PreferencesManager
+import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.network.AuthConfig
 
 class AuthService(
@@ -23,13 +23,6 @@ class AuthService(
         Uri.parse(AuthConfig.authCallback)
     ).setScope(AuthConfig.scope)
         .setCodeVerifier(null)
-        .build()
-
-    val logoutRequest = EndSessionRequest.Builder(
-        authorizationService
-    )
-        .setIdTokenHint(preferencesManager.accessToken)
-        .setPostLogoutRedirectUri(Uri.parse(AuthConfig.logoutCallback))
         .build()
 
     fun performTokenRequest(

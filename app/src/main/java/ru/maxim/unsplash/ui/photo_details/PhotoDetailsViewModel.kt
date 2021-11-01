@@ -19,6 +19,7 @@ import ru.maxim.unsplash.domain.model.Photo
 import ru.maxim.unsplash.network.exception.*
 import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
+import ru.maxim.unsplash.util.Result
 import timber.log.Timber
 
 class PhotoDetailsViewModel private constructor(
@@ -33,58 +34,36 @@ class PhotoDetailsViewModel private constructor(
     sealed class PhotoDetailsState {
         object Empty : PhotoDetailsState()
         object Refreshing : PhotoDetailsState()
-        data class Success(val photo: Photo, val isCache: Boolean = false) : PhotoDetailsState()
-        data class Error(@StringRes val messageRes: Int?) : PhotoDetailsState()
+        data class Success(val photo: Photo) : PhotoDetailsState()
+        data class Error(@StringRes val messageRes: Int, val cache: Photo?) : PhotoDetailsState()
     }
 
-    fun loadPhoto() = viewModelScope.launch(IO) {
-        try {
-            val response = photoService.getById(photoId)
-            val responseBody = response.body()
-            if (response.isSuccessful && responseBody != null) {
-                cacheResponse(responseBody)
-                withContext(Main) { _photoDetailsState.emit(Success(responseBody)) }
-            } else {
-                val messageRes = when (response.code()) {
-                    401 -> {
-                        //TODO: update auth credentials
-                        R.string.unauthorized_error
-                    }
-                    403 -> R.string.not_enough_rights_photo
-                    404 -> R.string.photo_not_found
-                    408 -> R.string.timeout_error
-                    in 500..599 -> R.string.server_error
-                    else -> null
+    fun loadPhoto() = viewModelScope.launch {
+        photoRepository.getById(photoId).collect { result ->
+            when(result) {
+                is Result.Loading -> {
+                    result.data?.let { _photoDetailsState.emit(Success(it)) }
                 }
-                withContext(Main) { _photoDetailsState.emit(Error(messageRes)) }
-            }
-        }catch (e: Exception) {
-            Timber.e(e.message)
-            try {
-                loadCache()
-            } catch (e: Exception) {
-                Timber.e(e.message)
-                withContext(Main) { _photoDetailsState.emit(Error(null)) }
-            }
-        }
-    }
 
-    private suspend fun cacheResponse(photo: Photo) = withContext(IO) {
-        val photoDao = database.photoDao()
-        val tagDao = database.tagDao()
-        photoDao.insert(photo.fromPhoto())
-        photo.tags?.let {
-            tagDao.insertAll(it.map { tag -> tag.fromTag(photoId = photo.id) })
-        }
-    }
+                is Result.Success -> {
+                    result.data?.let { _photoDetailsState.emit(Success(it)) }
+                }
 
-    private suspend fun loadCache() = withContext(IO) {
-        val photoDao = database.photoDao()
-        val photo = photoDao.getById(photoId)?.toPhoto()
-        if (photo != null) {
-            withContext(Main) { _photoDetailsState.emit(Success(photo, true)) }
-        } else {
-            withContext(Main) { _photoDetailsState.emit(Error(null)) }
+                is Result.Error -> {
+                    Timber.tag("PHOTO_STATE").d("error")
+
+                    val errorMessage = when (result.exception) {
+                        is UnauthorizedException -> R.string.unauthorized_error
+                        is ForbiddenException -> R.string.forbidden_photo
+                        is NotFoundException -> R.string.photo_not_found
+                        is TimeoutException -> R.string.timeout_error
+                        is ServerErrorException -> R.string.server_error
+                        is NoConnectionException -> R.string.no_internet
+                        else -> R.string.common_loading_error
+                    }
+                    _photoDetailsState.emit(Error(errorMessage, result.data))
+                }
+            }
         }
     }
 
@@ -94,22 +73,22 @@ class PhotoDetailsViewModel private constructor(
     }
 
     fun setLike() = viewModelScope.launch(IO) {
-        _photoDetailsState.collect { state ->
-            // If current state is success, photo was loaded and available for update
-            if (state is Success) {
-                val response =
-                    if (state.photo.likedByUser) photoService.removeLike(photoId)
-                    else photoService.setLike(photoId)
-                val like = response.body()
-                if (response.isSuccessful && like != null) {
-                    val updatedPhoto = state.photo.apply {
-                        likedByUser = like.photo.likedByUser
-                        likes = like.photo.likes
-                    }
-                    withContext(Main) { _photoDetailsState.emit(Success(updatedPhoto)) }
-                }
-            }
-        }
+//        _photoDetailsState.collect { state ->
+//            // If current state is success, photo was loaded and available for update
+//            if (state is Success) {
+//                val response =
+//                    if (state.photo.likedByUser) photoService.removeLike(photoId)
+//                    else photoService.setLike(photoId)
+//                val like = response.body()
+//                if (response.isSuccessful && like != null) {
+//                    val updatedPhoto = state.photo.apply {
+//                        likedByUser = like.photo.likedByUser
+//                        likes = like.photo.likes
+//                    }
+//                    withContext(Main) { _photoDetailsState.emit(Success(updatedPhoto)) }
+//                }
+//            }
+//        }
     }
 
     @Suppress("UNCHECKED_CAST")

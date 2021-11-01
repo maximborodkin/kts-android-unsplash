@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.network.RetrofitClient
+import ru.maxim.unsplash.network.exception.*
+import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
 import timber.log.Timber
 

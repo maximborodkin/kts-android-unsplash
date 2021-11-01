@@ -1,11 +1,11 @@
-package ru.maxim.unsplash.database.model
+package ru.maxim.unsplash.persistence.model
 
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.maxim.unsplash.database.model.UserEntity.UserContract
+import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
 
 @Entity(tableName = UserContract.tableName)
 data class UserEntity(

@@ -1,10 +1,9 @@
-package ru.maxim.unsplash.database.model
+package ru.maxim.unsplash.persistence.model
 
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
-import androidx.room.ForeignKey.NO_ACTION
-import ru.maxim.unsplash.database.model.PhotoEntity.PhotoContract
-import ru.maxim.unsplash.database.model.UserEntity.UserContract
+import androidx.room.ForeignKey.*
+import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
+import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
 import java.util.*
 
 @Entity(
@@ -14,7 +13,7 @@ import java.util.*
             entity = UserEntity::class,
             parentColumns = [UserContract.Columns.id],
             childColumns = [PhotoContract.Columns.userId],
-            onDelete = CASCADE, onUpdate = NO_ACTION
+            onDelete = SET_NULL, onUpdate = NO_ACTION
         )
     ]
 )

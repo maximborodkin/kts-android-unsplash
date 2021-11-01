@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ActivityMainBinding
-import ru.maxim.unsplash.database.PreferencesManager
+import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.util.NetworkUtils
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {

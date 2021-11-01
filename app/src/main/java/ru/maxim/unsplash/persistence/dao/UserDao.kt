@@ -1,8 +1,8 @@
-package ru.maxim.unsplash.database.dao
+package ru.maxim.unsplash.persistence.dao
 
 import androidx.room.*
-import ru.maxim.unsplash.database.model.UserEntity
-import ru.maxim.unsplash.database.model.UserEntity.UserContract
+import ru.maxim.unsplash.persistence.model.UserEntity
+import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
 
 @Dao
 interface UserDao {

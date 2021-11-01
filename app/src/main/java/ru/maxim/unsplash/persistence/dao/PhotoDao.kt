@@ -1,12 +1,12 @@
-package ru.maxim.unsplash.database.dao
+package ru.maxim.unsplash.persistence.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.maxim.unsplash.database.model.CollectionPhotoCrossRef
-import ru.maxim.unsplash.database.model.CollectionPhotoCrossRef.CollectionPhotoContract
-import ru.maxim.unsplash.database.model.PhotoEntity
-import ru.maxim.unsplash.database.model.PhotoEntity.PhotoContract
-import ru.maxim.unsplash.database.model.TagEntity.TagContract
+import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef
+import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef.CollectionPhotoContract
+import ru.maxim.unsplash.persistence.model.PhotoEntity
+import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
+import ru.maxim.unsplash.persistence.model.TagEntity.TagContract
 
 @Dao
 interface PhotoDao {
@@ -47,6 +47,9 @@ interface PhotoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(photoEntities: List<PhotoEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertCollectionRelation(relation: CollectionPhotoCrossRef)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCollectionRelations(relations: List<CollectionPhotoCrossRef>)

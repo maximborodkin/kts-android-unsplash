@@ -1,8 +1,8 @@
-package ru.maxim.unsplash.database.mapper
+package ru.maxim.unsplash.persistence.mapper
 
-import ru.maxim.unsplash.database.dao.TagDao
-import ru.maxim.unsplash.database.dao.UserDao
-import ru.maxim.unsplash.database.model.*
+import ru.maxim.unsplash.persistence.dao.TagDao
+import ru.maxim.unsplash.persistence.dao.UserDao
+import ru.maxim.unsplash.persistence.model.*
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.*
 

@@ -1,12 +1,12 @@
-package ru.maxim.unsplash.database.model
+package ru.maxim.unsplash.persistence.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.ForeignKey.NO_ACTION
-import ru.maxim.unsplash.database.model.PhotoEntity.PhotoContract
-import ru.maxim.unsplash.database.model.TagEntity.TagContract
+import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
+import ru.maxim.unsplash.persistence.model.TagEntity.TagContract
 
 @Entity(
     tableName = TagContract.tableName,

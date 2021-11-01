@@ -1,8 +1,7 @@
-package ru.maxim.unsplash.database
+package ru.maxim.unsplash.persistence
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 
 class PreferencesManager(context: Context) {
     private val preferences = context.getSharedPreferences(preferencesName, MODE_PRIVATE)

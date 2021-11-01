@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.database.model
+package ru.maxim.unsplash.persistence.model
 
 import androidx.room.ColumnInfo
 

@@ -26,7 +26,6 @@ val dataModule = module(createdAtStart = true) {
     single<CollectionRepository> {
         CollectionRepositoryImpl(
             collectionService = get(),
-            photoRepository = get(),
             collectionDao = get(),
             collectionDtoMapper = get(named("collection_dto_mapper")),
             collectionEntityMapper = get(named("collection_entity_mapper"))

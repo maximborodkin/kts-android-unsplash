@@ -1,8 +1,8 @@
-package ru.maxim.unsplash.database.mapper
+package ru.maxim.unsplash.persistence.mapper
 
-import ru.maxim.unsplash.database.model.LinksEntity
-import ru.maxim.unsplash.database.model.UrlsEntity
-import ru.maxim.unsplash.database.model.UserEntity
+import ru.maxim.unsplash.persistence.model.LinksEntity
+import ru.maxim.unsplash.persistence.model.UrlsEntity
+import ru.maxim.unsplash.persistence.model.UserEntity
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Links
 import ru.maxim.unsplash.domain.model.Urls

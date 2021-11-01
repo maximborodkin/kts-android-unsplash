@@ -1,11 +1,11 @@
-package ru.maxim.unsplash.database.dao
+package ru.maxim.unsplash.persistence.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ru.maxim.unsplash.database.model.TagEntity
-import ru.maxim.unsplash.database.model.TagEntity.TagContract
+import ru.maxim.unsplash.persistence.model.TagEntity
+import ru.maxim.unsplash.persistence.model.TagEntity.TagContract
 
 @Dao
 interface TagDao {

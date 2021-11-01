@@ -1,9 +1,9 @@
-package ru.maxim.unsplash.database.dao
+package ru.maxim.unsplash.persistence.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.maxim.unsplash.database.model.CollectionEntity
-import ru.maxim.unsplash.database.model.CollectionEntity.CollectionContract
+import ru.maxim.unsplash.persistence.model.CollectionEntity
+import ru.maxim.unsplash.persistence.model.CollectionEntity.CollectionContract
 
 @Dao
 interface CollectionDao {

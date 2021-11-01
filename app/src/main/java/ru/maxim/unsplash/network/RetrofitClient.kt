@@ -5,11 +5,9 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
-import org.koin.android.ext.android.inject
-import org.koin.java.KoinJavaComponent.inject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.maxim.unsplash.database.PreferencesManager
+import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.network.service.CollectionService
 import ru.maxim.unsplash.network.service.PhotoService
 

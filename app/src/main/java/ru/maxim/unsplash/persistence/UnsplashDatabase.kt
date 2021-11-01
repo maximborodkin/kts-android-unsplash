@@ -1,11 +1,11 @@
-package ru.maxim.unsplash.database
+package ru.maxim.unsplash.persistence
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import ru.maxim.unsplash.database.converter.DateConverter
-import ru.maxim.unsplash.database.dao.*
-import ru.maxim.unsplash.database.model.*
+import ru.maxim.unsplash.persistence.converter.DateConverter
+import ru.maxim.unsplash.persistence.dao.*
+import ru.maxim.unsplash.persistence.model.*
 
 @Database(
     entities = [

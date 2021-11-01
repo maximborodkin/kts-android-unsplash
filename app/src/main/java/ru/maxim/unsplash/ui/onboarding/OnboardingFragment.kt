@@ -10,7 +10,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import org.koin.android.ext.android.inject
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentOnboardingBinding
-import ru.maxim.unsplash.database.PreferencesManager
+import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
 

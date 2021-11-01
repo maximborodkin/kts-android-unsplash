@@ -1,93 +1,129 @@
 package ru.maxim.unsplash.repository
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import ru.maxim.unsplash.domain.DomainMapper
+import ru.maxim.unsplash.domain.model.Photo
+import ru.maxim.unsplash.domain.model.Tag
+import ru.maxim.unsplash.network.model.PhotoDto
+import ru.maxim.unsplash.network.service.PhotoService
 import ru.maxim.unsplash.persistence.dao.PhotoDao
 import ru.maxim.unsplash.persistence.dao.TagDao
 import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef
 import ru.maxim.unsplash.persistence.model.PhotoEntity
 import ru.maxim.unsplash.persistence.model.TagEntity
-import ru.maxim.unsplash.domain.DomainMapper
-import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.domain.model.Tag
-import ru.maxim.unsplash.network.exception.*
-import ru.maxim.unsplash.network.model.PhotoDto
-import ru.maxim.unsplash.network.service.PhotoService
-import ru.maxim.unsplash.ui.main.PhotosOrderType
-import ru.maxim.unsplash.ui.main.PhotosSearchOrderType
-import java.io.IOException
+import ru.maxim.unsplash.util.Result
+import ru.maxim.unsplash.util.networkBoundResource
 
 class PhotoRepositoryImpl(
     private val photoService: PhotoService,
     private val photoDao: PhotoDao,
     private val tagDao: TagDao,
     private val photoDtoMapper: DomainMapper<PhotoDto, Photo>,
-    private val tagDtoMapper: DomainMapper<TagDao, Tag>,
     private val photoEntityMapper: DomainMapper<PhotoEntity, Photo>,
     private val tagEntityMapper: DomainMapper<TagEntity, Tag>
 ) : PhotoRepository {
 
-    override suspend fun getAllPaginated(
-        page: Int,
-        pageSize: Int,
-        order: PhotosOrderType,
-    ): List<Photo> {
-        withContext(IO) {
-            try {
-                val response = photoService.getAllPaginated(page, pageSize, order.queryParam)
-                val responseBody = response.body()
-                if (response.isSuccessful && responseBody != null) {
-                    val photos = photoDtoMapper.toDomainModelList(responseBody)
-                    updateCache(photos)
-                    return@withContext photos
-                } else {
-                    throw when(response.code()) {
-                        401 -> UnauthorizedException(response)
-                        403 -> ForbiddenException(response)
-                        404 -> NotFoundException(response)
-                        408 -> TimeoutException(response)
-                        in 500..599 -> ServerErrorException(response)
-                        else -> NetworkException(response)
-                    }
+    override suspend fun getFeedPage(page: Int): Flow<Result<List<Photo>>> =
+        networkBoundResource(
+            query = {
+                if (page == 1) {
+                    photoDao.getAll().map { photoEntityMapper.toDomainModelList(it) }
+                } else flowOf(listOf())
+            },
+            fetch = {
+                val loadSize = if (page == 1) initialPageSize else pageSize
+                photoService.getPage(page, loadSize)
+            },
+            cacheFetchResult = { response: List<PhotoDto> ->
+                if (page == 1) {
+                    photoDao.deleteAll()
                 }
-            } catch (e: IOException) {
-
+                val domainModelList = photoDtoMapper.toDomainModelList(response)
+                photoDao.insertAll(photoEntityMapper.fromDomainModelList(domainModelList))
+            },
+            shouldFetch = {
+                // TODO: create cache validation algorithm
+                true
             }
-        }
-        return listOf()
-    }
+        )
 
-    override suspend fun getById(photoId: String): Photo? = null
+    override suspend fun getById(photoId: String): Flow<Result<Photo?>> =
+        networkBoundResource(
+            query = {
+                photoDao.getById(photoId).map { photoDto ->
+                    photoDto?.let { photoEntityMapper.toDomainModel(it) }
+                }
+            },
+            fetch = {
+                photoService.getById(photoId)
+            },
+            cacheFetchResult = { response: PhotoDto ->
+                val domainModel = photoDtoMapper.toDomainModel(response)
+                photoDao.insert(photoEntityMapper.fromDomainModel(domainModel))
+                domainModel.tags?.let {
+                    tagDao.insertAll(tagEntityMapper.fromDomainModelList(it, domainModel.id))
+                }
+            },
+            shouldFetch = { true }
+        )
 
-    override suspend fun getSearchPaginated(
-        query: String,
-        page: Int,
-        pageSize: Int,
-        order: PhotosSearchOrderType
-    ): List<Photo> {
-        //TODO("Not yet implemented")
-        return listOf()
-    }
+    override suspend fun getSearchPage(query: String, page: Int): Flow<Result<List<Photo>>> =
+        networkBoundResource(
+            query = {
+                photoDao.search(query).map { photoEntityMapper.toDomainModelList(it) }
+            },
+            fetch = {
+                delay(5000)
+                val loadSize = if (page == 1) initialPageSize else pageSize
+                photoService.getSearchPage(query, page, loadSize)
+            },
+            cacheFetchResult = { response ->
+                val domainModelList = photoDtoMapper.toDomainModelList(response.results)
+                photoDao.insertAll(photoEntityMapper.fromDomainModelList(domainModelList))
+            },
+            shouldFetch = { true }
+        )
 
-    override suspend fun setLike(photoId: String): Photo {
+    override suspend fun setLike(photoId: String): Flow<Result<Photo>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun removeLike(photoId: String): Photo {
+    override suspend fun removeLike(photoId: String): Flow<Result<Photo>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getCollectionPhotosPaginated(
+    override suspend fun getCollectionPhotosPage(
         collectionId: String,
-        page: Int,
-        pageSize: Int
-    ): List<Photo> {
-        TODO("Not yet implemented")
+        page: Int
+    ): Flow<Result<List<Photo>>> =
+        networkBoundResource(
+            query = {
+                photoDao.getByCollectionId(collectionId)
+                    .map { photoEntityMapper.toDomainModelList(it) }
+            },
+            fetch = {
+                val loadSize = if (page == 1) initialPageSize else pageSize
+                photoService.getCollectionPhotosPage(collectionId, page, loadSize)
+            },
+            cacheFetchResult = { response ->
+                val domainModelList = photoDtoMapper.toDomainModelList(response)
+
+                domainModelList.forEach { photo ->
+                    photoDao.insert(photoEntityMapper.fromDomainModel(photo))
+
+                    photoDao.insertCollectionRelation(
+                        CollectionPhotoCrossRef(collectionId, photo.id)
+                    )
+                }
+            },
+            shouldFetch = { true }
+        )
+
+    private companion object {
+        private const val pageSize = 10
+        private const val initialPageSize = 30
     }
-
-    private suspend fun updateCache(photos: List<Photo>) {
-
-    }
-
-    private suspend fun updateCache(photo: Photo) = updateCache(listOf(photo))
 }

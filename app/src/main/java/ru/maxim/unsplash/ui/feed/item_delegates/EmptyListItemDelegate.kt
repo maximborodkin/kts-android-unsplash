@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemEmptyListBinding
-import ru.maxim.unsplash.ui.main.item_delegates.EmptyListItemDelegate.EmptyListViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.EmptyListItem
+import ru.maxim.unsplash.ui.feed.item_delegates.EmptyListItemDelegate.EmptyListViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.EmptyListItem
 
 class EmptyListItemDelegate(private val onRefresh: () -> Unit) :
     BaseMainItemDelegate<EmptyListItem, EmptyListViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is EmptyListItem
 

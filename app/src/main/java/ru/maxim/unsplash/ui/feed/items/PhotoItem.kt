@@ -1,6 +1,4 @@
-package ru.maxim.unsplash.ui.main.items
-
-import ru.maxim.unsplash.domain.model.Photo
+package ru.maxim.unsplash.ui.feed.items
 
 data class PhotoItem(
     val id: String,
@@ -14,4 +12,4 @@ data class PhotoItem(
     var likedByUser: Boolean,
     var authorName: String?,
     val authorAvatar: String?
-) : BaseMainListItem()
+) : BaseFeedListItem()

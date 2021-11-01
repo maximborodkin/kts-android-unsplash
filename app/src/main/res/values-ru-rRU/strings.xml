@@ -22,9 +22,9 @@
     <string name="common_login_error">Ошибка при попытке входа. Пожалуйста, попробуйте снова</string>
     <string name="editorial">Редакция</string>
     <string name="collections">Коллекции</string>
-    <string name="following">Подписки</string>
+    <string name="profile">Профиль</string>
     <string name="unable_to_load_photo">Невозможно загрузить фото</string>
-    <string name="not_enough_rights_photo">Недостаточно проав для доступа к этому фото</string>
+    <string name="forbidden_photo">Недостаточно проав для доступа к этому фото</string>
     <string name="photo_not_found">Фото не найдено</string>
     <string name="dimensions">Размер</string>
     <string name="camera">Камера</string>
@@ -39,7 +39,7 @@
     <string name="unable_to_set_like">Невозможно поставить лайк</string>
     <string name="cached_data_shown">Показаны данные из кэша</string>
     <string name="logout">Выйти</string>
-    <string name="not_enough_rights_collection">Недостаточно прав для доступа к этой коллекции</string>
+    <string name="forbidden_collection">Недостаточно прав для доступа к этой коллекции</string>
     <string name="collection_not_found">Коллекция не найдена</string>
 
     <plurals name="photos_count">
@@ -51,4 +51,6 @@
     </plurals>
     <string name="published_at_placeholder">Опубликовано %s</string>
     <string name="last_update_placeholder">Обновлено %s</string>
+    <string name="common_forbidden">Недостаточно прав для доступа к этому контенту</string>
+    <string name="common_not_found">Запрашиваемый контент не найден</string>
 </resources>

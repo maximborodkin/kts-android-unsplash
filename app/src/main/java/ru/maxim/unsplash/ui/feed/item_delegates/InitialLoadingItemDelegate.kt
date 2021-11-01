@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.Gravity
 import android.view.View
@@ -8,16 +8,16 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
-import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingItemDelegate.InitialLoadingViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.InitialLoadingItem
+import ru.maxim.unsplash.ui.feed.item_delegates.InitialLoadingItemDelegate.InitialLoadingViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.InitialLoadingItem
 
 class InitialLoadingItemDelegate :
     BaseMainItemDelegate<InitialLoadingItem, InitialLoadingViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is InitialLoadingItem
 

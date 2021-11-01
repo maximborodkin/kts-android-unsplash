@@ -1,27 +1,27 @@
-package ru.maxim.unsplash.ui.main
+package ru.maxim.unsplash.ui.feed
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
-import ru.maxim.unsplash.databinding.ItemPhotoBinding
-import ru.maxim.unsplash.ui.main.item_delegates.*
-import ru.maxim.unsplash.ui.main.items.*
+import ru.maxim.unsplash.ui.feed.item_delegates.*
+import ru.maxim.unsplash.ui.feed.items.*
 
-class MainRecyclerAdapter(
+class FeedRecyclerAdapter(
     onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     onAddToCollection: (photoId: String) -> Unit,
     onDownload: (photoId: String) -> Unit,
     onCollectionShare: (collectionId: String) -> Unit,
-    onOpenPhotoDetails: (itemBinding: ItemPhotoBinding) -> Unit,
-    onOpenCollectionDetails: (collectionId: String) -> Unit,
+    feedActionsListener: FeedActionsListener,
     onRefresh: () -> Unit,
     onRetry: () -> Unit
-) : AsyncListDifferDelegationAdapter<BaseMainListItem>(ComplexDiffCallback) {
+) : AsyncListDifferDelegationAdapter<BaseFeedListItem>(ComplexDiffCallback) {
 
     init {
         delegatesManager
-            .addDelegate(PhotoItemDelegate(onSetLike, onAddToCollection, onDownload, onOpenPhotoDetails))
-            .addDelegate(CollectionItemDelegate(onCollectionShare, onOpenCollectionDetails))
+            .addDelegate(
+                PhotoItemDelegate(onSetLike, onAddToCollection, onDownload, feedActionsListener::openPhotoDetails)
+            )
+            .addDelegate(CollectionItemDelegate(onCollectionShare, feedActionsListener::openCollectionDetails))
             .addDelegate(InitialLoadingItemDelegate())
             .addDelegate(PageLoadingItemDelegate())
             .addDelegate(EmptyListItemDelegate(onRefresh))
@@ -30,8 +30,8 @@ class MainRecyclerAdapter(
             .addDelegate(CacheShownItemDelegate(onRefresh))
     }
 
-    object ComplexDiffCallback : DiffUtil.ItemCallback<BaseMainListItem>() {
-        override fun areItemsTheSame(first: BaseMainListItem, second: BaseMainListItem): Boolean =
+    object ComplexDiffCallback : DiffUtil.ItemCallback<BaseFeedListItem>() {
+        override fun areItemsTheSame(first: BaseFeedListItem, second: BaseFeedListItem): Boolean =
             first.javaClass == second.javaClass && when (first) {
                 is PhotoItem -> first.id == (second as PhotoItem).id
                 is CollectionItem -> first.id == (second as CollectionItem).id
@@ -43,7 +43,7 @@ class MainRecyclerAdapter(
             }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(first: BaseMainListItem, second: BaseMainListItem) =
+        override fun areContentsTheSame(first: BaseFeedListItem, second: BaseFeedListItem) =
             first == second
     }
 }

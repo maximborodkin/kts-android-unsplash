@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemCacheShownBinding
-import ru.maxim.unsplash.ui.main.item_delegates.CacheShownItemDelegate.CacheShownViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.CacheShownItem
+import ru.maxim.unsplash.ui.feed.item_delegates.CacheShownItemDelegate.CacheShownViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.CacheShownItem
 
 class CacheShownItemDelegate(private val onRefresh: () -> Unit) :
     BaseMainItemDelegate<CacheShownItem, CacheShownViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is CacheShownItem
 

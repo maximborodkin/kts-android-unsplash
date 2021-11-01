@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemInitialLoadingErrorBinding
-import ru.maxim.unsplash.ui.main.item_delegates.InitialLoadingErrorItemDelegate.InitialLoadingErrorViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.InitialLoadingErrorItem
+import ru.maxim.unsplash.ui.feed.item_delegates.InitialLoadingErrorItemDelegate.InitialLoadingErrorViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.InitialLoadingErrorItem
 
 class InitialLoadingErrorItemDelegate(private val onRefresh: () -> Unit) :
     BaseMainItemDelegate<InitialLoadingErrorItem, InitialLoadingErrorViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is InitialLoadingErrorItem
 

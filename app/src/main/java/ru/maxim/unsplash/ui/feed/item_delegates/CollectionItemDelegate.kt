@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,18 +7,21 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemCollectionBinding
-import ru.maxim.unsplash.ui.main.item_delegates.CollectionItemDelegate.PhotosCollectionViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.CollectionItem
+import ru.maxim.unsplash.ui.feed.item_delegates.CollectionItemDelegate.PhotosCollectionViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.CollectionItem
 
 class CollectionItemDelegate(
     private val onShare: (collectionId: String) -> Unit,
-    private val onOpenCollectionDetails: (collectionId: String) -> Unit
+    private val openCollectionDetailsListener: (
+        collectionId: String,
+        transitionExtras: Array<Pair<View, String>>
+    ) -> Unit
 ) : BaseMainItemDelegate<CollectionItem, PhotosCollectionViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is CollectionItem
 
@@ -41,7 +44,7 @@ class CollectionItemDelegate(
             with(binding) {
                 this.collection = collection
 
-                root.setOnClickListener { onOpenCollectionDetails(collection.id) }
+                root.setOnClickListener { openCollectionDetailsListener(collection.id, arrayOf()) }
                 itemCollectionShareBtn.setOnClickListener { onShare(collection.id) }
             }
         }

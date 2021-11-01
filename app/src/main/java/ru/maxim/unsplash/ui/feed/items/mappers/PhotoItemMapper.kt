@@ -1,7 +1,7 @@
-package ru.maxim.unsplash.ui.main.items.mappers
+package ru.maxim.unsplash.ui.feed.items.mappers
 
 import ru.maxim.unsplash.domain.model.Photo
-import ru.maxim.unsplash.ui.main.items.PhotoItem
+import ru.maxim.unsplash.ui.feed.items.PhotoItem
 
 fun Photo.mapToItem(): PhotoItem =
     PhotoItem(

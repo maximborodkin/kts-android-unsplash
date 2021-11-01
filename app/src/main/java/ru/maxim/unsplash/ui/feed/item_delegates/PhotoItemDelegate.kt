@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,20 +7,27 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemPhotoBinding
-import ru.maxim.unsplash.ui.main.item_delegates.PhotoItemDelegate.PhotoViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.PhotoItem
+import ru.maxim.unsplash.ui.feed.item_delegates.PhotoItemDelegate.PhotoViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.PhotoItem
 
 class PhotoItemDelegate(
     private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     private val onAddToCollection: (photoId: String) -> Unit,
     private val onDownload: (photoId: String) -> Unit,
-    private val onOpenPhotoDetails: (itemBinding: ItemPhotoBinding) -> Unit
+    private val openPhotoDetailsListener: (
+        photoId: String,
+        photoUrl: String?,
+        blurHash: String?,
+        width: Int,
+        height: Int,
+        transitionExtras: Array<Pair<View, String>>
+    ) -> Unit
 ) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is PhotoItem
 
@@ -41,8 +48,29 @@ class PhotoItemDelegate(
         private val context = itemView.context
         fun bind(photo: PhotoItem) {
             with(binding) {
+                binding.photo
                 this.photo = photo
-                root.setOnClickListener { onOpenPhotoDetails(this) }
+                root.setOnClickListener {
+                    openPhotoDetailsListener(
+                        photo.id,
+                        photo.regular,
+                        photo.blurHash,
+                        binding.itemPhotoImage.width,
+                        binding.itemPhotoImage.height,
+                        arrayOf(
+                            binding.itemPhotoImage to
+                                    context.getString(R.string.photo_details_image_transition),
+                            binding.itemPhotoLikeBtn to
+                                    context.getString(R.string.photo_details_like_btn_transition),
+                            binding.itemPhotoLikesCount to
+                                    context.getString(R.string.photo_details_likes_count_transition),
+                            binding.itemPhotoAuthorAvatar to
+                                    context.getString(R.string.photo_details_author_avatar_transition),
+                            binding.itemPhotoAuthorName to
+                                    context.getString(R.string.photo_details_author_name_transition)
+                        )
+                    )
+                }
 
                 // Set initial ImageView size to photo dimensions
                 val screenWidth = context.resources.displayMetrics.widthPixels

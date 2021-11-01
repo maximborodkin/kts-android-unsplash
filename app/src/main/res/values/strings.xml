@@ -17,16 +17,18 @@
     <string name="onboarding_third_title">Login to unlock all activities</string>
     <string name="onboarding_third_description">Use your Unsplash account to watch, download or share photos, create custom collections, manage account information</string>
     <string name="unauthorized_error">"Authentication failed. Relogin needed "</string>
-    <string name="common_loading_error">An error occurred during download. Please try to refresh page</string>
+    <string name="common_loading_error">An error occurred during loading. Please try to refresh page</string>
     <string name="server_error">Server error. Please try again</string>
     <string name="timeout_error">Request timed out. Check your internet connection</string>
     <string name="common_login_error">Something went wrong while authentication process. Please try again</string>
     <string name="editorial">Editorial</string>
     <string name="collections">Collections</string>
-    <string name="following">Following</string>
+    <string name="profile">Profile</string>
     <string name="unable_to_load_photo">Unable to load photo</string>
-    <string name="not_enough_rights_photo">Not enough rights to access this photo</string>
-    <string name="not_enough_rights_collection">Not enough rights to access this collection</string>
+    <string name="common_forbidden">Not enough rights to access this content</string>
+    <string name="forbidden_photo">Not enough rights to access this photo</string>
+    <string name="forbidden_collection">Not enough rights to access this collection</string>
+    <string name="common_not_found">Requested content not found</string>
     <string name="photo_not_found">Photo not found</string>
     <string name="collection_not_found">Collection not found</string>
     <string name="dimensions_placeholder" translatable="false">%d x %d</string>

@@ -2,7 +2,6 @@ package ru.maxim.unsplash.ui.main
 
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -12,26 +11,27 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainBinding
-import ru.maxim.unsplash.databinding.ItemPhotoBinding
+import ru.maxim.unsplash.ui.feed.FeedFragment
+import ru.maxim.unsplash.ui.feed.FeedActionsListener
 
-class MainFragment : Fragment(R.layout.fragment_main) {
+class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
     private val binding by viewBinding(FragmentMainBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         val pages = listOf(
-            MainPageFragment().apply { arguments = bundleOf("list_mode" to ListMode.Editorial) },
-            MainPageFragment().apply { arguments = bundleOf("list_mode" to ListMode.Collections) },
-            MainPageFragment().apply { arguments = bundleOf("list_mode" to ListMode.Following) }
+            FeedFragment().apply { arguments = bundleOf("list_mode" to ListMode.Editorial) },
+            FeedFragment().apply { arguments = bundleOf("list_mode" to ListMode.Collections) },
+            FeedFragment().apply { arguments = bundleOf("list_mode" to ListMode.Profile) }
         )
         binding.mainViewPager.adapter = MainPagerAdapter(childFragmentManager, lifecycle, pages)
 
         TabLayoutMediator(binding.mainTabLayout, binding.mainViewPager) { tab, position ->
             val title = when (position) {
-                0 -> ListMode.Editorial.stringResource
-                1 -> ListMode.Collections.stringResource
-                2 -> ListMode.Following.stringResource
+                0 -> R.string.editorial
+                1 -> R.string.collections
+                2 -> R.string.profile
                 else -> throw IllegalStateException("There is no title for position $position")
             }
             tab.setText(title)
@@ -40,36 +40,39 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.root.doOnPreDraw { startPostponedEnterTransition() }
     }
 
-    fun openPhotoDetails(itemBinding: ItemPhotoBinding) {
-        val photo = itemBinding.photo
-        val photoUrl = photo?.regular?:return
+    override fun openPhotoDetails(
+        photoId: String,
+        photoUrl: String?,
+        blurHash: String?,
+        width: Int,
+        height: Int,
+        transitionExtras: Array<Pair<View, String>>,
+    ) {
 
         val action = MainFragmentDirections.actionMainToPhotoDetails(
-            photoId = photo.id,
+            photoId = photoId,
             photoUrl = photoUrl,
-            imageWidth = itemBinding.itemPhotoImage.width,
-            imageHeight = itemBinding.itemPhotoImage.height,
-            blurHash = photo.blurHash
+            imageWidth = width,
+            imageHeight = height,
+            blurHash = blurHash
         )
 
-        val extras = FragmentNavigatorExtras(
-            itemBinding.itemPhotoImage to getString(R.string.photo_details_image_transition),
-            itemBinding.itemPhotoLikeBtn to getString(R.string.photo_details_like_btn_transition),
-            itemBinding.itemPhotoLikesCount to getString(R.string.photo_details_likes_count_transition),
-            itemBinding.itemPhotoAuthorAvatar to getString(R.string.photo_details_author_avatar_transition),
-            itemBinding.itemPhotoAuthorName to getString(R.string.photo_details_author_name_transition)
-        )
+        val extras = FragmentNavigatorExtras(*transitionExtras)
         findNavController().navigate(action, extras)
     }
 
-    fun openCollectionDetails(collectionId: String) {
+    override fun openCollectionDetails(
+        collectionId: String,
+        transitionExtras: Array<Pair<View, String>>
+    ) {
         val action = MainFragmentDirections.actionMainToCollectionDetails(collectionId)
         findNavController().navigate(action)
     }
 
-    enum class ListMode(@StringRes val stringResource: Int) {
-        Editorial(R.string.editorial),
-        Collections(R.string.collections),
-        Following(R.string.following)
+    enum class ListMode {
+        Editorial,
+        Collections,
+        Profile,
+        CollectionPhotos
     }
 }

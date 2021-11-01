@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.Gravity
 import android.view.View
@@ -6,15 +6,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
-import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingItemDelegate.PageLoadingViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.PageLoadingItem
+import ru.maxim.unsplash.ui.feed.item_delegates.PageLoadingItemDelegate.PageLoadingViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.PageLoadingItem
 
 class PageLoadingItemDelegate : BaseMainItemDelegate<PageLoadingItem, PageLoadingViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is PageLoadingItem
 

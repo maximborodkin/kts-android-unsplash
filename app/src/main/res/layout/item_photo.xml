@@ -4,7 +4,7 @@
     <data>
         <variable
             name="photo"
-            type="ru.maxim.unsplash.ui.main.items.PhotoItem" />
+            type="ru.maxim.unsplash.ui.feed.items.PhotoItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

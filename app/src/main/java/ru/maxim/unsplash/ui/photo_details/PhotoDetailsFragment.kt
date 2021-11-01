@@ -21,6 +21,7 @@ import ru.maxim.unsplash.databinding.FragmentPhotoDetailsBinding
 import ru.maxim.unsplash.databinding.ItemTagBinding
 import ru.maxim.unsplash.domain.model.Tag
 import ru.maxim.unsplash.util.load
+import ru.maxim.unsplash.util.longToast
 import ru.maxim.unsplash.util.toast
 
 class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
@@ -43,7 +44,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
                     height = args.imageHeight
                 }
                 setOnClickListener { photo?.urls?.full?.let { openPhotoViewer(it) } }
-                load(url = args.photoUrl, blurHash = args.blurHash)
+                args.photoUrl?.let { load(url = it, blurHash = args.blurHash) }
             }
             photoDetailsSwipeRefresh.setOnRefreshListener { refresh() }
             photoDetailsLikeBtn.setOnClickListener { model.setLike() }
@@ -59,18 +60,21 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
                         model.loadPhoto()
                     }
 
-                    is PhotoDetailsViewModel.PhotoDetailsState.Error -> {
-                        binding.photoDetailsSwipeRefresh.isRefreshing = false
-                        context?.toast(state.messageRes ?: R.string.common_loading_error)
+                    is PhotoDetailsViewModel.PhotoDetailsState.Refreshing -> with(binding) {
+                        isCache = false
                     }
-
-                    is PhotoDetailsViewModel.PhotoDetailsState.Refreshing -> {}
 
                     is PhotoDetailsViewModel.PhotoDetailsState.Success -> with(binding) {
                         photoDetailsSwipeRefresh.isRefreshing = false
                         photo = state.photo
-                        isCache = state.isCache
+                        isCache = false
                         state.photo.tags?.let { drawTags(it) }
+                    }
+
+                    is PhotoDetailsViewModel.PhotoDetailsState.Error -> with(binding) {
+                        photoDetailsSwipeRefresh.isRefreshing = false
+                        isCache = true
+                        context?.longToast(state.messageRes)
                     }
                 }
             }
@@ -92,7 +96,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
     }
 
     private fun refresh() {
-        binding.photoDetailsImage.load(url = args.photoUrl, blurHash = args.blurHash)
+        args.photoUrl?.let { binding.photoDetailsImage.load(url = it, blurHash = args.blurHash) }
         model.refresh()
     }
 

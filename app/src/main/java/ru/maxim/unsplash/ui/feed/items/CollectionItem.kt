@@ -1,6 +1,4 @@
-package ru.maxim.unsplash.ui.main.items
-
-import ru.maxim.unsplash.domain.model.Collection
+package ru.maxim.unsplash.ui.feed.items
 
 data class CollectionItem(
     val id: String,
@@ -11,4 +9,4 @@ data class CollectionItem(
     val coverHash: String?,
     val authorName: String?,
     val authorAvatar: String?,
-) : BaseMainListItem()
+) : BaseFeedListItem()

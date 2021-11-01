@@ -4,7 +4,7 @@
     <data>
         <variable
             name="collection"
-            type="ru.maxim.unsplash.ui.main.items.CollectionItem" />
+            type="ru.maxim.unsplash.ui.feed.items.CollectionItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

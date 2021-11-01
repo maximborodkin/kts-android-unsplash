@@ -1,4 +1,4 @@
-package ru.maxim.unsplash.ui.main.item_delegates
+package ru.maxim.unsplash.ui.feed.item_delegates
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemPageLoadingErrorBinding
-import ru.maxim.unsplash.ui.main.item_delegates.PageLoadingErrorItemDelegate.PageLoadingErrorViewHolder
-import ru.maxim.unsplash.ui.main.items.BaseMainListItem
-import ru.maxim.unsplash.ui.main.items.PageLoadingErrorItem
+import ru.maxim.unsplash.ui.feed.item_delegates.PageLoadingErrorItemDelegate.PageLoadingErrorViewHolder
+import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
+import ru.maxim.unsplash.ui.feed.items.PageLoadingErrorItem
 
 class PageLoadingErrorItemDelegate(private val onRetry: () -> Unit) :
     BaseMainItemDelegate<PageLoadingErrorItem, PageLoadingErrorViewHolder>() {
 
     override fun isForViewType(
-        item: BaseMainListItem,
-        items: MutableList<BaseMainListItem>,
+        item: BaseFeedListItem,
+        items: MutableList<BaseFeedListItem>,
         position: Int
     ): Boolean = item is PageLoadingErrorItem
 

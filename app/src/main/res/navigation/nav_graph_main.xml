@@ -66,7 +66,8 @@
             app:argType="string" />
         <argument
             android:name="photoUrl"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="imageWidth"
             app:argType="integer" />
@@ -92,6 +93,9 @@
         <argument
             android:name="collectionId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_collectionDetails_to_photoDetails"
+            app:destination="@id/photoDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentImageViewer"

@@ -1,7 +1,7 @@
-package ru.maxim.unsplash.ui.main.items.mappers
+package ru.maxim.unsplash.ui.feed.items.mappers
 
 import ru.maxim.unsplash.domain.model.Collection
-import ru.maxim.unsplash.ui.main.items.CollectionItem
+import ru.maxim.unsplash.ui.feed.items.CollectionItem
 
 fun Collection.mapToItem(): CollectionItem =
     CollectionItem(

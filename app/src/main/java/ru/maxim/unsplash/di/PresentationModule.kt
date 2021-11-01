@@ -7,9 +7,8 @@ import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsViewModelFactory
 import ru.maxim.unsplash.ui.login.LoginViewModel
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginViewModelFactory
-import ru.maxim.unsplash.ui.main.MainFragment
-import ru.maxim.unsplash.ui.main.MainViewModel
-import ru.maxim.unsplash.ui.main.MainViewModel.MainViewModelFactory
+import ru.maxim.unsplash.ui.feed.FeedViewModel
+import ru.maxim.unsplash.ui.feed.FeedViewModel.MainViewModelFactory
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsViewModelFactory
 
@@ -31,8 +30,9 @@ val presentationModule = module(createdAtStart = true) {
             application = androidApplication(),
             photoRepository = get(),
             collectionRepository = get(),
-            listMode = MainFragment.ListMode.Editorial
-        ).create(MainViewModel::class.java)
+            listMode = parameters.get(),
+            collectionId = parameters.getOrNull()
+        ).create(FeedViewModel::class.java)
     }
 
     viewModel { parameters ->

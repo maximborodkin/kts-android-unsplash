@@ -47,7 +47,6 @@ val presentationModule = module(createdAtStart = true) {
         CollectionDetailsViewModelFactory(
             application = androidApplication(),
             collectionRepository = get(),
-            photoRepository = get(),
             collectionId = parameters.get()
         ).create(CollectionDetailsViewModel::class.java)
     }

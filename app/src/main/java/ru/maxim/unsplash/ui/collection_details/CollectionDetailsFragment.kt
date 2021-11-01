@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
@@ -25,31 +28,38 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.collectionSwipeRefresh.setOnRefreshListener { model.refresh() }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             model.collectionDetailsState.collect { state ->
-                when(state) {
+                when (state) {
                     CollectionDetailsViewModel.CollectionDetailsState.Empty -> {
                         if (savedInstanceState == null) model.loadCollection()
                     }
 
-                    CollectionDetailsViewModel.CollectionDetailsState.Loading -> {
-                        binding.collectionSwipeRefresh.isRefreshing = false
+                    CollectionDetailsViewModel.CollectionDetailsState.Refreshing -> with(binding) {
+                        isCache = false
                     }
 
-                    CollectionDetailsViewModel.CollectionDetailsState.Refreshing -> {}
+                    is CollectionDetailsViewModel.CollectionDetailsState.Success -> with(binding) {
+                        collectionSwipeRefresh.isRefreshing = false
+                        isCache = false
+                        collection = state.collection
 
-                    is CollectionDetailsViewModel.CollectionDetailsState.Success -> {
-                        binding.collectionSwipeRefresh.isRefreshing = false
-                        binding.isCache = state.isCache
-                        binding.collection = state.collection
-
-                        val photosListFragment = MainPageFragment().apply {
-                            arguments = bundleOf("list_mode" to MainFragment.ListMode.Editorial)
-                        }
-                        childFragmentManager.beginTransaction()
-                            .replace(binding.collectionDetailsPhotosList.id, photosListFragment)
-                            .commit()
+                        loadCollectionPhotos()
                     }
+
+                    is CollectionDetailsViewModel.CollectionDetailsState.Error -> with(binding) {
+                        collectionSwipeRefresh.isRefreshing = false
+                        collection = state.cache
+                        isCache = true
+                        context?.longToast(state.messageRes)
+                        loadCollectionPhotos()
+                    }
+                }
+            }
+        }
+    }
 
 
     private fun loadCollectionPhotos() {

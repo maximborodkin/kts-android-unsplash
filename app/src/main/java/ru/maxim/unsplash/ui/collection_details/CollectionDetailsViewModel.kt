@@ -6,90 +6,61 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Collection
+import ru.maxim.unsplash.network.exception.*
 import ru.maxim.unsplash.repository.CollectionRepository
 import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsState.*
+import ru.maxim.unsplash.util.Result
 
 class CollectionDetailsViewModel private constructor(
     application: Application,
     private val collectionRepository: CollectionRepository,
-    private val photoRepository: PhotoRepository,
     private val collectionId: String
 ) : AndroidViewModel(application) {
-
-    val database = Database.instance
-    private val collectionService = RetrofitClient.collectionService
-    private val photoService = RetrofitClient.photoService
     private val _collectionDetailsState = MutableStateFlow<CollectionDetailsState>(Empty)
     val collectionDetailsState: StateFlow<CollectionDetailsState> =
         _collectionDetailsState.asStateFlow()
 
     sealed class CollectionDetailsState {
         object Empty : CollectionDetailsState()
-        object Loading : CollectionDetailsState()
         object Refreshing : CollectionDetailsState()
-        data class Success(val collection: Collection, val isCache: Boolean = false) :
-            CollectionDetailsState()
-        data class Error(@StringRes val messageRes: Int?) : CollectionDetailsState()
+        data class Success(val collection: Collection) : CollectionDetailsState()
+        data class Error(@StringRes val messageRes: Int, val cache: Collection?) : CollectionDetailsState()
     }
 
     fun loadCollection() = viewModelScope.launch {
-        withContext(IO) {
-            try {
-                val response = collectionService.getById(collectionId)
-                val collection = response.body()
-                if (response.isSuccessful && collection != null) {
-                    cacheCollection(collection)
-                    withContext(Main) { _collectionDetailsState.emit(Success(collection)) }
-                } else {
-                    val messageRes = when (response.code()) {
-                        401 -> {
+        val collection = collectionRepository.getById(collectionId)
+        collection.collect { result ->
+            when(result) {
+                is Result.Loading -> {
+                    result.data?.let { _collectionDetailsState.emit(Success(it)) }
+                }
+                is Result.Success -> {
+                    result.data?.let { _collectionDetailsState.emit(Success(it)) }
+                }
+                is Result.Error -> {
+                    val messageRes = when (result.exception) {
+                        is UnauthorizedException -> {
                             //TODO: update auth credentials
                             R.string.unauthorized_error
                         }
-                        403 -> R.string.not_enough_rights_collection
-                        404 -> R.string.collection_not_found
-                        408 -> R.string.timeout_error
-                        in 500..599 -> R.string.server_error
-                        else -> null
+                        is ForbiddenException -> R.string.forbidden_collection
+                        is NotFoundException -> R.string.collection_not_found
+                        is TimeoutException -> R.string.timeout_error
+                        is ServerErrorException -> R.string.server_error
+                        is NoConnectionException -> R.string.no_internet
+                        else -> R.string.common_loading_error
                     }
-                    withContext(Main) { _collectionDetailsState.emit(Error(messageRes)) }
-                }
-            } catch (e: Exception) {
-                try {
-                    loadCache()
-                } catch (e: Exception) {
-                    withContext(Main) { _collectionDetailsState.emit(Error(null)) }
+                    _collectionDetailsState.emit(Error(messageRes, result.data))
                 }
             }
-        }
-    }
-
-    private suspend fun loadCache() = withContext(IO) {
-        val collectionDao = database.collectionDao()
-        val collection = collectionDao.getById(collectionId)?.toCollection()
-        if (collection != null) {
-            withContext(Main) { _collectionDetailsState.emit(Success(collection, true)) }
-        } else {
-            withContext(Main) { _collectionDetailsState.emit(Error(null)) }
-        }
-    }
-
-    private suspend fun cacheCollection(collection: Collection) = withContext(IO) {
-        database.collectionDao().insert(collection.fromCollection())
-    }
-
-    fun loadPhotos() = viewModelScope.launch {
-        withContext(IO) {
-
         }
     }
 
@@ -102,7 +73,6 @@ class CollectionDetailsViewModel private constructor(
     class CollectionDetailsViewModelFactory(
         private val application: Application,
         private val collectionRepository: CollectionRepository,
-        private val photoRepository: PhotoRepository,
         private val collectionId: String
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
@@ -111,7 +81,6 @@ class CollectionDetailsViewModel private constructor(
                 return CollectionDetailsViewModel(
                     application,
                     collectionRepository,
-                    photoRepository,
                     collectionId
                 ) as T
             }

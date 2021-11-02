@@ -46,8 +46,8 @@ class CollectionRepositoryImpl(
     override suspend fun getById(collectionId: String): Flow<Result<Collection?>> =
         networkBoundResource(
             query = {
-                collectionDao.getById(collectionId).map { collectionDto ->
-                    collectionDto?.let { collectionEntityMapper.toDomainModel(it) }
+                collectionDao.getById(collectionId).map { collectionEntity ->
+                    collectionEntity?.let { collectionEntityMapper.toDomainModel(it) }
                 }
             },
             fetch = {

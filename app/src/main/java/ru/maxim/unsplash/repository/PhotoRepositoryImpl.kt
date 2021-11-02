@@ -53,8 +53,8 @@ class PhotoRepositoryImpl(
     override suspend fun getById(photoId: String): Flow<Result<Photo?>> =
         networkBoundResource(
             query = {
-                photoDao.getById(photoId).map { photoDto ->
-                    photoDto?.let { photoEntityMapper.toDomainModel(it) }
+                photoDao.getById(photoId).map { photoEntity ->
+                    photoEntity?.let { photoEntityMapper.toDomainModel(it) }
                 }
             },
             fetch = {

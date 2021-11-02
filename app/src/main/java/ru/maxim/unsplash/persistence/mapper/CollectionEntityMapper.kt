@@ -23,7 +23,7 @@ class CollectionEntityMapper(
 
     override suspend fun toDomainModel(model: CollectionEntity): Collection {
         val user = model.userId?.let { userId ->
-            userDao.getById(userId)?.let { userEntity ->
+            userDao.getById(userId).first()?.let { userEntity ->
                 userEntityMapper.toDomainModel(userEntity)
             }
         }

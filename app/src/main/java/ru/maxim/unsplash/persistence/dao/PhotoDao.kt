@@ -44,10 +44,10 @@ interface PhotoDao {
     fun search(query: String): Flow<List<PhotoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(photoEntity: PhotoEntity)
+    suspend fun insert(photoEntity: PhotoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(photoEntities: List<PhotoEntity>)
+    suspend fun insertAll(photoEntities: List<PhotoEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCollectionRelation(relation: CollectionPhotoCrossRef)
@@ -56,7 +56,7 @@ interface PhotoDao {
     fun insertCollectionRelations(relations: List<CollectionPhotoCrossRef>)
 
     @Update
-    fun update(photoEntity: PhotoEntity)
+    suspend fun update(photoEntity: PhotoEntity)
 
     @Delete
     fun delete(photoEntity: PhotoEntity)

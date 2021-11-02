@@ -20,7 +20,7 @@ class PhotoEntityMapper(
     override suspend fun toDomainModel(model: PhotoEntity): Photo {
         val tags = ArrayList(tagEntityMapper.toDomainModelList(tagDao.getByPhotoId(model.id)))
         val user = model.userId?.let { userId ->
-            userDao.getById(userId)?.let { userEntity ->
+            userDao.getById(userId).first()?.let { userEntity ->
                 userEntityMapper.toDomainModel(userEntity)
             }
         }

@@ -23,13 +23,13 @@ interface CollectionDao {
     fun getById(id: String): Flow<CollectionEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(collectionEntity: CollectionEntity)
+    suspend fun insert(collectionEntity: CollectionEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(collectionEntities: List<CollectionEntity>)
 
-    @Update
-    fun update(collectionEntity: CollectionEntity)
+    @Update(entity = CollectionEntity::class)
+    suspend fun update(collectionEntity: CollectionEntity)
 
     @Delete()
     fun delete(collectionEntity: CollectionEntity)

@@ -11,6 +11,8 @@ import ru.maxim.unsplash.ui.login.LoginViewModel
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginViewModelFactory
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsViewModelFactory
+import ru.maxim.unsplash.ui.profile.ProfileViewModel
+import ru.maxim.unsplash.ui.profile.ProfileViewModel.ProfileViewModelFactory
 
 
 val presentationModule = module(createdAtStart = true) {
@@ -48,5 +50,13 @@ val presentationModule = module(createdAtStart = true) {
             collectionRepository = get(),
             collectionId = parameters.get()
         ).create(CollectionDetailsViewModel::class.java)
+    }
+
+    viewModel { parameters ->
+        ProfileViewModelFactory(
+            application = androidApplication(),
+            userRepository = get(),
+            username = parameters.getOrNull()
+        ).create(ProfileViewModel::class.java)
     }
 }

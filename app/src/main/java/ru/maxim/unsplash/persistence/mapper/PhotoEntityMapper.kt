@@ -1,5 +1,6 @@
 package ru.maxim.unsplash.persistence.mapper
 
+import kotlinx.coroutines.flow.first
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.*
 import ru.maxim.unsplash.persistence.dao.TagDao

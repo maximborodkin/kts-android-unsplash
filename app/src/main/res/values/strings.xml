@@ -28,8 +28,10 @@
     <string name="common_forbidden">Not enough rights to access this content</string>
     <string name="forbidden_photo">Not enough rights to access this photo</string>
     <string name="forbidden_collection">Not enough rights to access this collection</string>
+    <string name="forbidden_user">Not enough rights to access information about this user</string>
     <string name="common_not_found">Requested content not found</string>
     <string name="photo_not_found">Photo not found</string>
+    <string name="user_not_found">User not found</string>
     <string name="collection_not_found">Collection not found</string>
     <string name="dimensions_placeholder" translatable="false">%d x %d</string>
     <string name="dimensions">Dimensions</string>

@@ -9,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.maxim.unsplash.network.service.CollectionService
 import ru.maxim.unsplash.network.service.PhotoService
+import ru.maxim.unsplash.network.service.UserService
 import ru.maxim.unsplash.persistence.PreferencesManager
 
 class RetrofitClient(private val preferencesManager: PreferencesManager) {
@@ -40,6 +41,7 @@ class RetrofitClient(private val preferencesManager: PreferencesManager) {
 
     val photoService: PhotoService by lazy { instance.create(PhotoService::class.java) }
     val collectionService: CollectionService by lazy { instance.create(CollectionService::class.java) }
+    val userService: UserService by lazy { instance.create(UserService::class.java) }
 
     companion object {
         private const val baseUrl = "https://api.unsplash.com/"

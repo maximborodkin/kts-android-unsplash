@@ -14,6 +14,7 @@ import ru.maxim.unsplash.persistence.dao.TagDao
 import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef
 import ru.maxim.unsplash.persistence.model.PhotoEntity
 import ru.maxim.unsplash.persistence.model.TagEntity
+import ru.maxim.unsplash.persistence.model.UserPhotoCrossRef
 import ru.maxim.unsplash.util.Result
 import ru.maxim.unsplash.util.networkBoundResource
 
@@ -117,6 +118,27 @@ class PhotoRepositoryImpl(
                     photoDao.insertCollectionRelation(
                         CollectionPhotoCrossRef(collectionId, photo.id)
                     )
+                }
+            },
+            shouldFetch = { true }
+        )
+
+    override suspend fun getUserPhotosPage(username: String, page: Int): Flow<Result<List<Photo>>> =
+        networkBoundResource(
+            query = {
+                photoDao.getByUserUsername(username).map { photoEntityMapper.toDomainModelList(it) }
+            },
+            fetch = {
+                val loadSize = if (page == 1) initialPageSize else pageSize
+                photoService.getUserPhotosPage(username, page, loadSize)
+            },
+            cacheFetchResult = { response ->
+                val domainModelList = photoDtoMapper.toDomainModelList(response)
+
+                domainModelList.forEach { photo ->
+                    photoDao.insert(photoEntityMapper.fromDomainModel(photo))
+
+                    photoDao.insertUserRelation(UserPhotoCrossRef(username, photo.id))
                 }
             },
             shouldFetch = { true }

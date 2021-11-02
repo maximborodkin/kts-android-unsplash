@@ -53,4 +53,6 @@
     <string name="last_update_placeholder">Обновлено %s</string>
     <string name="common_forbidden">Недостаточно прав для доступа к этому контенту</string>
     <string name="common_not_found">Запрашиваемый контент не найден</string>
+    <string name="forbidden_user">Недостаточно прав для доступа к информации об этом пользователе</string>
+    <string name="user_not_found">Пользователь не найден</string>
 </resources>

@@ -36,4 +36,11 @@ interface PhotoService {
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<List<PhotoDto>>
+
+    @GET("/users/{username}/photos")
+    suspend fun getUserPhotosPage(
+        @Path("username") username: String,
+        @Query("page") page: Int,
+        @Query("per_page") pageSize: Int = 10
+    ): Response<List<PhotoDto>>
 }

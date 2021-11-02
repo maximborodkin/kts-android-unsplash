@@ -28,6 +28,7 @@ val networkModule = module(createdAtStart = true) {
     single { AuthorizationService(androidApplication()) }
     single { get<RetrofitClient>().photoService }
     single { get<RetrofitClient>().collectionService }
+    single { get<RetrofitClient>().userService }
 
     // DTO mappers
     single<DomainMapper<ExifDto, Exif>>(named("exif_dto_mapper")) { ExifDtoMapper() }

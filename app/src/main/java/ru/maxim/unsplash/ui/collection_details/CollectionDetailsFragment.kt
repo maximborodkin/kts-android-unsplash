@@ -15,9 +15,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentCollectionDetailsBinding
+import ru.maxim.unsplash.ui.collection_details.CollectionPhotosFeedFragment.Companion.collectionIdKey
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
-import ru.maxim.unsplash.ui.feed.FeedFragment
-import ru.maxim.unsplash.ui.feed.FeedFragment.ListMode
 import ru.maxim.unsplash.util.longToast
 
 class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details),
@@ -44,17 +43,20 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
                     is CollectionDetailsViewModel.CollectionDetailsState.Success -> with(binding) {
                         collectionSwipeRefresh.isRefreshing = false
                         isCache = false
-                        collection = state.collection
-
-                        loadCollectionPhotos()
+                        state.collection?.let {
+                            collection = it
+                            loadCollectionPhotos(it.id)
+                        }
                     }
 
                     is CollectionDetailsViewModel.CollectionDetailsState.Error -> with(binding) {
                         collectionSwipeRefresh.isRefreshing = false
-                        collection = state.cache
                         isCache = true
+                        state.cache?.let {
+                            collection = it
+                            loadCollectionPhotos(it.id)
+                        }
                         context?.longToast(state.messageRes)
-                        loadCollectionPhotos()
                     }
                 }
             }
@@ -62,29 +64,25 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
     }
 
 
-    private fun loadCollectionPhotos() {
+    private fun loadCollectionPhotos(collectionId: String) {
         /*
         * If fragment already set in the FragmentContainerView, just call the refresh method
         * Otherwise, set new instance of it
         **/
-        val tag = "collection_photos_list_fragment"
+        val tag = "collection_photos_feed_fragment"
         val collectionPhotosFragment =
-            childFragmentManager.findFragmentByTag(tag) as? FeedFragment
+            childFragmentManager.findFragmentByTag(tag) as? CollectionPhotosFeedFragment
 
         if (collectionPhotosFragment != null) {
             collectionPhotosFragment.refreshPage()
         } else {
+            val collectionPhotosFeedFragment = CollectionPhotosFeedFragment().apply {
+                arguments = bundleOf(collectionIdKey to collectionId)
+            }
+
             childFragmentManager.commit {
                 setReorderingAllowed(true)
-                add(
-                    R.id.collectionDetailsPhotosList,
-                    FeedFragment::class.java,
-                    bundleOf(
-                        "list_mode" to ListMode.CollectionPhotos,
-                        "collection_id" to args.collectionId
-                    ),
-                    tag
-                )
+                add(R.id.collectionDetailsPhotosList, collectionPhotosFeedFragment, tag)
             }
         }
     }

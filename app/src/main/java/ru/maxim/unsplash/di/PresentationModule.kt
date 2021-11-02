@@ -30,8 +30,7 @@ val presentationModule = module(createdAtStart = true) {
             application = androidApplication(),
             photoRepository = get(),
             collectionRepository = get(),
-            listMode = parameters.get(),
-            collectionId = parameters.getOrNull()
+            getItemsPage = parameters.get()
         ).create(FeedViewModel::class.java)
     }
 

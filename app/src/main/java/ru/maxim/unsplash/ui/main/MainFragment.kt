@@ -2,7 +2,6 @@ package ru.maxim.unsplash.ui.main
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -12,8 +11,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentMainBinding
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
-import ru.maxim.unsplash.ui.feed.FeedFragment
-import ru.maxim.unsplash.ui.feed.FeedFragment.ListMode
+import ru.maxim.unsplash.ui.profile.ProfileFragment
 
 class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
     private val binding by viewBinding(FragmentMainBinding::bind)
@@ -22,20 +20,15 @@ class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         val pages = listOf(
-            FeedFragment().apply { arguments = bundleOf("list_mode" to ListMode.Editorial) },
-            FeedFragment().apply { arguments = bundleOf("list_mode" to ListMode.Collections) },
-            FeedFragment().apply { arguments = bundleOf("list_mode" to ListMode.Profile) }
+            R.string.editorial to EditorialFeedFragment(),
+            R.string.collections to CollectionsFeedFragment(),
+            R.string.profile to ProfileFragment()
         )
-        binding.mainViewPager.adapter = MainPagerAdapter(childFragmentManager, lifecycle, pages)
+        binding.mainViewPager.adapter =
+            MainPagerAdapter(childFragmentManager, lifecycle, pages.map { it.second })
 
         TabLayoutMediator(binding.mainTabLayout, binding.mainViewPager) { tab, position ->
-            val title = when (position) {
-                0 -> R.string.editorial
-                1 -> R.string.collections
-                2 -> R.string.profile
-                else -> throw IllegalStateException("There is no title for position $position")
-            }
-            tab.setText(title)
+            tab.setText(pages[position].first)
         }.attach()
 
         binding.root.doOnPreDraw { startPostponedEnterTransition() }

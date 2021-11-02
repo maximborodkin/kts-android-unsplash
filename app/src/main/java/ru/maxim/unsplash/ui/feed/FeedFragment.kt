@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -18,27 +19,25 @@ import ru.maxim.unsplash.ui.feed.items.InitialLoadingErrorItem
 import ru.maxim.unsplash.ui.feed.items.InitialLoadingItem
 import ru.maxim.unsplash.ui.feed.items.PageLoadingErrorItem
 import ru.maxim.unsplash.ui.feed.items.PageLoadingItem
-import ru.maxim.unsplash.util.PaginationScrollListener
-import ru.maxim.unsplash.util.autoCleared
-import ru.maxim.unsplash.util.longToast
-import ru.maxim.unsplash.util.toast
+import ru.maxim.unsplash.util.*
 
-class FeedFragment : Fragment(R.layout.fragment_feed) {
+/**
+ * The abstract fragment that represents a paginated list of items.
+ * Every item must have a personal class inherited of
+ * [ru.maxim.unsplash.ui.feed.items.BaseFeedListItem] in /items directory and item delegate
+ * in /item_delegates. The delegates must be registered in [FeedRecyclerAdapter].
+ *
+ * For using this class create implementation and realize [getItemsPage] method based on data that
+ * you want to show.
+ * */
+abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val binding by viewBinding(FragmentFeedBinding::bind)
-    private val model: FeedViewModel by viewModel {
-        val mode = arguments?.get("list_mode")
-        val collectionId = arguments?.getString("collection_id")
-
-        if (mode !is ListMode)
-            throw IllegalArgumentException("list_mode must be provided to FeedFragment")
-        else if (mode == ListMode.CollectionPhotos && collectionId.isNullOrBlank())
-            throw IllegalArgumentException("collectionId must be provided for CollectionPhotos mode")
-        else
-            parametersOf(mode, collectionId)
-    }
+    private val model: FeedViewModel by viewModel { parametersOf(::getItemsPage) }
     private var feedRecyclerAdapter by autoCleared<FeedRecyclerAdapter>()
     private var cacheWarningSnackbar: Snackbar? = null
+
+    protected abstract suspend fun getItemsPage(page: Int): Flow<Result<List<Any>>>
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -152,7 +151,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     fun refreshPage() {
         val currentState = model.feedState.value
-        if (currentState != Refreshing && currentState != InitialLoading){
+        if (currentState != Refreshing && currentState != InitialLoading) {
             model.refresh()
         } else {
             binding.feedSwipeRefresh.isRefreshing = false
@@ -167,12 +166,5 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         if (currentState !is PageLoading && currentState !is PageLoadingError) {
             model.loadNextPage()
         }
-    }
-
-    enum class ListMode {
-        Editorial,
-        Collections,
-        Profile,
-        CollectionPhotos
     }
 }

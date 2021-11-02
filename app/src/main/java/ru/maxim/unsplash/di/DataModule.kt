@@ -2,10 +2,7 @@ package ru.maxim.unsplash.di
 
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import ru.maxim.unsplash.repository.CollectionRepository
-import ru.maxim.unsplash.repository.CollectionRepositoryImpl
-import ru.maxim.unsplash.repository.PhotoRepository
-import ru.maxim.unsplash.repository.PhotoRepositoryImpl
+import ru.maxim.unsplash.repository.*
 
 
 val dataModule = module(createdAtStart = true) {
@@ -28,6 +25,16 @@ val dataModule = module(createdAtStart = true) {
             collectionDao = get(),
             collectionDtoMapper = get(named("collection_dto_mapper")),
             collectionEntityMapper = get(named("collection_entity_mapper"))
+        )
+    }
+
+    single<UserRepository> {
+        UserRepositoryImpl(
+            userDao = get(),
+            userService = get(),
+            userEntityMapper = get(named("user_entity_mapper")),
+            userDtoMapper = get(named("user_dto_mapper")),
+            preferencesManager = get()
         )
     }
 }

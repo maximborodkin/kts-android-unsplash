@@ -17,7 +17,6 @@ import ru.maxim.unsplash.network.exception.*
 import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.photo_details.PhotoDetailsViewModel.PhotoDetailsState.*
 import ru.maxim.unsplash.util.Result
-import timber.log.Timber
 
 class PhotoDetailsViewModel private constructor(
     application: Application,
@@ -47,8 +46,6 @@ class PhotoDetailsViewModel private constructor(
                 }
 
                 is Result.Error -> {
-                    Timber.tag("PHOTO_STATE").d("error")
-
                     val errorMessage = when (result.exception) {
                         is UnauthorizedException -> R.string.unauthorized_error
                         is ForbiddenException -> R.string.forbidden_photo

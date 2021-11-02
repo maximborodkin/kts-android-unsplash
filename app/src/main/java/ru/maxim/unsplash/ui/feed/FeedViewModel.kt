@@ -7,10 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Collection
@@ -18,23 +15,19 @@ import ru.maxim.unsplash.domain.model.Photo
 import ru.maxim.unsplash.network.exception.*
 import ru.maxim.unsplash.repository.CollectionRepository
 import ru.maxim.unsplash.repository.PhotoRepository
-import ru.maxim.unsplash.ui.feed.FeedFragment.ListMode
 import ru.maxim.unsplash.ui.feed.FeedViewModel.FeedState.*
 import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
-import ru.maxim.unsplash.ui.feed.items.PageLoadingErrorItem
 import ru.maxim.unsplash.ui.feed.items.mappers.mapToItem
+import ru.maxim.unsplash.util.Result
 import ru.maxim.unsplash.util.Result.*
-import timber.log.Timber
 
 class FeedViewModel private constructor(
     application: Application,
     private val photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
-    private val listMode: ListMode,
-    private val collectionId: String?
+    private val getItemsPage: suspend (page: Int) -> Flow<Result<List<Any>>>
 ) : AndroidViewModel(application) {
 
-    private val items = arrayListOf<BaseFeedListItem>()
     private var currentPage = 1
 
     private val _feedState = MutableStateFlow<FeedState>(Empty)
@@ -72,17 +65,7 @@ class FeedViewModel private constructor(
             _feedState.emit(PageLoading)
         }
 
-        val items = when (listMode) {
-            ListMode.Editorial -> photoRepository.getFeedPage(currentPage)
-            ListMode.Collections -> collectionRepository.getFeedPage(currentPage)
-            ListMode.Profile -> photoRepository.getFeedPage(currentPage)
-            ListMode.CollectionPhotos -> photoRepository.getCollectionPhotosPage(
-                collectionId!!,
-                currentPage
-            )
-        }
-
-        items.collect { result ->
+        getItemsPage(currentPage).collect { result ->
             when (result) {
                 is Loading -> {
 
@@ -108,7 +91,6 @@ class FeedViewModel private constructor(
                 }
 
                 is Error -> {
-                    Timber.w(result.exception)
                     val errorMessage = when (result.exception) {
                         is UnauthorizedException -> R.string.unauthorized_error
                         is ForbiddenException -> R.string.common_forbidden
@@ -163,8 +145,8 @@ class FeedViewModel private constructor(
     }
 
     fun retryPageLoading() {
-        if (items.lastOrNull() is PageLoadingErrorItem) {
-            loadNextPage()
+        if (_feedState.value is PageLoadingError) {
+            loadNextPage(currentPage)
         }
     }
 
@@ -173,8 +155,7 @@ class FeedViewModel private constructor(
         private val application: Application,
         private val photoRepository: PhotoRepository,
         private val collectionRepository: CollectionRepository,
-        private val listMode: ListMode,
-        private val collectionId: String?
+        private val getItemsPage: suspend (page: Int) -> Flow<Result<List<Any>>>
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -183,8 +164,7 @@ class FeedViewModel private constructor(
                     application,
                     photoRepository,
                     collectionRepository,
-                    listMode,
-                    collectionId
+                    getItemsPage
                 ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")

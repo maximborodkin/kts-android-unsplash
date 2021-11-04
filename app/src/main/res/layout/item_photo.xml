@@ -63,7 +63,7 @@
             android:id="@+id/itemPhotoAuthorName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:padding="12dp"
             android:maxLines="1"
             android:text="@{photo.authorName}"
             android:textColor="@color/white"

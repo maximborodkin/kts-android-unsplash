@@ -108,6 +108,7 @@
                         tools:src="@tools:sample/avatars" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/photoDetailsAuthorName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"

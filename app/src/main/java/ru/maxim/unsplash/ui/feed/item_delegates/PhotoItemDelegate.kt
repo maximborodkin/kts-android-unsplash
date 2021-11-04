@@ -15,12 +15,16 @@ class PhotoItemDelegate(
     private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
     private val onAddToCollection: (photoId: String) -> Unit,
     private val onDownload: (photoId: String) -> Unit,
-    private val openPhotoDetailsListener: (
+    private val onOpenPhotoDetails: (
         photoId: String,
         photoUrl: String?,
         blurHash: String?,
         width: Int,
         height: Int,
+        transitionExtras: Array<Pair<View, String>>
+    ) -> Unit,
+    private val onOpenProfile: (
+        userUsername: String,
         transitionExtras: Array<Pair<View, String>>
     ) -> Unit
 ) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
@@ -46,31 +50,11 @@ class PhotoItemDelegate(
     inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(ItemPhotoBinding::bind)
         private val context = itemView.context
+
         fun bind(photo: PhotoItem) {
             with(binding) {
                 binding.photo
                 this.photo = photo
-                root.setOnClickListener {
-                    openPhotoDetailsListener(
-                        photo.id,
-                        photo.regular,
-                        photo.blurHash,
-                        binding.itemPhotoImage.width,
-                        binding.itemPhotoImage.height,
-                        arrayOf(
-                            binding.itemPhotoImage to
-                                    context.getString(R.string.photo_details_image_transition),
-                            binding.itemPhotoLikeBtn to
-                                    context.getString(R.string.photo_details_like_btn_transition),
-                            binding.itemPhotoLikesCount to
-                                    context.getString(R.string.photo_details_likes_count_transition),
-                            binding.itemPhotoAuthorAvatar to
-                                    context.getString(R.string.photo_details_author_avatar_transition),
-                            binding.itemPhotoAuthorName to
-                                    context.getString(R.string.photo_details_author_name_transition)
-                        )
-                    )
-                }
 
                 // Set initial ImageView size to photo dimensions
                 val screenWidth = context.resources.displayMetrics.widthPixels
@@ -83,7 +67,43 @@ class PhotoItemDelegate(
                 itemPhotoLikeBtn.setOnClickListener { onSetLike(photo.id, absoluteAdapterPosition) }
                 itemPhotoAddBtn.setOnClickListener { onAddToCollection(photo.id) }
                 itemPhotoDownloadBtn.setOnClickListener { onDownload(photo.id) }
-                executePendingBindings()
+
+                val openProfileAction = {
+                    onOpenProfile(
+                        photo.authorUsername,
+                        arrayOf(
+                            itemPhotoAuthorAvatar to
+                                    context.getString(R.string.photo_details_author_avatar_transition),
+                            itemPhotoAuthorName to
+                                    context.getString(R.string.photo_details_author_name_transition)
+                        )
+                    )
+                }
+
+                itemPhotoAuthorAvatar.setOnClickListener { openProfileAction() }
+                itemPhotoAuthorName.setOnClickListener { openProfileAction() }
+
+                root.setOnClickListener {
+                    onOpenPhotoDetails(
+                        photo.id,
+                        photo.regular,
+                        photo.blurHash,
+                        itemPhotoImage.width,
+                        itemPhotoImage.height,
+                        arrayOf(
+                            itemPhotoImage to
+                                    context.getString(R.string.photo_details_image_transition),
+                            itemPhotoLikeBtn to
+                                    context.getString(R.string.photo_details_like_btn_transition),
+                            itemPhotoLikesCount to
+                                    context.getString(R.string.photo_details_likes_count_transition),
+                            itemPhotoAuthorAvatar to
+                                    context.getString(R.string.photo_details_author_avatar_transition),
+                            itemPhotoAuthorName to
+                                    context.getString(R.string.photo_details_author_name_transition)
+                        )
+                    )
+                }
             }
         }
     }

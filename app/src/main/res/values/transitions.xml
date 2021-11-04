@@ -13,4 +13,13 @@
     <string name="photo_details_likes_count_transition" translatable="false">photo_details_likes_count_transition</string>
     <string name="photo_details_author_avatar_transition" translatable="false">photo_details_author_avatar_transition</string>
     <string name="photo_details_author_name_transition" translatable="false">photo_details_author_name_transition</string>
+
+<!--  CollectionDetailsFragment  -->
+    <string name="collection_details_title_transition" translatable="false">collection_details_title</string>
+    <string name="collection_details_author_avatar_transition" translatable="false">collection_details_author_avatar</string>
+    <string name="collection_details_author_name_transition" translatable="false">collection_details_author_name</string>
+
+<!--  ProfileFragment  -->
+    <string name="profile_user_avatar_transition" translatable="false">profile_user_avatar</string>
+    <string name="profile_user_name_transition" translatable="false">profile_user_name</string>
 </resources>

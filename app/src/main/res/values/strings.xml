@@ -50,8 +50,10 @@
     <string name="unable_to_set_like">Unable to set like</string>
     <string name="cached_data_shown">Cached data shown</string>
     <string name="logout">Logout</string>
-    <string name="published_at_placeholder">Published %s</string>
-    <string name="last_update_placeholder">Last update %s</string>
+    <string name="published_at">Published</string>
+    <string name="last_update">Last update</string>
+    <string name="photos">Photos</string>
+    <string name="likes">Likes</string>
 
     <plurals name="photos_count">
         <item quantity="zero">No photos yet</item>

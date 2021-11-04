@@ -49,10 +49,12 @@
         <item quantity="many">%d фотографий</item>
         <item quantity="other">%d фотографий</item>
     </plurals>
-    <string name="published_at_placeholder">Опубликовано %s</string>
-    <string name="last_update_placeholder">Обновлено %s</string>
+    <string name="published_at">Опубликовано</string>
+    <string name="last_update">Обновлено</string>
     <string name="common_forbidden">Недостаточно прав для доступа к этому контенту</string>
     <string name="common_not_found">Запрашиваемый контент не найден</string>
     <string name="forbidden_user">Недостаточно прав для доступа к информации об этом пользователе</string>
     <string name="user_not_found">Пользователь не найден</string>
+    <string name="photos">Фотографии</string>
+    <string name="likes">Избранное</string>
 </resources>

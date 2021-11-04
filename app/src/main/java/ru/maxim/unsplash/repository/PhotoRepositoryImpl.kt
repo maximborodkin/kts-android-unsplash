@@ -11,10 +11,8 @@ import ru.maxim.unsplash.network.model.PhotoDto
 import ru.maxim.unsplash.network.service.PhotoService
 import ru.maxim.unsplash.persistence.dao.PhotoDao
 import ru.maxim.unsplash.persistence.dao.TagDao
-import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef
 import ru.maxim.unsplash.persistence.model.PhotoEntity
 import ru.maxim.unsplash.persistence.model.TagEntity
-import ru.maxim.unsplash.persistence.model.UserPhotoCrossRef
 import ru.maxim.unsplash.util.Result
 import ru.maxim.unsplash.util.networkBoundResource
 
@@ -36,14 +34,14 @@ class PhotoRepositoryImpl(
             },
             fetch = {
                 val loadSize = if (page == 1) initialPageSize else pageSize
-                photoService.getPage(page, loadSize)
+                photoService.getFeedPage(page, loadSize)
             },
             cacheFetchResult = { response: List<PhotoDto> ->
                 if (page == 1) {
                     photoDao.deleteAll()
                 }
                 val domainModelList = photoDtoMapper.toDomainModelList(response)
-                photoDao.insertAll(photoEntityMapper.fromDomainModelList(domainModelList))
+                photoDao.insert(photoEntityMapper.fromDomainModelList(domainModelList))
             },
             shouldFetch = {
                 // TODO: create cache validation algorithm
@@ -65,7 +63,7 @@ class PhotoRepositoryImpl(
                 val domainModel = photoDtoMapper.toDomainModel(response)
                 photoDao.insert(photoEntityMapper.fromDomainModel(domainModel))
                 domainModel.tags?.let {
-                    tagDao.insertAll(tagEntityMapper.fromDomainModelList(it, domainModel.id))
+                    tagDao.insert(tagEntityMapper.fromDomainModelList(it, domainModel.id))
                 }
             },
             shouldFetch = { true }
@@ -83,7 +81,7 @@ class PhotoRepositoryImpl(
             },
             cacheFetchResult = { response ->
                 val domainModelList = photoDtoMapper.toDomainModelList(response.results)
-                photoDao.insertAll(photoEntityMapper.fromDomainModelList(domainModelList))
+                photoDao.insert(photoEntityMapper.fromDomainModelList(domainModelList))
             },
             shouldFetch = { true }
         )
@@ -111,14 +109,10 @@ class PhotoRepositoryImpl(
             },
             cacheFetchResult = { response ->
                 val domainModelList = photoDtoMapper.toDomainModelList(response)
-
-                domainModelList.forEach { photo ->
-                    photoDao.insert(photoEntityMapper.fromDomainModel(photo))
-
-                    photoDao.insertCollectionRelation(
-                        CollectionPhotoCrossRef(collectionId, photo.id)
-                    )
-                }
+                photoDao.insertForCollection(
+                    photoEntityMapper.fromDomainModelList(domainModelList),
+                    collectionId
+                )
             },
             shouldFetch = { true }
         )
@@ -126,7 +120,7 @@ class PhotoRepositoryImpl(
     override suspend fun getUserPhotosPage(username: String, page: Int): Flow<Result<List<Photo>>> =
         networkBoundResource(
             query = {
-                photoDao.getByUserUsername(username).map { photoEntityMapper.toDomainModelList(it) }
+                photoDao.getByUser(username).map { photoEntityMapper.toDomainModelList(it) }
             },
             fetch = {
                 val loadSize = if (page == 1) initialPageSize else pageSize
@@ -134,12 +128,29 @@ class PhotoRepositoryImpl(
             },
             cacheFetchResult = { response ->
                 val domainModelList = photoDtoMapper.toDomainModelList(response)
+                photoDao.insertForUser(
+                    photoEntityMapper.fromDomainModelList(domainModelList),
+                    username
+                )
+            },
+            shouldFetch = { true }
+        )
 
-                domainModelList.forEach { photo ->
-                    photoDao.insert(photoEntityMapper.fromDomainModel(photo))
-
-                    photoDao.insertUserRelation(UserPhotoCrossRef(username, photo.id))
-                }
+    override suspend fun getUserLikedPage(userUsername: String, page: Int): Flow<Result<List<Photo>>> =
+        networkBoundResource(
+            query = {
+                photoDao.getLikedByUser(userUsername).map { photoEntityMapper.toDomainModelList(it) }
+            },
+            fetch = {
+                val loadSize = if (page == 1) initialPageSize else pageSize
+                photoService.getUserLikesPage(userUsername, page, loadSize)
+            },
+            cacheFetchResult = { response ->
+                val domainModelList = photoDtoMapper.toDomainModelList(response)
+                photoDao.insertForLikes(
+                    photoEntityMapper.fromDomainModelList(domainModelList),
+                    userUsername
+                )
             },
             shouldFetch = { true }
         )

@@ -63,7 +63,7 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                     ::onLoadNextPage
                 )
             )
-            feedSwipeRefresh.setOnRefreshListener(::refreshPage)
+            feedSwipeRefresh.setOnRefreshListener(::refresh)
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -73,7 +73,9 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                         if (savedInstanceState == null) loadInitialPage()
                     }
 
-                    Refreshing -> {}
+                    Refreshing -> with(binding) {
+                        feedSwipeRefresh.isRefreshing = true
+                    }
 
                     InitialLoading -> {
                         feedRecyclerAdapter.items = listOf(InitialLoadingItem)
@@ -93,11 +95,11 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                         if (cache != null && cache.isNotEmpty()) {
                             cacheWarningSnackbar =
                                 Snackbar.make(
-                                    feedRecycler,
+                                    view,
                                     R.string.cached_data_shown,
                                     Snackbar.LENGTH_INDEFINITE
                                 )
-                                    .setAction(R.string.refresh) { refreshPage() }
+                                    .setAction(R.string.refresh) { refresh() }
                                     .also { it.show() }
 
                             feedRecyclerAdapter.items = cache
@@ -149,7 +151,7 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
             model.loadNextPage(1)
     }
 
-    fun refreshPage() {
+    fun refresh() {
         val currentState = model.feedState.value
         if (currentState != Refreshing && currentState != InitialLoading) {
             model.refresh()
@@ -166,5 +168,10 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
         if (currentState !is PageLoading && currentState !is PageLoadingError) {
             model.loadNextPage()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        cacheWarningSnackbar?.dismiss()
     }
 }

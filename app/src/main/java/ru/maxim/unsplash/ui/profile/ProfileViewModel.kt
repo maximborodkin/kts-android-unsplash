@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.User
 import ru.maxim.unsplash.network.exception.*
+import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.repository.UserRepository
 import ru.maxim.unsplash.ui.profile.ProfileViewModel.ProfileState.*
 import ru.maxim.unsplash.util.Result
@@ -20,6 +21,7 @@ import ru.maxim.unsplash.util.Result
 class ProfileViewModel private constructor(
     application: Application,
     private val userRepository: UserRepository,
+    private val preferencesManager: PreferencesManager,
     private val username: String?
 ) : AndroidViewModel(application) {
 
@@ -41,12 +43,18 @@ class ProfileViewModel private constructor(
                 userRepository.getByUsername(username)
 
         userRequest.collect { result ->
-            when(result) {
+            when (result) {
                 is Result.Loading -> {
                     result.data?.let { _profileState.emit(Success(it)) }
                 }
                 is Result.Success -> {
-                    result.data?.let { _profileState.emit(Success(it)) }
+                    result.data?.let {
+                        _profileState.emit(Success(it))
+
+                        if (username.isNullOrBlank()) {
+                            preferencesManager.currentUserUsername = result.data.username
+                        }
+                    }
                 }
                 is Result.Error -> {
                     val errorMessage = when (result.exception) {
@@ -73,12 +81,18 @@ class ProfileViewModel private constructor(
     class ProfileViewModelFactory(
         private val application: Application,
         private val userRepository: UserRepository,
+        private val preferencesManager: PreferencesManager,
         private val username: String?
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
-                return ProfileViewModel(application, userRepository, username) as T
+                return ProfileViewModel(
+                    application,
+                    userRepository,
+                    preferencesManager,
+                    username
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class ${modelClass.simpleName}")
         }

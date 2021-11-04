@@ -23,13 +23,15 @@ class FeedRecyclerAdapter(
                     onSetLike,
                     onAddToCollection,
                     onDownload,
-                    feedActionsListener::openPhotoDetails
+                    feedActionsListener::openPhotoDetails,
+                    feedActionsListener::openProfile
                 )
             )
             .addDelegate(
                 CollectionItemDelegate(
                     onCollectionShare,
-                    feedActionsListener::openCollectionDetails
+                    feedActionsListener::openCollectionDetails,
+                    feedActionsListener::openProfile
                 )
             )
             .addDelegate(InitialLoadingItemDelegate())

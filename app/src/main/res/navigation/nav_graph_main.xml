@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_main_to_collectionDetails"
             app:destination="@id/collectionDetailsFragment" />
+        <action
+            android:id="@+id/action_main_to_profile"
+            app:destination="@id/profileFragment" />
     </fragment>
 
     <fragment
@@ -83,7 +86,7 @@
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
         <action
-            android:id="@+id/action_photoDetails_to_Profile"
+            android:id="@+id/action_photoDetails_to_profile"
             app:destination="@id/profileFragment" />
     </fragment>
 
@@ -96,11 +99,12 @@
             android:name="collectionId"
             app:argType="string" />
         <action
+            android:id="@+id/action_collectionDetails_to_profile"
+            app:destination="@id/profileFragment" />
+        <action
             android:id="@+id/action_collectionDetails_to_photoDetails"
             app:destination="@id/photoDetailsFragment" />
-        <action
-            android:id="@+id/action_collectionDetails_to_Profile"
-            app:destination="@id/profileFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/fragmentImageViewer"
@@ -124,17 +128,15 @@
             android:name="username"
             app:argType="string"
             app:nullable="true"
-            android:defaultValue="null"/>
-    </fragment>
-    <fragment
-        android:id="@+id/feedFragment"
-        android:name="ru.maxim.unsplash.ui.feed.FeedFragment"
-        android:label="FeedFragment" >
+            android:defaultValue="@null"/>
         <action
-            android:id="@+id/action_feed_to_photoDetails"
+            android:id="@+id/action_profile_to_collectionDetails"
+            app:destination="@id/collectionDetailsFragment" />
+        <action
+            android:id="@+id/action_profile_to_photoDetails"
             app:destination="@id/photoDetailsFragment" />
         <action
-            android:id="@+id/action_feed_to_collectionDetails"
-            app:destination="@id/collectionDetailsFragment" />
+            android:id="@+id/action_profile_to_ImageViewer"
+            app:destination="@id/fragmentImageViewer" />
     </fragment>
 </navigation>

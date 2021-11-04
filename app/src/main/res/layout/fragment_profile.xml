@@ -10,6 +10,10 @@
             type="Boolean" />
 
         <variable
+            name="isCurrentUser"
+            type="Boolean" />
+
+        <variable
             name="user"
             type="ru.maxim.unsplash.domain.model.User" />
     </data>
@@ -25,23 +29,28 @@
 
             <ru.maxim.unsplash.ui.view.AvatarView
                 android:id="@+id/profileAvatar"
+                image="@{user.profileImage.large}"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                android:layout_margin="24dp"
+                android:layout_margin="12dp"
+                android:transitionName="@string/profile_user_avatar_transition"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                image="@{user.profileImage.large}"
                 tools:src="@tools:sample/avatars" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/profileName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
-                android:textSize="22sp"
+                app:layout_constrainedWidth="true"
                 android:text="@{user.name}"
+                android:textSize="22sp"
+                android:maxLines="3"
+                android:transitionName="@string/profile_user_name_transition"
                 app:layout_constraintStart_toEndOf="@id/profileAvatar"
                 app:layout_constraintTop_toTopOf="@id/profileAvatar"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="Maxim Borodkin" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -49,9 +58,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
+                android:text="@{user.bio}"
                 app:layout_constrainedHeight="true"
                 app:layout_constrainedWidth="true"
-                android:text="@{user.bio}"
+                android:maxLines="4"
                 app:layout_constraintBottom_toBottomOf="@id/profileAvatar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/profileName"
@@ -74,8 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:textSize="18sp"
                 android:text="@{String.valueOf(user.totalPhotos)}"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@id/profileCollectionsCount"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/profileAvatar"
@@ -119,16 +129,27 @@
                 app:layout_constraintBaseline_toBaselineOf="@id/profileCollectionsCount"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/profileCollectionsCount"
-                tools:text="50" />
+                tools:text="40" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/profilePhotosList"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/profileTabLayout"
+                style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:layout_constraintBottom_toTopOf="@id/profileTabLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileAvatar" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/profileViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profilePhotosCount"
-                android:layout_marginTop="12dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileTabLayout" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

@@ -56,6 +56,7 @@ val presentationModule = module(createdAtStart = true) {
         ProfileViewModelFactory(
             application = androidApplication(),
             userRepository = get(),
+            preferencesManager = get(),
             username = parameters.getOrNull()
         ).create(ProfileViewModel::class.java)
     }

@@ -17,6 +17,7 @@ import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentCollectionDetailsBinding
 import ru.maxim.unsplash.ui.collection_details.CollectionPhotosFeedFragment.Companion.collectionIdKey
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
+import ru.maxim.unsplash.ui.feed.FeedFragment
 import ru.maxim.unsplash.util.longToast
 
 class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details),
@@ -74,7 +75,7 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
             childFragmentManager.findFragmentByTag(tag) as? CollectionPhotosFeedFragment
 
         if (collectionPhotosFragment != null) {
-            collectionPhotosFragment.refreshPage()
+            (collectionPhotosFragment as FeedFragment).refresh()
         } else {
             val collectionPhotosFeedFragment = CollectionPhotosFeedFragment().apply {
                 arguments = bundleOf(collectionIdKey to collectionId)
@@ -112,5 +113,17 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
         transitionExtras: Array<Pair<View, String>>
     ) {
         //Stub
+    }
+
+    override fun openProfile(userUsername: String, transitionExtras: Array<Pair<View, String>>) {
+        val action =
+            CollectionDetailsFragmentDirections.actionCollectionDetailsToProfile(userUsername)
+        val extras = FragmentNavigatorExtras(
+            binding.collectionDetailsAuthorAvatar to
+                    getString(R.string.profile_user_avatar_transition),
+            binding.collectionDetailsAuthorName to
+                    getString(R.string.profile_user_name_transition)
+        )
+        findNavController().navigate(action, extras)
     }
 }

@@ -7,6 +7,7 @@ import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.MATCH_PARENT
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.WRAP_CONTENT
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.ChangeBounds
@@ -49,7 +50,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
             photoDetailsSwipeRefresh.setOnRefreshListener { refresh() }
             photoDetailsLikeBtn.setOnClickListener { model.setLike() }
             photoDetailsBackBtn.setOnClickListener { findNavController().popBackStack() }
-            photoDetailsAuthor.setOnClickListener { photo?.user?.id?.let { openUserProfile(it) } }
+            photoDetailsAuthor.setOnClickListener { photo?.user?.username?.let { openUserProfile(it) } }
             photoDetailsCacheWarning.itemCacheShownRefreshBtn.setOnClickListener { refresh() }
         }
 
@@ -104,8 +105,13 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_photo_details) {
         context?.toast(tag)
     }
 
-    private fun openUserProfile(userId: String) {
-        context?.toast("Open profile with id: $userId")
+    private fun openUserProfile(userUsername: String) {
+        val action = PhotoDetailsFragmentDirections.actionPhotoDetailsToProfile(userUsername)
+        val extras = FragmentNavigatorExtras(
+            binding.photoDetailsAuthorAvatar to getString(R.string.profile_user_avatar_transition),
+            binding.photoDetailsAuthorName to getString(R.string.profile_user_name_transition)
+        )
+        findNavController().navigate(action, extras)
     }
 
     private fun openPhotoViewer(photoUrl: String) {

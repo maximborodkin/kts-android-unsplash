@@ -13,8 +13,12 @@ import ru.maxim.unsplash.ui.feed.items.CollectionItem
 
 class CollectionItemDelegate(
     private val onShare: (collectionId: String) -> Unit,
-    private val openCollectionDetailsListener: (
+    private val onOpenCollectionDetails: (
         collectionId: String,
+        transitionExtras: Array<Pair<View, String>>
+    ) -> Unit,
+    private val onOpenProfile: (
+        userUsername: String,
         transitionExtras: Array<Pair<View, String>>
     ) -> Unit
 ) : BaseMainItemDelegate<CollectionItem, PhotosCollectionViewHolder>() {
@@ -39,13 +43,41 @@ class CollectionItemDelegate(
 
     inner class PhotosCollectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(ItemCollectionBinding::bind)
+        private val context = itemView.context
 
         fun bind(collection: CollectionItem) {
             with(binding) {
                 this.collection = collection
 
-                root.setOnClickListener { openCollectionDetailsListener(collection.id, arrayOf()) }
                 itemCollectionShareBtn.setOnClickListener { onShare(collection.id) }
+
+                val openProfileAction = {
+                    onOpenProfile(
+                        collection.authorUsername,
+                        arrayOf(
+                            itemCollectionAuthorAvatar to
+                                    context.getString(R.string.photo_details_author_avatar_transition),
+                            itemCollectionAuthorName to
+                                    context.getString(R.string.photo_details_author_name_transition)
+                        )
+                    )
+                }
+                itemCollectionAuthorAvatar.setOnClickListener { openProfileAction() }
+                itemCollectionAuthorName.setOnClickListener { openProfileAction() }
+
+                root.setOnClickListener {
+                    onOpenProfile(
+                        collection.id,
+                        arrayOf(
+                            itemCollectionTitle to
+                                    context.getString(R.string.collection_details_title_transition),
+                            itemCollectionAuthorAvatar to
+                                    context.getString(R.string.collection_details_author_avatar_transition),
+                            itemCollectionAuthorName to
+                                    context.getString(R.string.collection_details_author_name_transition)
+                        )
+                    )
+                }
             }
         }
     }

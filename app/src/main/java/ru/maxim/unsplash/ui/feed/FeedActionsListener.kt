@@ -14,4 +14,6 @@ interface FeedActionsListener {
     )
 
     fun openCollectionDetails(collectionId: String, transitionExtras: Array<Pair<View, String>>)
+
+    fun openProfile(userUsername: String, transitionExtras: Array<Pair<View, String>>)
 }

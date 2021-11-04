@@ -1,8 +1,7 @@
 package ru.maxim.unsplash.persistence.model
 
 import androidx.room.*
-import androidx.room.ForeignKey.NO_ACTION
-import androidx.room.ForeignKey.SET_NULL
+import androidx.room.ForeignKey.*
 import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
 import java.util.Date
@@ -12,15 +11,15 @@ import java.util.Date
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,
-            parentColumns = [UserContract.Columns.id],
-            childColumns = [PhotoContract.Columns.userId],
-            onDelete = SET_NULL, onUpdate = NO_ACTION
+            parentColumns = [UserContract.Columns.username],
+            childColumns = [PhotoContract.Columns.userUsername],
+            onDelete = CASCADE, onUpdate = NO_ACTION
         )
     ]
 )
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = PhotoContract.Columns.id)
+    @ColumnInfo(name = PhotoContract.Columns.id, index = true)
     val id: String,
 
     @ColumnInfo(name = PhotoContract.Columns.createdAt)
@@ -50,8 +49,8 @@ data class PhotoEntity(
     @ColumnInfo(name = PhotoContract.Columns.description)
     val description: String?,
 
-    @ColumnInfo(name = PhotoContract.Columns.userId)
-    var userId: String?,
+    @ColumnInfo(name = PhotoContract.Columns.userUsername, index = true)
+    var userUsername: String,
 
     @Embedded
     val location: LocationEntity?,
@@ -84,7 +83,7 @@ data class PhotoEntity(
             const val likedByUser = "liked_by_user"
             const val description = "description"
             const val tags = "tags"
-            const val userId = "user_id"
+            const val userUsername = "user_username"
             const val cacheTime = "cache_time"
         }
     }

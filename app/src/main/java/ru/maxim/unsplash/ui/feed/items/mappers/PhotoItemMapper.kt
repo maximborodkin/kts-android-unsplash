@@ -14,6 +14,7 @@ fun Photo.mapToItem(): PhotoItem =
         blurHash = blurHash,
         likesCount = likes,
         likedByUser = likedByUser,
-        authorName = user?.name,
-        authorAvatar = user?.profileImage?.small
+        authorUsername = user.username,
+        authorName = user.name,
+        authorAvatar = user.profileImage.small
     )

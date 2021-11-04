@@ -27,7 +27,7 @@ class CollectionDtoMapper(
             isPrivate = model.isPrivate,
             shareKey = model.shareKey,
             coverPhoto = model.coverPhoto?.let { photoDtoMapper.toDomainModel(it) },
-            user = model.user?.let { userDtoMapper.toDomainModel(it) },
+            user = userDtoMapper.toDomainModel(model.user),
             links = linksDtoMapper.toDomainModel(model.links),
         )
 
@@ -42,7 +42,7 @@ class CollectionDtoMapper(
             isPrivate = domainModel.isPrivate,
             shareKey = domainModel.shareKey,
             coverPhoto = domainModel.coverPhoto?.let { photoDtoMapper.fromDomainModel(it) },
-            user = domainModel.user?.let { userDtoMapper.fromDomainModel(it) },
+            user = userDtoMapper.fromDomainModel(domainModel.user),
             links = linksDtoMapper.fromDomainModel(domainModel.links),
         )
 }

@@ -7,6 +7,7 @@ data class CollectionItem(
     val totalPhotos: Int,
     val cover: String?,
     val coverHash: String?,
+    val authorUsername: String,
     val authorName: String?,
     val authorAvatar: String?,
 ) : BaseFeedListItem()

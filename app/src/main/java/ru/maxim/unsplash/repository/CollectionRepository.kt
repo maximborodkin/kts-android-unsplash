@@ -12,5 +12,7 @@ interface CollectionRepository {
 
     suspend fun getSearchPage(query: String, page: Int): Flow<Result<List<Collection>>>
 
+    fun getUserCollectionsPage(userUsername: String, page: Int): Flow<Result<List<Collection>>>
+
     suspend fun share(shareKey: String): Flow<Boolean>
 }

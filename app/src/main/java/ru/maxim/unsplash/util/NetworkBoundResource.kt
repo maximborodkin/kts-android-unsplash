@@ -15,7 +15,11 @@ fun <DomainType, ResponseType> networkBoundResource(
     shouldFetch: (DomainType) -> Boolean = { true }
 ) = flow {
 
-    val cache = query().flowOn(IO).first()
+    // Database result flows may throw [IllegalStateException] when a query fails.
+    // In this case, the flow collector must handle these exceptions and pass this inconsistent data.
+    suspend fun queryFlow() = query().flowOn(IO).catch {  }
+
+    val cache = queryFlow().first()
 
     val responseFlow = if (shouldFetch(cache)) {
         emit(Result.Loading(cache))
@@ -25,7 +29,7 @@ fun <DomainType, ResponseType> networkBoundResource(
             val responseBody = response.body()
             if (response.isSuccessful && responseBody != null) {
                 withContext(IO) { cacheFetchResult(responseBody) }
-                query().flowOn(IO).map { Result.Success(it) }
+                queryFlow().map { Result.Success(it) }
             } else {
                 throw when (response.code()) {
                     401 -> UnauthorizedException(response)
@@ -39,10 +43,10 @@ fun <DomainType, ResponseType> networkBoundResource(
         } catch (e: Exception) {
             Timber.w(e)
             val exception = if (e is IOException) NoConnectionException() else e
-            query().flowOn(IO).map { Result.Error(it, exception) }
+            queryFlow().map { Result.Error(it, exception) }
         }
     } else {
-        query().flowOn(IO).map { Result.Success(it) }
+        queryFlow().map { Result.Success(it) }
     }
 
     emitAll(responseFlow)

@@ -43,7 +43,7 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
                     is CollectionDetailsViewModel.CollectionDetailsState.Success -> with(binding) {
                         collectionSwipeRefresh.isRefreshing = false
                         isCache = false
-                        state.collection?.let {
+                        state.collection.let {
                             collection = it
                             loadCollectionPhotos(it.id)
                         }

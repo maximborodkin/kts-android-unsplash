@@ -44,7 +44,7 @@ data class PhotoDto(
     val tags: List<TagDto>?,
 
     @SerializedName("user")
-    val user: UserDto?,
+    val user: UserDto,
 
     @SerializedName("urls")
     val urls: UrlsDto,

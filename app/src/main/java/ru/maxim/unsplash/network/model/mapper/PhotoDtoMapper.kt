@@ -28,7 +28,7 @@ class PhotoDtoMapper(
             exif = model.exif?.let { exifDtoMapper.toDomainModel(it) },
             location = model.location?.let { locationDtoMapper.toDomainModel(it) },
             tags = model.tags?.let { tagDtoMapper.toDomainModelList(it) },
-            user = model.user?.let { userDtoMapper.toDomainModel(it) },
+            user = userDtoMapper.toDomainModel(model.user),
             urls = urlsDtoMapper.toDomainModel(model.urls),
             links = linksDtoMapper.toDomainModel(model.links)
         )
@@ -48,7 +48,7 @@ class PhotoDtoMapper(
             exif = domainModel.exif?.let { exifDtoMapper.fromDomainModel(it) },
             location = domainModel.location?.let { locationDtoMapper.fromDomainModel(it) },
             tags = domainModel.tags?.let { tagDtoMapper.fromDomainModelList(it) },
-            user = domainModel.user?.let { userDtoMapper.fromDomainModel(it) },
+            user = userDtoMapper.fromDomainModel(domainModel.user),
             urls = urlsDtoMapper.fromDomainModel(domainModel.urls),
             links = linksDtoMapper.fromDomainModel(domainModel.links)
         )

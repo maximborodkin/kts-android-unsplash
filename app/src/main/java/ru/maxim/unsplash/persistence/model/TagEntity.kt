@@ -21,13 +21,13 @@ import ru.maxim.unsplash.persistence.model.TagEntity.TagContract
     ]
 )
 data class TagEntity(
-    @ColumnInfo(name = TagContract.Columns.photoId)
+    @ColumnInfo(name = TagContract.Columns.photoId, index = true)
     var photoId: String,
 
     @ColumnInfo(name = TagContract.Columns.type)
     val type: String?,
 
-    @ColumnInfo(name = TagContract.Columns.title)
+    @ColumnInfo(name = TagContract.Columns.title, index = true)
     val title: String
 ) {
 

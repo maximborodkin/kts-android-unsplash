@@ -16,7 +16,7 @@ data class Photo(
     val exif: Exif?,
     val location: Location?,
     val tags: List<Tag>?,
-    val user: User?,
+    val user: User,
     val urls: Urls,
     val links: Links
 )

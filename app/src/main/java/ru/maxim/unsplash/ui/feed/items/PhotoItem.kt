@@ -10,6 +10,7 @@ data class PhotoItem(
     val blurHash: String?,
     var likesCount: Int,
     var likedByUser: Boolean,
+    val authorUsername: String,
     var authorName: String?,
     val authorAvatar: String?
 ) : BaseFeedListItem()

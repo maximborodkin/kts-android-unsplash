@@ -12,6 +12,6 @@ data class Collection(
     val isPrivate: Boolean,
     val shareKey: String?,
     val coverPhoto: Photo?,
-    val user: User?,
+    val user: User,
     val links: Links,
 )

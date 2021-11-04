@@ -1,16 +1,16 @@
 package ru.maxim.unsplash.persistence.model
 
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
 
-@Entity(tableName = UserContract.tableName)
+@Entity(
+    tableName = UserContract.tableName,
+    indices = [Index(value = [UserContract.Columns.username], unique = true)]
+)
 data class UserEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = UserContract.Columns.id)
+    @ColumnInfo(name = UserContract.Columns.id, index = true)
     val id: String,
 
     @ColumnInfo(name = UserContract.Columns.username)
@@ -44,7 +44,7 @@ data class UserEntity(
     val links: LinksEntity,
 
     //Used for ordering cached items to retain fetched items order
-    @ColumnInfo(name = CollectionEntity.CollectionContract.Columns.cacheTime)
+    @ColumnInfo(name = UserContract.Columns.cacheTime)
     val cacheTime: Long
 ) {
     object UserContract {

@@ -9,7 +9,7 @@ import ru.maxim.unsplash.network.model.response.PhotosSearchResponse
 interface PhotoService {
 
     @GET("/photos")
-    suspend fun getPage(
+    suspend fun getFeedPage(
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<List<PhotoDto>>
@@ -40,6 +40,13 @@ interface PhotoService {
     @GET("/users/{username}/photos")
     suspend fun getUserPhotosPage(
         @Path("username") username: String,
+        @Query("page") page: Int,
+        @Query("per_page") pageSize: Int = 10
+    ): Response<List<PhotoDto>>
+
+    @GET("/users/{username}/likes")
+    suspend fun getUserLikesPage(
+        @Path("username") userUsername: String,
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<List<PhotoDto>>

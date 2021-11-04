@@ -1,8 +1,7 @@
 package ru.maxim.unsplash.persistence.model
 
 import androidx.room.*
-import androidx.room.ForeignKey.NO_ACTION
-import androidx.room.ForeignKey.SET_NULL
+import androidx.room.ForeignKey.*
 import ru.maxim.unsplash.persistence.model.CollectionEntity.CollectionContract
 import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
@@ -13,9 +12,9 @@ import java.util.Date
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,
-            parentColumns = [UserContract.Columns.id],
-            childColumns = [CollectionContract.Columns.userId],
-            onDelete = SET_NULL, onUpdate = NO_ACTION
+            parentColumns = [UserContract.Columns.username],
+            childColumns = [CollectionContract.Columns.userUsername],
+            onDelete = CASCADE, onUpdate = NO_ACTION
         ),
         ForeignKey(
             entity = PhotoEntity::class,
@@ -27,13 +26,13 @@ import java.util.Date
 )
 data class CollectionEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = CollectionContract.Columns.id)
+    @ColumnInfo(name = CollectionContract.Columns.id, index = true)
     val id: String,
 
-    @ColumnInfo(name = CollectionContract.Columns.title)
+    @ColumnInfo(name = CollectionContract.Columns.title, index = true)
     val title: String,
 
-    @ColumnInfo(name = CollectionContract.Columns.description)
+    @ColumnInfo(name = CollectionContract.Columns.description, index = true)
     val description: String?,
 
     @ColumnInfo(name = CollectionContract.Columns.publishedAt)
@@ -51,10 +50,10 @@ data class CollectionEntity(
     @ColumnInfo(name = CollectionContract.Columns.shareKey)
     val shareKey: String?,
 
-    @ColumnInfo(name = CollectionContract.Columns.userId)
-    val userId: String?,
+    @ColumnInfo(name = CollectionContract.Columns.userUsername, index = true)
+    val userUsername: String,
 
-    @ColumnInfo(name = CollectionContract.Columns.coverPhotoId)
+    @ColumnInfo(name = CollectionContract.Columns.coverPhotoId, index = true)
     val coverPhotoId: String?,
 
     @Embedded
@@ -77,7 +76,7 @@ data class CollectionEntity(
             const val isPrivate = "is_private"
             const val shareKey = "share_key"
             const val coverPhotoId = "cover_photo_id"
-            const val userId = "user_id"
+            const val userUsername = "user_username"
             const val cacheTime = "cache_time"
         }
     }

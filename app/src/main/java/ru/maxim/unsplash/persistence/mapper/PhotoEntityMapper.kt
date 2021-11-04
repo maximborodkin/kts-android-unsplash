@@ -20,11 +20,12 @@ class PhotoEntityMapper(
 
     override suspend fun toDomainModel(model: PhotoEntity): Photo {
         val tags = ArrayList(tagEntityMapper.toDomainModelList(tagDao.getByPhotoId(model.id)))
-        val user = model.userId?.let { userId ->
-            userDao.getById(userId).first()?.let { userEntity ->
-                userEntityMapper.toDomainModel(userEntity)
-            }
-        }
+        val user = userDao.getByUsername(model.userUsername).first()?.let { userEntity ->
+            userEntityMapper.toDomainModel(userEntity)
+        } ?: throw IllegalStateException(
+            "User with username ${model.userUsername} for photo ${model.id} not found"
+        )
+
 
         return Photo(
             id = model.id,
@@ -49,9 +50,7 @@ class PhotoEntityMapper(
     }
 
     override suspend fun fromDomainModel(domainModel: Photo, vararg params: String): PhotoEntity {
-        domainModel.user?.let { user ->
-            userDao.insert(userEntityMapper.fromDomainModel(user))
-        }
+        userDao.insert(userEntityMapper.fromDomainModel(domainModel.user))
 
         return PhotoEntity(
             id = domainModel.id,
@@ -64,7 +63,7 @@ class PhotoEntityMapper(
             likes = domainModel.likes,
             likedByUser = domainModel.likedByUser,
             description = domainModel.description,
-            userId = domainModel.user?.id,
+            userUsername = domainModel.user.username,
             location = domainModel.location?.let { locationEntityMapper.fromDomainModel(it) },
             exif = domainModel.exif?.let { exifEntityMapper.fromDomainModel(it) },
             urls = urlsEntityMapper.fromDomainModel(domainModel.urls),

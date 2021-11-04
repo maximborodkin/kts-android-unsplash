@@ -10,7 +10,7 @@ import ru.maxim.unsplash.network.model.response.CollectionsSearchResponse
 interface CollectionService {
 
     @GET("/collections")
-    suspend fun getPage(
+    suspend fun getFeedPage(
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<List<CollectionDto>>
@@ -24,4 +24,11 @@ interface CollectionService {
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<CollectionsSearchResponse>
+
+    @GET("/users/{username}/collections")
+    suspend fun getUserCollectionsPage(
+        @Path("username") userUsername: String,
+        @Query("page") page: Int,
+        @Query("per_page") pageSize: Int = 10
+    ): Response<List<CollectionDto>>
 }

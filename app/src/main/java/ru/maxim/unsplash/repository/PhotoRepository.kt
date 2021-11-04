@@ -19,4 +19,6 @@ interface PhotoRepository {
     suspend fun getCollectionPhotosPage(collectionId: String, page: Int): Flow<Result<List<Photo>>>
 
     suspend fun getUserPhotosPage(username: String, page: Int): Flow<Result<List<Photo>>>
+
+    suspend fun getUserLikedPage(userUsername: String, page: Int): Flow<Result<List<Photo>>>
 }

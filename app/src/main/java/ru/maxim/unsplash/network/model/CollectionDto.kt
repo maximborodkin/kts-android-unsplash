@@ -32,7 +32,7 @@ data class CollectionDto(
     val coverPhoto: PhotoDto?,
 
     @SerializedName("user")
-    val user: UserDto?,
+    val user: UserDto,
 
     @SerializedName("links")
     val links: LinksDto,

@@ -8,19 +8,19 @@ import androidx.room.ForeignKey.NO_ACTION
 import androidx.room.Index
 import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
 import ru.maxim.unsplash.persistence.model.UserEntity.UserContract
-import ru.maxim.unsplash.persistence.model.UserPhotoCrossRef.UserPhotoContract
+import ru.maxim.unsplash.persistence.model.UserLikeCrossRef.UserLikeContract
 
 @Entity(
-    tableName = UserPhotoContract.tableName,
+    tableName = UserLikeContract.tableName,
     primaryKeys = [
-        UserPhotoContract.Columns.userUsername,
-        UserPhotoContract.Columns.photoId
+        UserLikeContract.Columns.userUsername,
+        UserLikeContract.Columns.photoId
     ],
     indices = [
         Index(
             value = [
-                UserPhotoContract.Columns.userUsername,
-                UserPhotoContract.Columns.photoId
+                UserLikeContract.Columns.userUsername,
+                UserLikeContract.Columns.photoId
             ],
             unique = true
         )
@@ -29,26 +29,26 @@ import ru.maxim.unsplash.persistence.model.UserPhotoCrossRef.UserPhotoContract
         ForeignKey(
             entity = UserEntity::class,
             parentColumns = [UserContract.Columns.username],
-            childColumns = [UserPhotoContract.Columns.userUsername],
+            childColumns = [UserLikeContract.Columns.userUsername],
             onDelete = CASCADE, onUpdate = NO_ACTION
         ),
         ForeignKey(
             entity = PhotoEntity::class,
             parentColumns = [PhotoContract.Columns.id],
-            childColumns = [UserPhotoContract.Columns.photoId],
+            childColumns = [UserLikeContract.Columns.photoId],
             onDelete = CASCADE, onUpdate = NO_ACTION
         )
     ]
 )
-data class UserPhotoCrossRef(
-    @ColumnInfo(name = UserPhotoContract.Columns.userUsername)
+data class UserLikeCrossRef(
+    @ColumnInfo(name = UserLikeContract.Columns.userUsername)
     val userUsername: String,
 
-    @ColumnInfo(name = UserPhotoContract.Columns.photoId)
+    @ColumnInfo(name = UserLikeContract.Columns.photoId)
     val photoId: String
 ) {
-    object UserPhotoContract {
-        const val tableName = "user_photo"
+    object UserLikeContract {
+        const val tableName = "user_liked_photo"
 
         object Columns {
             const val userUsername = "user_username"

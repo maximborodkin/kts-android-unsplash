@@ -22,10 +22,12 @@ class CollectionEntityMapper(
 ) : DomainMapper<CollectionEntity, Collection> {
 
     override suspend fun toDomainModel(model: CollectionEntity): Collection {
-        val user = model.userId?.let { userId ->
-            userDao.getById(userId).first()?.let { userEntity ->
+        val user = model.userUsername.let { username ->
+            userDao.getByUsername(username).first()?.let { userEntity ->
                 userEntityMapper.toDomainModel(userEntity)
-            }
+            } ?: throw IllegalStateException(
+                "User with username $username for collection ${model.id} not found"
+            )
         }
 
         val coverPhoto = model.coverPhotoId?.let { photoId ->
@@ -53,13 +55,10 @@ class CollectionEntityMapper(
         domainModel: Collection,
         vararg params: String
     ): CollectionEntity {
-        domainModel.user?.let { user ->
-            userDao.insert(userEntityMapper.fromDomainModel(user))
-        }
+        userDao.insert(userEntityMapper.fromDomainModel(domainModel.user))
 
         domainModel.coverPhoto?.let { photo ->
-            val photoEntity = photoEntityMapper.fromDomainModel(photo)
-            photoDao.insert(photoEntity)
+            photoDao.insert(photoEntityMapper.fromDomainModel(photo))
         }
 
         return CollectionEntity(
@@ -71,7 +70,7 @@ class CollectionEntityMapper(
             totalPhotos = domainModel.totalPhotos,
             isPrivate = domainModel.isPrivate,
             shareKey = domainModel.shareKey,
-            userId = domainModel.user?.id,
+            userUsername = domainModel.user.username,
             coverPhotoId = domainModel.coverPhoto?.id,
             links = linksEntityMapper.fromDomainModel(domainModel.links),
             System.currentTimeMillis()

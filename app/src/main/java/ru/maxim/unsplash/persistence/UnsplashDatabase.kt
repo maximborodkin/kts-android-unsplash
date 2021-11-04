@@ -17,7 +17,9 @@ import ru.maxim.unsplash.persistence.model.*
         TagEntity::class,
         UserEntity::class,
         CollectionPhotoCrossRef::class,
-        UserPhotoCrossRef::class
+        UserPhotoCrossRef::class,
+        UserCollectionCrossRef::class,
+        UserLikeCrossRef::class
     ],
     version = UnsplashDatabase.databaseVersion
 )

@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.ForeignKey.NO_ACTION
+import androidx.room.Index
 import ru.maxim.unsplash.persistence.model.CollectionEntity.CollectionContract
 import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef.CollectionPhotoContract
 import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
@@ -14,6 +15,15 @@ import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
     primaryKeys = [
         CollectionPhotoContract.Columns.collectionId,
         CollectionPhotoContract.Columns.photoId
+    ],
+    indices = [
+        Index(
+            value = [
+                CollectionPhotoContract.Columns.collectionId,
+                CollectionPhotoContract.Columns.photoId
+            ],
+            unique = true
+        )
     ],
     foreignKeys = [
         ForeignKey(
@@ -31,10 +41,10 @@ import ru.maxim.unsplash.persistence.model.PhotoEntity.PhotoContract
     ]
 )
 data class CollectionPhotoCrossRef(
-    @ColumnInfo(name = CollectionPhotoContract.Columns.collectionId)
+    @ColumnInfo(name = CollectionPhotoContract.Columns.collectionId, index = true)
     val collectionId: String,
 
-    @ColumnInfo(name = CollectionPhotoContract.Columns.photoId)
+    @ColumnInfo(name = CollectionPhotoContract.Columns.photoId, index = true)
     val photoId: String
 ) {
     object CollectionPhotoContract {

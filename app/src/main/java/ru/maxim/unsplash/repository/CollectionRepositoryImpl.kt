@@ -25,17 +25,15 @@ class CollectionRepositoryImpl(
             },
             fetch = {
                 val loadSize = if (page == 1) initialPageSize else pageSize
-                collectionService.getPage(page, loadSize)
+                collectionService.getFeedPage(page, loadSize)
             },
             cacheFetchResult = { response: List<CollectionDto> ->
                 if (page == 1) {
                     collectionDao.deleteAll()
                 }
-                response.forEach { collectionDto ->
-                    val domainCollection = collectionDtoMapper.toDomainModel(collectionDto)
-                    val collectionEntity = collectionEntityMapper.fromDomainModel(domainCollection)
-                    collectionDao.insert(collectionEntity)
-                }
+                val domainList = collectionDtoMapper.toDomainModelList(response)
+                val collectionEntityList = collectionEntityMapper.fromDomainModelList(domainList)
+                collectionDao.insert(collectionEntityList)
             },
             shouldFetch = {
                 // TODO: create cache validation algorithm
@@ -63,6 +61,33 @@ class CollectionRepositoryImpl(
     override suspend fun getSearchPage(query: String, page: Int): Flow<Result<List<Collection>>> {
         TODO("Not yet implemented")
     }
+
+    override fun getUserCollectionsPage(
+        userUsername: String,
+        page: Int
+    ): Flow<Result<List<Collection>>> =
+        networkBoundResource(
+            query = {
+                collectionDao.getByUser(userUsername)
+                    .map { collectionEntityMapper.toDomainModelList(it) }
+            },
+            fetch = {
+                val loadSize = if (page == 1) initialPageSize else pageSize
+                collectionService.getUserCollectionsPage(userUsername, page, loadSize)
+            },
+            cacheFetchResult = { response: List<CollectionDto> ->
+                if (page == 1) {
+                    collectionDao.deleteAll()
+                }
+                val domainList = collectionDtoMapper.toDomainModelList(response)
+                val collectionEntityList = collectionEntityMapper.fromDomainModelList(domainList)
+                collectionDao.insertForUser(collectionEntityList, userUsername)
+            },
+            shouldFetch = {
+                // TODO: create cache validation algorithm
+                true
+            }
+        )
 
     override suspend fun share(shareKey: String): Flow<Boolean> {
         TODO("Not yet implemented")

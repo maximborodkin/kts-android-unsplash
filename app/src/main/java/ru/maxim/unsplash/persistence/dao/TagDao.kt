@@ -17,8 +17,8 @@ interface TagDao {
     fun getByPhotoId(photoId: String): List<TagEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(tagEntity: TagEntity)
+    suspend fun insert(tagEntity: TagEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(tagEntities: List<TagEntity>)
+    suspend fun insert(tagEntities: List<TagEntity>)
 }

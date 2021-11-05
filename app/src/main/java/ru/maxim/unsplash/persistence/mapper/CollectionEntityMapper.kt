@@ -12,6 +12,7 @@ import ru.maxim.unsplash.persistence.model.CollectionEntity
 import ru.maxim.unsplash.persistence.model.LinksEntity
 import ru.maxim.unsplash.persistence.model.PhotoEntity
 import ru.maxim.unsplash.persistence.model.UserEntity
+import timber.log.Timber
 
 class CollectionEntityMapper(
     private val userEntityMapper: DomainMapper<UserEntity, User>,
@@ -21,14 +22,18 @@ class CollectionEntityMapper(
     private val photoDao: PhotoDao
 ) : DomainMapper<CollectionEntity, Collection> {
 
+    @Throws(IllegalStateException::class)
     override suspend fun toDomainModel(model: CollectionEntity): Collection {
-        val user = model.userUsername.let { username ->
-            userDao.getByUsername(username).first()?.let { userEntity ->
-                userEntityMapper.toDomainModel(userEntity)
-            } ?: throw IllegalStateException(
-                "User with username $username for collection ${model.id} not found"
+        val user = userDao.getByUsername(model.userUsername).first()?.let { userEntity ->
+            userEntityMapper.toDomainModel(userEntity)
+        } ?: run {
+            val exception = IllegalStateException(
+                "User with username ${model.userUsername} for collection ${model.id} not found"
             )
+            Timber.w(exception)
+            throw exception
         }
+
 
         val coverPhoto = model.coverPhotoId?.let { photoId ->
             photoDao.getById(photoId).first()?.let { photoEntity ->
@@ -55,10 +60,10 @@ class CollectionEntityMapper(
         domainModel: Collection,
         vararg params: String
     ): CollectionEntity {
-        userDao.insert(userEntityMapper.fromDomainModel(domainModel.user))
+        userDao.insertOrUpdate(userEntityMapper.fromDomainModel(domainModel.user))
 
         domainModel.coverPhoto?.let { photo ->
-            photoDao.insert(photoEntityMapper.fromDomainModel(photo))
+            photoDao.insertOrUpdate(photoEntityMapper.fromDomainModel(photo))
         }
 
         return CollectionEntity(

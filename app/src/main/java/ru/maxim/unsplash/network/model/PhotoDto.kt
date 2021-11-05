@@ -23,7 +23,7 @@ data class PhotoDto(
     val color: String?,
 
     @SerializedName("blur_hash")
-    val blurHash: String,
+    val blurHash: String?,
 
     @SerializedName("likes")
     var likes: Int,

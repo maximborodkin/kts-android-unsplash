@@ -9,7 +9,7 @@ data class Photo(
     val width: Int,
     val height: Int,
     val color: String?,
-    val blurHash: String,
+    val blurHash: String?,
     var likes: Int,
     var likedByUser: Boolean,
     val description: String?,

@@ -9,6 +9,7 @@ import ru.maxim.unsplash.util.Result
 
 class UserLikesFeedFragment : FeedFragment() {
     private var userUsername: String? = null
+    private val photoRepository = get<PhotoRepository>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +20,7 @@ class UserLikesFeedFragment : FeedFragment() {
     }
 
     override suspend fun getItemsPage(page: Int): Flow<Result<List<Any>>> =
-        get<PhotoRepository>().getUserLikedPage(
+        photoRepository.getUserLikedPage(
             userUsername ?: throw IllegalStateException("$userUsername cannot be null"),
             page
         ) as Flow<Result<List<Any>>>

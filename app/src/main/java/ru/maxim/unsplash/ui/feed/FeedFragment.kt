@@ -15,10 +15,7 @@ import org.koin.core.parameter.parametersOf
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentFeedBinding
 import ru.maxim.unsplash.ui.feed.FeedViewModel.FeedState.*
-import ru.maxim.unsplash.ui.feed.items.InitialLoadingErrorItem
-import ru.maxim.unsplash.ui.feed.items.InitialLoadingItem
-import ru.maxim.unsplash.ui.feed.items.PageLoadingErrorItem
-import ru.maxim.unsplash.ui.feed.items.PageLoadingItem
+import ru.maxim.unsplash.ui.feed.items.*
 import ru.maxim.unsplash.util.*
 
 /**
@@ -85,6 +82,9 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                         feedSwipeRefresh.isRefreshing = false
                         val newItems = state.items
                         cacheWarningSnackbar?.dismiss()
+                        if (newItems.isEmpty() && state.isCache) {
+                            newItems.add(EmptyListItem)
+                        }
                         feedRecyclerAdapter.items = newItems
                         feedRecyclerAdapter.notifyDataSetChanged()
                     }

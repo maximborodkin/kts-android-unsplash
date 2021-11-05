@@ -2,6 +2,8 @@ package ru.maxim.unsplash.persistence.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef
 import ru.maxim.unsplash.persistence.model.CollectionPhotoCrossRef.CollectionPhotoContract
 import ru.maxim.unsplash.persistence.model.PhotoEntity
@@ -81,9 +83,21 @@ abstract class PhotoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(photoEntities: List<PhotoEntity>)
 
+    open suspend fun insertOrUpdate(photoEntity: PhotoEntity) {
+        if (getById(photoEntity.id).catch {  }.firstOrNull() != null) {
+            update(photoEntity)
+        } else {
+            insert(photoEntity)
+        }
+    }
+
+    open suspend fun insertOrUpdate(photoEntities: List<PhotoEntity>) {
+        photoEntities.forEach { insertOrUpdate(it) }
+    }
+
     @Transaction
     open suspend fun insertForCollection(photoEntities: List<PhotoEntity>, collectionId: String) {
-        insert(photoEntities)
+        insertOrUpdate(photoEntities)
         val relations =
             photoEntities.map { photo -> CollectionPhotoCrossRef(collectionId, photo.id) }
         insertCollectionRelations(relations)
@@ -91,14 +105,14 @@ abstract class PhotoDao {
 
     @Transaction
     open suspend fun insertForUser(photoEntities: List<PhotoEntity>, userUsername: String) {
-        insert(photoEntities)
+        insertOrUpdate(photoEntities)
         val relations = photoEntities.map { photo -> UserPhotoCrossRef(userUsername, photo.id) }
         insertUserRelations(relations)
     }
 
     @Transaction
     open suspend fun insertForLikes(photoEntities: List<PhotoEntity>, userUsername: String) {
-        insert(photoEntities)
+        insertOrUpdate(photoEntities)
         val relations = photoEntities.map { photo -> UserLikeCrossRef(userUsername, photo.id) }
         insertLikeRelations(relations)
     }

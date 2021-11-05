@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--  MainFragment  -->
-    <string name="main_list_image_transition" translatable="false">main_list_image_transition_%s</string>
-    <string name="main_list_like_btn_transition" translatable="false">main_list_like_btn_transition_%s</string>
-    <string name="main_list_likes_count_transition" translatable="false">main_list_likes_count_transition_%s</string>
-    <string name="main_list_author_avatar_transition" translatable="false">main_list_author_avatar_transition_%s</string>
-    <string name="main_list_author_name_transition" translatable="false">main_list_author_name_transition_%s</string>
+<!--  FeedFragment  -->
+    <!--  PhotoItem  -->
+        <string name="item_photo_image_transition" translatable="false">item_photo_image_%s</string>
+        <string name="item_photo_like_btn_transition" translatable="false">item_photo_like_btn_%s</string>
+        <string name="item_photo_likes_count_transition" translatable="false">item_photo_likes_count_%s</string>
+        <string name="item_photo_author_avatar_transition" translatable="false">item_photo_author_avatar_%s</string>
+        <string name="item_photo_author_name_transition" translatable="false">item_photo_author_name_%s</string>
+    <!--  CollectionItem  -->
+        <string name="item_collection_title_transition" translatable="false">item_collection_title_%s</string>
+        <string name="item_collection_author_avatar_transition" translatable="false">item_collection_author_avatar_%s</string>
+        <string name="item_collection_author_name_transition" translatable="false">item_collection_author_name_%s</string>
 
 <!--  PhotoDetailsFragment  -->
     <string name="photo_details_image_transition" translatable="false">photo_details_image_transition</string>

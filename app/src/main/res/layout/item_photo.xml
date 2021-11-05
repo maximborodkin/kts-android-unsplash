@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="center"
-            android:transitionName="@{@string/main_list_image_transition(photo.id)}"
+            android:transitionName="@{@string/item_photo_image_transition(photo.id)}"
             app:blurHash="@{photo.blurHash}"
             app:image="@{photo.regular}"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +53,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="12dp"
-            android:transitionName="@{@string/main_list_author_avatar_transition(photo.id)}"
+            android:transitionName="@{@string/item_photo_author_avatar_transition(photo.id)}"
             app:image="@{photo.authorAvatar}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +67,7 @@
             android:maxLines="1"
             android:text="@{photo.authorName}"
             android:textColor="@color/white"
-            android:transitionName="@{@string/main_list_author_name_transition(photo.id)}"
+            android:transitionName="@{@string/item_photo_author_name_transition(photo.id)}"
 
             app:layout_constraintBottom_toBottomOf="@id/itemPhotoAuthorAvatar"
             app:layout_constraintStart_toEndOf="@id/itemPhotoAuthorAvatar"
@@ -80,9 +80,8 @@
             android:layout_height="48dp"
             android:padding="8dp"
             android:src="@drawable/ic_like"
-
             android:tint="@{photo.likedByUser ? @color/red_500 : @color/grey}"
-            android:transitionName="@{@string/main_list_like_btn_transition(photo.id)}"
+            android:transitionName="@{@string/item_photo_like_btn_transition(photo.id)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/itemPhotoLikesCount" />
 
@@ -95,7 +94,7 @@
             android:text="@{Integer.toString(photo.likesCount)}"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:transitionName="@{@string/main_list_likes_count_transition(photo.id)}"
+            android:transitionName="@{@string/item_photo_likes_count_transition(photo.id)}"
             app:layout_constraintBottom_toBottomOf="@id/itemPhotoLikeBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/itemPhotoLikeBtn"

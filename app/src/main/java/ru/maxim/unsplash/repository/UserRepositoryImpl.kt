@@ -34,7 +34,7 @@ class UserRepositoryImpl(
             },
             cacheFetchResult = { response ->
                 val domainModel = userDtoMapper.toDomainModel(response)
-                userDao.insert(userEntityMapper.fromDomainModel(domainModel))
+                userDao.insertOrUpdate(userEntityMapper.fromDomainModel(domainModel))
             },
             shouldFetch = { true }
         )
@@ -56,7 +56,7 @@ class UserRepositoryImpl(
             },
             cacheFetchResult = { response ->
                 val domainModel = userDtoMapper.toDomainModel(response)
-                userDao.insert(userEntityMapper.fromDomainModel(domainModel))
+                userDao.insertOrUpdate(userEntityMapper.fromDomainModel(domainModel))
                 preferencesManager.currentUserUsername = domainModel.username
             },
             shouldFetch = { true }

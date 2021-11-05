@@ -6,6 +6,7 @@ import ru.maxim.unsplash.domain.model.*
 import ru.maxim.unsplash.persistence.dao.TagDao
 import ru.maxim.unsplash.persistence.dao.UserDao
 import ru.maxim.unsplash.persistence.model.*
+import timber.log.Timber
 
 class PhotoEntityMapper(
     private val tagDao: TagDao,
@@ -18,14 +19,19 @@ class PhotoEntityMapper(
     private val linksEntityMapper: DomainMapper<LinksEntity, Links>,
 ) : DomainMapper<PhotoEntity, Photo> {
 
+    @Throws(IllegalStateException::class)
     override suspend fun toDomainModel(model: PhotoEntity): Photo {
-        val tags = ArrayList(tagEntityMapper.toDomainModelList(tagDao.getByPhotoId(model.id)))
+        val tags = tagEntityMapper.toDomainModelList(tagDao.getByPhotoId(model.id))
+
         val user = userDao.getByUsername(model.userUsername).first()?.let { userEntity ->
             userEntityMapper.toDomainModel(userEntity)
-        } ?: throw IllegalStateException(
-            "User with username ${model.userUsername} for photo ${model.id} not found"
-        )
-
+        } ?: run {
+            val exception = IllegalStateException(
+                "User with username ${model.userUsername} for photo ${model.id} not found"
+            )
+            Timber.w(exception)
+            throw exception
+        }
 
         return Photo(
             id = model.id,
@@ -50,7 +56,7 @@ class PhotoEntityMapper(
     }
 
     override suspend fun fromDomainModel(domainModel: Photo, vararg params: String): PhotoEntity {
-        userDao.insert(userEntityMapper.fromDomainModel(domainModel.user))
+        userDao.insertOrUpdate(userEntityMapper.fromDomainModel(domainModel.user))
 
         return PhotoEntity(
             id = domainModel.id,

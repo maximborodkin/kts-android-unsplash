@@ -2,6 +2,8 @@ package ru.maxim.unsplash.persistence.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import ru.maxim.unsplash.persistence.model.CollectionEntity
 import ru.maxim.unsplash.persistence.model.CollectionEntity.CollectionContract
 import ru.maxim.unsplash.persistence.model.UserCollectionCrossRef
@@ -43,8 +45,11 @@ abstract class CollectionDao {
     abstract suspend fun insert(collectionEntities: List<CollectionEntity>)
 
     @Transaction
-    open suspend fun insertForUser(collectionEntities: List<CollectionEntity>, userUsername: String) {
-        insert(collectionEntities)
+    open suspend fun insertForUser(
+        collectionEntities: List<CollectionEntity>,
+        userUsername: String
+    ) {
+        insertOrUpdate(collectionEntities)
         val relations = collectionEntities.map { collection ->
             UserCollectionCrossRef(
                 userUsername,
@@ -52,6 +57,18 @@ abstract class CollectionDao {
             )
         }
         insertUserCollectionRelations(relations)
+    }
+
+    open suspend fun insertOrUpdate(collectionEntity: CollectionEntity) {
+        if (getById(collectionEntity.id).catch { }.firstOrNull() != null) {
+            update(collectionEntity)
+        } else {
+            insert(collectionEntity)
+        }
+    }
+
+    open suspend fun insertOrUpdate(collectionEntities: List<CollectionEntity>) {
+        collectionEntities.forEach { insertOrUpdate(it) }
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

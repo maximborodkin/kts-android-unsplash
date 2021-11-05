@@ -41,7 +41,7 @@ class PhotoRepositoryImpl(
                     photoDao.deleteAll()
                 }
                 val domainModelList = photoDtoMapper.toDomainModelList(response)
-                photoDao.insert(photoEntityMapper.fromDomainModelList(domainModelList))
+                photoDao.insertOrUpdate(photoEntityMapper.fromDomainModelList(domainModelList))
             },
             shouldFetch = {
                 // TODO: create cache validation algorithm
@@ -61,7 +61,7 @@ class PhotoRepositoryImpl(
             },
             cacheFetchResult = { response: PhotoDto ->
                 val domainModel = photoDtoMapper.toDomainModel(response)
-                photoDao.insert(photoEntityMapper.fromDomainModel(domainModel))
+                photoDao.insertOrUpdate(photoEntityMapper.fromDomainModel(domainModel))
                 domainModel.tags?.let {
                     tagDao.insert(tagEntityMapper.fromDomainModelList(it, domainModel.id))
                 }
@@ -81,7 +81,7 @@ class PhotoRepositoryImpl(
             },
             cacheFetchResult = { response ->
                 val domainModelList = photoDtoMapper.toDomainModelList(response.results)
-                photoDao.insert(photoEntityMapper.fromDomainModelList(domainModelList))
+                photoDao.insertOrUpdate(photoEntityMapper.fromDomainModelList(domainModelList))
             },
             shouldFetch = { true }
         )

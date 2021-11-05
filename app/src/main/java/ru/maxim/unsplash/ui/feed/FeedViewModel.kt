@@ -39,7 +39,8 @@ class FeedViewModel private constructor(
 
         object InitialLoading : FeedState()
         data class InitialLoadingSuccess(
-            val items: ArrayList<BaseFeedListItem>
+            val items: ArrayList<BaseFeedListItem>,
+            val isCache: Boolean
         ) : FeedState()
         data class InitialLoadingError(
             @StringRes val message: Int?,
@@ -76,14 +77,14 @@ class FeedViewModel private constructor(
                     * */
                     if (currentPage == 1) {
                         result.data?.let {
-                            _feedState.emit(InitialLoadingSuccess(mapResponse(it)))
+                            _feedState.emit(InitialLoadingSuccess(mapResponse(it), isCache = true))
                         }
                     }
                 }
 
                 is Success -> {
                     if (currentPage == 1) {
-                        _feedState.emit(InitialLoadingSuccess(mapResponse(result.data)))
+                        _feedState.emit(InitialLoadingSuccess(mapResponse(result.data), isCache = false))
                     } else {
                         _feedState.emit(PageLoadingSuccess(mapResponse(result.data)))
                     }

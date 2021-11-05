@@ -33,7 +33,7 @@ class CollectionRepositoryImpl(
                 }
                 val domainList = collectionDtoMapper.toDomainModelList(response)
                 val collectionEntityList = collectionEntityMapper.fromDomainModelList(domainList)
-                collectionDao.insert(collectionEntityList)
+                collectionDao.insertOrUpdate(collectionEntityList)
             },
             shouldFetch = {
                 // TODO: create cache validation algorithm
@@ -53,7 +53,7 @@ class CollectionRepositoryImpl(
             },
             cacheFetchResult = { response: CollectionDto ->
                 val domainModel = collectionDtoMapper.toDomainModel(response)
-                collectionDao.insert(collectionEntityMapper.fromDomainModel(domainModel))
+                collectionDao.insertOrUpdate(collectionEntityMapper.fromDomainModel(domainModel))
             },
             shouldFetch = { true }
         )

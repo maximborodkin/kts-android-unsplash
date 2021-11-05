@@ -38,7 +38,7 @@ data class PhotoEntity(
     val color: String?,
 
     @ColumnInfo(name = PhotoContract.Columns.blurHash)
-    val blurHash: String,
+    val blurHash: String?,
 
     @ColumnInfo(name = PhotoContract.Columns.likes)
     var likes: Int,

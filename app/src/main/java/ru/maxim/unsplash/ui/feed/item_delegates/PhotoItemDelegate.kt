@@ -12,10 +12,10 @@ import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
 import ru.maxim.unsplash.ui.feed.items.PhotoItem
 
 class PhotoItemDelegate(
-    private val onSetLike: (photoId: String, itemPosition: Int) -> Unit,
-    private val onAddToCollection: (photoId: String) -> Unit,
-    private val onDownload: (photoId: String) -> Unit,
-    private val onOpenPhotoDetails: (
+    private val onLikeClick: (photoId: String, hasLike: Boolean, itemPosition: Int) -> Unit,
+    private val onAddToCollectionClick: (photoId: String) -> Unit,
+    private val onDownloadClick: (photoId: String) -> Unit,
+    private val onPhotoClick: (
         photoId: String,
         photoUrl: String?,
         blurHash: String?,
@@ -23,7 +23,7 @@ class PhotoItemDelegate(
         height: Int,
         transitionExtras: Array<Pair<View, String>>
     ) -> Unit,
-    private val onOpenProfile: (
+    private val onProfileClick: (
         userUsername: String,
         transitionExtras: Array<Pair<View, String>>
     ) -> Unit
@@ -51,59 +51,62 @@ class PhotoItemDelegate(
         private val binding by viewBinding(ItemPhotoBinding::bind)
         private val context = itemView.context
 
-        fun bind(photo: PhotoItem) {
-            with(binding) {
-                binding.photo
-                this.photo = photo
+        fun bind(photoItem: PhotoItem) = with(binding) {
+            photo = photoItem
 
-                // Set initial ImageView size to photo dimensions
-                val screenWidth = context.resources.displayMetrics.widthPixels
-                val imageRatio = photo.width.toDouble() / photo.height.toDouble()
-                itemPhotoImage.layoutParams.apply {
-                    width = screenWidth
-                    height = (screenWidth / imageRatio).toInt()
-                }
+            // Set initial ImageView size to photo dimensions
+            val screenWidth = context.resources.displayMetrics.widthPixels
+            val imageRatio = photoItem.width.toDouble() / photoItem.height.toDouble()
+            itemPhotoImage.layoutParams.apply {
+                width = screenWidth
+                height = (screenWidth / imageRatio).toInt()
+            }
 
-                itemPhotoLikeBtn.setOnClickListener { onSetLike(photo.id, absoluteAdapterPosition) }
-                itemPhotoAddBtn.setOnClickListener { onAddToCollection(photo.id) }
-                itemPhotoDownloadBtn.setOnClickListener { onDownload(photo.id) }
+            itemPhotoLikeBtn.setOnClickListener {
+                onLikeClick(
+                    photoItem.id,
+                    photoItem.likedByUser,
+                    absoluteAdapterPosition
+                )
+            }
+            itemPhotoAddBtn.setOnClickListener { onAddToCollectionClick(photoItem.id) }
+            itemPhotoDownloadBtn.setOnClickListener { onDownloadClick(photoItem.id) }
 
-                val openProfileAction = {
-                    onOpenProfile(
-                        photo.authorUsername,
-                        arrayOf(
-                            itemPhotoAuthorAvatar to
-                                    context.getString(R.string.photo_details_author_avatar_transition),
-                            itemPhotoAuthorName to
-                                    context.getString(R.string.photo_details_author_name_transition)
-                        )
+            val openProfileAction = {
+                onProfileClick(
+                    photoItem.authorUsername,
+                    arrayOf(
+                        itemPhotoAuthorAvatar to
+                                context.getString(R.string.photo_details_author_avatar_transition),
+                        itemPhotoAuthorName to
+                                context.getString(R.string.photo_details_author_name_transition)
                     )
-                }
+                )
+            }
 
-                itemPhotoAuthorAvatar.setOnClickListener { openProfileAction() }
-                itemPhotoAuthorName.setOnClickListener { openProfileAction() }
+            itemPhotoAuthorAvatar.setOnClickListener { openProfileAction() }
+            itemPhotoAuthorName.setOnClickListener { openProfileAction() }
 
-                root.setOnClickListener {
-                    onOpenPhotoDetails(
-                        photo.id,
-                        photo.regular,
-                        photo.blurHash,
-                        itemPhotoImage.width,
-                        itemPhotoImage.height,
-                        arrayOf(
-                            itemPhotoImage to
-                                    context.getString(R.string.photo_details_image_transition),
-                            itemPhotoLikeBtn to
-                                    context.getString(R.string.photo_details_like_btn_transition),
-                            itemPhotoLikesCount to
-                                    context.getString(R.string.photo_details_likes_count_transition),
-                            itemPhotoAuthorAvatar to
-                                    context.getString(R.string.photo_details_author_avatar_transition),
-                            itemPhotoAuthorName to
-                                    context.getString(R.string.photo_details_author_name_transition)
-                        )
+            root.setOnClickListener {
+                onPhotoClick(
+                    photoItem.id,
+                    photoItem.regular,
+                    photoItem.blurHash,
+                    itemPhotoImage.width,
+                    itemPhotoImage.height,
+                    arrayOf(
+                        itemPhotoImage to
+                                context.getString(R.string.photo_details_image_transition),
+                        itemPhotoLikeBtn to
+                                context.getString(R.string.photo_details_like_btn_transition),
+                        itemPhotoLikesCount to
+                                context.getString(R.string.photo_details_likes_count_transition),
+                        itemPhotoAuthorAvatar to
+                                context.getString(R.string.photo_details_author_avatar_transition),
+                        itemPhotoAuthorName to
+                                context.getString(R.string.photo_details_author_name_transition)
                     )
-                }
+                )
             }
         }
     }

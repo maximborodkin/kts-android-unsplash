@@ -88,7 +88,7 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
         }
     }
 
-    override fun openPhotoDetails(
+    override fun onPhotoClick(
         photoId: String,
         photoUrl: String?,
         blurHash: String?,
@@ -108,14 +108,7 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
         findNavController().navigate(action, extras)
     }
 
-    override fun openCollectionDetails(
-        collectionId: String,
-        transitionExtras: Array<Pair<View, String>>
-    ) {
-        //Stub
-    }
-
-    override fun openProfile(userUsername: String, transitionExtras: Array<Pair<View, String>>) {
+    override fun onProfileClick(userUsername: String, transitionExtras: Array<Pair<View, String>>) {
         val action =
             CollectionDetailsFragmentDirections.actionCollectionDetailsToProfile(userUsername)
         val extras = FragmentNavigatorExtras(

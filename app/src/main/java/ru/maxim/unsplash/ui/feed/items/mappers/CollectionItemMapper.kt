@@ -13,5 +13,6 @@ fun Collection.mapToItem(): CollectionItem =
         coverHash = coverPhoto?.blurHash,
         authorUsername = user.username,
         authorName = user.name,
-        authorAvatar = user.profileImage.small
+        authorAvatar = user.profileImage.small,
+        link = links.self
     )

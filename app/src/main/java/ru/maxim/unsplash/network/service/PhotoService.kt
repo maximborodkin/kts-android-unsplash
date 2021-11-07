@@ -1,9 +1,11 @@
 package ru.maxim.unsplash.network.service
 
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.maxim.unsplash.network.model.PhotoDto
 import ru.maxim.unsplash.network.model.response.LikeResponse
+import ru.maxim.unsplash.network.model.response.PhotoDownloadResponse
 import ru.maxim.unsplash.network.model.response.PhotosSearchResponse
 
 interface PhotoService {
@@ -50,4 +52,10 @@ interface PhotoService {
         @Query("page") page: Int,
         @Query("per_page") pageSize: Int = 10
     ): Response<List<PhotoDto>>
+
+    @GET("/photos/{photoId}/download")
+    suspend fun getDownloadUrl(@Path("photoId") photoId: String): PhotoDownloadResponse
+
+    @GET
+    suspend fun downloadPhoto(@Url trackableDownloadUrl: String): Response<ResponseBody>
 }

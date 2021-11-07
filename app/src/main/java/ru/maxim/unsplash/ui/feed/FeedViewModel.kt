@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.maxim.unsplash.R
@@ -49,10 +48,10 @@ class FeedViewModel private constructor(
 
         object PageLoading : FeedState()
         data class PageLoadingSuccess(val itemsAdded: ArrayList<BaseFeedListItem>) : FeedState()
-        data class PageLoadingError(@StringRes val message: Int?) : FeedState()
+        data class PageLoadingError(@StringRes val message: Int) : FeedState()
 
         data class SetLikeSuccess(val itemPosition: Int) : FeedState()
-        data class SetLikeError(@StringRes val message: Int?) : FeedState()
+        data class SetLikeError(@StringRes val message: Int) : FeedState()
     }
 
     fun loadNextPage(page: Int? = null) = viewModelScope.launch {
@@ -84,7 +83,12 @@ class FeedViewModel private constructor(
 
                 is Success -> {
                     if (currentPage == 1) {
-                        _feedState.emit(InitialLoadingSuccess(mapResponse(result.data), isCache = false))
+                        _feedState.emit(
+                            InitialLoadingSuccess(
+                                mapResponse(result.data),
+                                isCache = false
+                            )
+                        )
                     } else {
                         _feedState.emit(PageLoadingSuccess(mapResponse(result.data)))
                     }
@@ -129,20 +133,35 @@ class FeedViewModel private constructor(
         loadNextPage(1)
     }
 
-    fun setLike(photoId: String, itemPosition: Int) = viewModelScope.launch(IO) {
-
+    fun setLike(photoId: String, hasLike: Boolean, itemPosition: Int) = viewModelScope.launch {
+        photoRepository.editLike(photoId, hasLike).collect { result ->
+            when(result) {
+                is Success -> {
+                    _feedState.emit(SetLikeSuccess(itemPosition))
+                }
+                is Error -> {
+                    val errorMessage = when(result.exception) {
+                        is UnauthorizedException -> R.string.unauthorized_error
+                        is ForbiddenException -> R.string.forbidden_photo
+                        is NotFoundException -> R.string.photo_not_found
+                        is TimeoutException -> R.string.timeout_error
+                        is ServerErrorException -> R.string.server_error
+                        is NoConnectionException -> R.string.no_internet
+                        else -> R.string.common_like_error
+                    }
+                    _feedState.emit(SetLikeError(errorMessage))
+                }
+                else -> { /* Skip cache */ }
+            }
+        }
     }
 
     fun addToCollection(photoId: String) {
 
     }
 
-    fun download(photoId: String) {
-
-    }
-
-    fun shareCollection(collectionId: String) {
-
+    fun download(photoId: String) = viewModelScope.launch {
+        photoRepository.downloadPhoto(photoId)
     }
 
     fun retryPageLoading() {
@@ -159,7 +178,7 @@ class FeedViewModel private constructor(
         private val getItemsPage: suspend (page: Int) -> Flow<Result<List<Any>>>
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(FeedViewModel::class.java)) {
                 return FeedViewModel(
                     application,

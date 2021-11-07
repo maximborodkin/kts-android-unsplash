@@ -16,7 +16,6 @@ import org.koin.core.parameter.parametersOf
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentProfileBinding
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
-import ru.maxim.unsplash.ui.feed.FeedFragment
 import ru.maxim.unsplash.util.longToast
 
 class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener {
@@ -35,7 +34,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
         with(binding) {
             lifecycleOwner = viewLifecycleOwner
             profileSwipeRefresh.setOnRefreshListener { model.refresh() }
-            profileAvatar.setOnClickListener { user?.profileImage?.large }
+            profileAvatar.setOnClickListener { user?.profileImage?.large?.let { openAvatarViewer(it) } }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -98,7 +97,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
         }
     }
 
-    override fun openPhotoDetails(
+    override fun onPhotoClick(
         photoId: String,
         photoUrl: String?,
         blurHash: String?,
@@ -107,7 +106,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
         transitionExtras: Array<Pair<View, String>>
     ) {
         (parentFragment as? FeedActionsListener)
-            ?.openPhotoDetails(photoId, photoUrl, blurHash, width, height, transitionExtras)
+            ?.onPhotoClick(photoId, photoUrl, blurHash, width, height, transitionExtras)
             ?: kotlin.run {
                 val action = ProfileFragmentDirections
                     .actionProfileToPhotoDetails(photoId, photoUrl, width, height, blurHash)
@@ -117,12 +116,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
     }
 
 
-    override fun openCollectionDetails(
+    override fun onCollectionClick(
         collectionId: String,
         transitionExtras: Array<Pair<View, String>>
     ) {
         (parentFragment as? FeedActionsListener)
-            ?.openCollectionDetails(collectionId, transitionExtras)
+            ?.onCollectionClick(collectionId, transitionExtras)
             ?: kotlin.run {
                 val action = ProfileFragmentDirections
                     .actionProfileToCollectionDetails(collectionId)
@@ -134,10 +133,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
     fun openAvatarViewer(avatarUrl: String) {
         val action = ProfileFragmentDirections.actionProfileToImageViewer(avatarUrl)
         findNavController().navigate(action)
-    }
-
-    override fun openProfile(userUsername: String, transitionExtras: Array<Pair<View, String>>) {
-        // Stub
     }
 
     override fun onDestroyView() {

@@ -12,14 +12,14 @@ fun <DomainType, ResponseType> networkBoundResource(
     query: suspend () -> Flow<DomainType>,
     fetch: suspend () -> Response<ResponseType>,
     cacheFetchResult: suspend (ResponseType) -> Unit,
-    shouldFetch: (DomainType) -> Boolean = { true }
+    shouldFetch: (DomainType?) -> Boolean = { true }
 ) = flow {
 
     // Database result flows may throw [IllegalStateException] when a query fails.
     // In this case, the flow collector must handle these exceptions and pass this inconsistent data.
     suspend fun queryFlow() = query().flowOn(IO).catch {  }
 
-    val cache = queryFlow().first()
+    val cache = queryFlow().firstOrNull()
 
     val responseFlow = if (shouldFetch(cache)) {
         emit(Result.Loading(cache))

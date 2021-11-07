@@ -4,16 +4,16 @@ import android.view.View
 
 interface FeedActionsListener {
 
-    fun openPhotoDetails(
+    fun onPhotoClick(
         photoId: String,
         photoUrl: String?,
         blurHash: String?,
         width: Int,
         height: Int,
         transitionExtras: Array<Pair<View, String>>,
-    )
+    ) {}
 
-    fun openCollectionDetails(collectionId: String, transitionExtras: Array<Pair<View, String>>)
+    fun onCollectionClick(collectionId: String, transitionExtras: Array<Pair<View, String>>) {}
 
-    fun openProfile(userUsername: String, transitionExtras: Array<Pair<View, String>>)
+    fun onProfileClick(userUsername: String, transitionExtras: Array<Pair<View, String>>) {}
 }

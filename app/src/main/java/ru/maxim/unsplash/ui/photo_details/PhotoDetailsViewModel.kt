@@ -67,7 +67,30 @@ class PhotoDetailsViewModel private constructor(
     }
 
     fun setLike() = viewModelScope.launch {
-
+        val currentState = _photoDetailsState.value
+        if (currentState is Success) {
+            photoRepository.editLike(photoId, currentState.photo.likedByUser).collect { result ->
+                when(result) {
+                    is Result.Success -> {
+                        val updatedPhoto = currentState.photo.apply { likedByUser = !likedByUser }
+                        _photoDetailsState.emit(Success(updatedPhoto))
+                    }
+                    is Result.Error -> {
+                        val errorMessage = when(result.exception) {
+                            is UnauthorizedException -> R.string.unauthorized_error
+                            is ForbiddenException -> R.string.forbidden_photo
+                            is NotFoundException -> R.string.photo_not_found
+                            is TimeoutException -> R.string.timeout_error
+                            is ServerErrorException -> R.string.server_error
+                            is NoConnectionException -> R.string.no_internet
+                            else -> R.string.common_like_error
+                        }
+                        _photoDetailsState.emit(Error(errorMessage, null))
+                    }
+                    else -> { /* Skip cache */ }
+                }
+            }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

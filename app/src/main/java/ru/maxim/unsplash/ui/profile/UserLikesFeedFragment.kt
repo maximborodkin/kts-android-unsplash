@@ -2,14 +2,14 @@ package ru.maxim.unsplash.ui.profile
 
 import android.os.Bundle
 import kotlinx.coroutines.flow.Flow
-import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.feed.FeedFragment
 import ru.maxim.unsplash.util.Result
 
 class UserLikesFeedFragment : FeedFragment() {
+    private val photoRepository: PhotoRepository by inject()
     private var userUsername: String? = null
-    private val photoRepository = get<PhotoRepository>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

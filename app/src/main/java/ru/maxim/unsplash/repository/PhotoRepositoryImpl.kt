@@ -1,20 +1,21 @@
 package ru.maxim.unsplash.repository
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Photo
 import ru.maxim.unsplash.domain.model.Tag
 import ru.maxim.unsplash.network.model.PhotoDto
 import ru.maxim.unsplash.network.service.PhotoService
+import ru.maxim.unsplash.persistence.ExternalStorageManager
 import ru.maxim.unsplash.persistence.dao.PhotoDao
 import ru.maxim.unsplash.persistence.dao.TagDao
 import ru.maxim.unsplash.persistence.model.PhotoEntity
 import ru.maxim.unsplash.persistence.model.TagEntity
 import ru.maxim.unsplash.util.Result
 import ru.maxim.unsplash.util.networkBoundResource
+import timber.log.Timber
 
 class PhotoRepositoryImpl(
     private val photoService: PhotoService,
@@ -22,7 +23,8 @@ class PhotoRepositoryImpl(
     private val tagDao: TagDao,
     private val photoDtoMapper: DomainMapper<PhotoDto, Photo>,
     private val photoEntityMapper: DomainMapper<PhotoEntity, Photo>,
-    private val tagEntityMapper: DomainMapper<TagEntity, Tag>
+    private val tagEntityMapper: DomainMapper<TagEntity, Tag>,
+    private val externalStorageManager: ExternalStorageManager
 ) : PhotoRepository {
 
     override suspend fun getFeedPage(page: Int): Flow<Result<List<Photo>>> =
@@ -75,7 +77,6 @@ class PhotoRepositoryImpl(
                 photoDao.search(query).map { photoEntityMapper.toDomainModelList(it) }
             },
             fetch = {
-                delay(5000)
                 val loadSize = if (page == 1) initialPageSize else pageSize
                 photoService.getSearchPage(query, page, loadSize)
             },
@@ -86,13 +87,24 @@ class PhotoRepositoryImpl(
             shouldFetch = { true }
         )
 
-    override suspend fun setLike(photoId: String): Flow<Result<Photo>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun removeLike(photoId: String): Flow<Result<Photo>> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun editLike(photoId: String, hasLike: Boolean): Flow<Result<Nothing>> =
+        networkBoundResource(
+            query = { emptyFlow() },
+            fetch = {
+                if (hasLike)
+                    photoService.removeLike(photoId)
+                else
+                    photoService.setLike(photoId)
+            },
+            cacheFetchResult = { response ->
+                photoDao.getById(photoId).firstOrNull()?.let {
+                    it.likedByUser = response.photo.likedByUser
+                    it.likes = response.photo.likes
+                    photoDao.update(it)
+                }
+            },
+            shouldFetch = { true }
+        )
 
     override suspend fun getCollectionPhotosPage(
         collectionId: String,
@@ -136,10 +148,14 @@ class PhotoRepositoryImpl(
             shouldFetch = { true }
         )
 
-    override suspend fun getUserLikedPage(userUsername: String, page: Int): Flow<Result<List<Photo>>> =
+    override suspend fun getUserLikedPage(
+        userUsername: String,
+        page: Int
+    ): Flow<Result<List<Photo>>> =
         networkBoundResource(
             query = {
-                photoDao.getLikedByUser(userUsername).map { photoEntityMapper.toDomainModelList(it) }
+                photoDao.getLikedByUser(userUsername)
+                    .map { photoEntityMapper.toDomainModelList(it) }
             },
             fetch = {
                 val loadSize = if (page == 1) initialPageSize else pageSize
@@ -154,6 +170,27 @@ class PhotoRepositoryImpl(
             },
             shouldFetch = { true }
         )
+
+    override suspend fun downloadPhoto(photoId: String) = withContext(IO) {
+        try {
+            /**
+             * Unsplash requires the use of trackable download link to increment the downloads
+             * counter instead of using the embedded link for loading an image into the application.
+             * */
+            /**
+             * Unsplash requires the use of trackable download link to increment the downloads
+             * counter instead of using the embedded link for loading an image into the application.
+             * */
+            val trackableDownloadUrl = photoService.getDownloadUrl(photoId).url
+            val photoResponse = photoService.downloadPhoto(trackableDownloadUrl)
+            if (photoResponse.isSuccessful && photoResponse.body() != null) {
+                externalStorageManager.saveFile(photoResponse.body()!!)
+            }
+        } catch (e: Exception) {
+            Timber.w(e)
+        }
+    }
+
 
     private companion object {
         private const val pageSize = 10

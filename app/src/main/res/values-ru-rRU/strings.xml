@@ -57,4 +57,8 @@
     <string name="user_not_found">Пользователь не найден</string>
     <string name="photos">Фотографии</string>
     <string name="likes">Избранное</string>
+    <string name="common_like_error">Невозможно изменить лайк</string>
+    <string name="downloaded">Загружено</string>
+    <string name="download_error">Ошибка загрузки</string>
+    <string name="share_collection">Поделиться коллекцией</string>
 </resources>

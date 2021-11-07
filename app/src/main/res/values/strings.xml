@@ -54,6 +54,10 @@
     <string name="last_update">Last update</string>
     <string name="photos">Photos</string>
     <string name="likes">Likes</string>
+    <string name="common_like_error">Unable to set like</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="download_error">Downloading error</string>
+    <string name="share_collection">Share collection</string>
 
     <plurals name="photos_count">
         <item quantity="zero">No photos yet</item>

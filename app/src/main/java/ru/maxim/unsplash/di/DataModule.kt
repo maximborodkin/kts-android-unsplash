@@ -15,7 +15,8 @@ val dataModule = module(createdAtStart = true) {
             tagDao = get(),
             photoDtoMapper = get(named("photo_dto_mapper")),
             photoEntityMapper = get(named("photo_entity_mapper")),
-            tagEntityMapper = get(named("tag_entity_mapper"))
+            tagEntityMapper = get(named("tag_entity_mapper")),
+            externalStorageManager = get()
         )
     }
 

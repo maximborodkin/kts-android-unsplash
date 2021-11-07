@@ -42,10 +42,9 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
         postponeEnterTransition()
 
         feedRecyclerAdapter = FeedRecyclerAdapter(
-            onSetLike = model::setLike,
-            onAddToCollection = model::addToCollection,
-            onDownload = model::download,
-            onCollectionShare = model::shareCollection,
+            onLikeClick = model::setLike,
+            onAddToCollectionClick = model::addToCollection,
+            onDownloadClick = model::download,
             feedActionsListener = parentFragment as FeedActionsListener,
             onRefresh = ::loadInitialPage,
             onRetry = ::retryLoading
@@ -135,7 +134,7 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
 
                     is SetLikeSuccess -> feedRecyclerAdapter.notifyItemChanged(state.itemPosition)
 
-                    is SetLikeError -> state.message?.let { context?.toast(it) }
+                    is SetLikeError -> state.message.let { context?.toast(it) }
                 }
             }
         }

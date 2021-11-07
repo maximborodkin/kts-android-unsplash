@@ -7,16 +7,18 @@ import org.koin.dsl.module
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.*
 import ru.maxim.unsplash.domain.model.Collection
+import ru.maxim.unsplash.persistence.ExternalStorageManager
 import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.persistence.UnsplashDatabase
 import ru.maxim.unsplash.persistence.mapper.*
 import ru.maxim.unsplash.persistence.model.*
 
-
 val persistenceModule = module(createdAtStart = true) {
 
     // Preferences manager
     single { PreferencesManager(androidContext()) }
+
+    single { ExternalStorageManager(androidContext()) }
 
     // Database instance
     single {

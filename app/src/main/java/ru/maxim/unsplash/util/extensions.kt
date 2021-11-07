@@ -116,6 +116,8 @@ fun ImageView.load(
 
 fun Date?.dateTimeString(): String? = this?.let { "${dateString()} ${timeString()}" }
 
+fun Date.toFileName(): String = SimpleDateFormat("dd_MMMM_yyyy_HH_mm_ss", Locale.getDefault()).format(this)
+
 fun Date?.dateString(): String? =
     this?.let { SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(this) }
 

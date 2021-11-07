@@ -37,7 +37,7 @@ class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
         binding.root.doOnPreDraw { startPostponedEnterTransition() }
     }
 
-    override fun openPhotoDetails(
+    override fun onPhotoClick(
         photoId: String,
         photoUrl: String?,
         blurHash: String?,
@@ -58,7 +58,7 @@ class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
         findNavController().navigate(action, extras)
     }
 
-    override fun openCollectionDetails(
+    override fun onCollectionClick(
         collectionId: String,
         transitionExtras: Array<Pair<View, String>>
     ) {
@@ -67,7 +67,7 @@ class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
         findNavController().navigate(action, extras)
     }
 
-    override fun openProfile(userUsername: String, transitionExtras: Array<Pair<View, String>>) {
+    override fun onProfileClick(userUsername: String, transitionExtras: Array<Pair<View, String>>) {
         val action = MainFragmentDirections.actionMainToProfile(userUsername)
         val extras = FragmentNavigatorExtras(*transitionExtras)
         findNavController().navigate(action, extras)

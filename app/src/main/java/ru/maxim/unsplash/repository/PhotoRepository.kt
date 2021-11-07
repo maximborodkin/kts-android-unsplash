@@ -12,13 +12,13 @@ interface PhotoRepository {
 
     suspend fun getSearchPage(query: String, page: Int): Flow<Result<List<Photo>>>
 
-    suspend fun setLike(photoId: String): Flow<Result<Photo>>
-
-    suspend fun removeLike(photoId: String): Flow<Result<Photo>>
+    suspend fun editLike(photoId: String, hasLike: Boolean): Flow<Result<Nothing>>
 
     suspend fun getCollectionPhotosPage(collectionId: String, page: Int): Flow<Result<List<Photo>>>
 
     suspend fun getUserPhotosPage(username: String, page: Int): Flow<Result<List<Photo>>>
 
     suspend fun getUserLikedPage(userUsername: String, page: Int): Flow<Result<List<Photo>>>
+
+    suspend fun downloadPhoto(photoId: String)
 }

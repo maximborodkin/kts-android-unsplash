@@ -5,6 +5,15 @@
     android:id="@+id/nav_graph.xml"
     app:startDestination="@id/onboardingFragment">
 
+    <dialog
+        android:id="@+id/addToCollectionDialog"
+        android:name="ru.maxim.unsplash.ui.dialogs.add_to_collection.AddToCollectionDialogFragment"
+        android:label="AddToCollectionDialog">
+        <argument
+            android:name="photoId"
+            app:argType="string" />
+    </dialog>
+
     <fragment
         android:id="@+id/onboardingFragment"
         android:name="ru.maxim.unsplash.ui.onboarding.OnboardingFragment"
@@ -56,6 +65,9 @@
         <action
             android:id="@+id/action_main_to_profile"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_main_to_addToCollectionDialog"
+            app:destination="@id/addToCollectionDialog" />
     </fragment>
 
     <fragment
@@ -126,9 +138,9 @@
         tools:layout="@layout/fragment_profile">
         <argument
             android:name="username"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+            app:nullable="true" />
         <action
             android:id="@+id/action_profile_to_collectionDetails"
             app:destination="@id/collectionDetailsFragment" />
@@ -138,5 +150,8 @@
         <action
             android:id="@+id/action_profile_to_ImageViewer"
             app:destination="@id/fragmentImageViewer" />
+        <action
+            android:id="@+id/action_profile_to_addToCollectionDialog"
+            app:destination="@id/addToCollectionDialog" />
     </fragment>
 </navigation>

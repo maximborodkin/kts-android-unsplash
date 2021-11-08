@@ -16,4 +16,6 @@ interface FeedActionsListener {
     fun onCollectionClick(collectionId: String, transitionExtras: Array<Pair<View, String>>) {}
 
     fun onProfileClick(userUsername: String, transitionExtras: Array<Pair<View, String>>) {}
+
+    fun onAddToCollectionClick(photoId: String) {}
 }

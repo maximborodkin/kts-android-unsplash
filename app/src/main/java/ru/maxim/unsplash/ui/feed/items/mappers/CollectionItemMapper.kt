@@ -14,5 +14,6 @@ fun Collection.mapToItem(): CollectionItem =
         authorUsername = user.username,
         authorName = user.name,
         authorAvatar = user.profileImage.small,
-        link = links.self
+        isPrivate = isPrivate,
+        link = links.html
     )

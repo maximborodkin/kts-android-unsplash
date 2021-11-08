@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
         <variable
             name="collection"
             type="ru.maxim.unsplash.ui.feed.items.CollectionItem" />
@@ -26,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemCollectionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,6 +40,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Example collection" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_private"
+            android:visibility="@{collection.isPrivate ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/itemCollectionTitle"
+            app:layout_constraintStart_toEndOf="@id/itemCollectionTitle"
+            app:layout_constraintTop_toTopOf="@id/itemCollectionTitle" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/itemCollectionShareBtn"

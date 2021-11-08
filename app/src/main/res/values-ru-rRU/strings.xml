@@ -25,6 +25,7 @@
     <string name="profile">Профиль</string>
     <string name="unable_to_load_photo">Невозможно загрузить фото</string>
     <string name="forbidden_photo">Недостаточно проав для доступа к этому фото</string>
+    <string name="forbidden_add_to_collection">Недостаточно прав для добавления фото в эту коллекцию</string>
     <string name="photo_not_found">Фото не найдено</string>
     <string name="dimensions">Размер</string>
     <string name="camera">Камера</string>
@@ -58,7 +59,8 @@
     <string name="photos">Фотографии</string>
     <string name="likes">Избранное</string>
     <string name="common_like_error">Невозможно изменить лайк</string>
-    <string name="downloaded">Загружено</string>
+    <string name="downloaded_placeholder">Загружено в %s</string>
     <string name="download_error">Ошибка загрузки</string>
     <string name="share_collection">Поделиться коллекцией</string>
+    <string name="added_to_collection">Добавлено в коллекцию</string>
 </resources>

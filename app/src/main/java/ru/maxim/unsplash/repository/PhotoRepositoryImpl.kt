@@ -39,9 +39,6 @@ class PhotoRepositoryImpl(
                 photoService.getFeedPage(page, loadSize)
             },
             cacheFetchResult = { response: List<PhotoDto> ->
-                if (page == 1) {
-                    photoDao.deleteAll()
-                }
                 val domainModelList = photoDtoMapper.toDomainModelList(response)
                 photoDao.insertOrUpdate(photoEntityMapper.fromDomainModelList(domainModelList))
             },

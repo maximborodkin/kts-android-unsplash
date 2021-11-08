@@ -17,7 +17,7 @@ import ru.maxim.unsplash.persistence.model.UserPhotoCrossRef.UserPhotoContract
 @Dao
 abstract class PhotoDao {
 
-    @Query("SELECT * FROM ${PhotoContract.tableName} ORDER BY ${PhotoContract.Columns.cacheTime}")
+    @Query("SELECT * FROM ${PhotoContract.tableName} ORDER BY ${PhotoContract.Columns.updatedAt}")
     abstract fun getAll(): Flow<List<PhotoEntity>>
 
     @Query("SELECT * FROM ${PhotoContract.tableName} WHERE ${PhotoContract.Columns.id}=:id")
@@ -32,7 +32,7 @@ abstract class PhotoDao {
             ${CollectionPhotoContract.tableName}.${CollectionPhotoContract.Columns.photoId}
         WHERE ${CollectionPhotoContract.tableName}.${CollectionPhotoContract.Columns.collectionId}=
             :collectionId
-        ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.cacheTime}"""
+        ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.updatedAt}"""
     )
     @RewriteQueriesToDropUnusedColumns
     abstract fun getByCollectionId(collectionId: String): Flow<List<PhotoEntity>>
@@ -45,7 +45,7 @@ abstract class PhotoDao {
             ${PhotoContract.tableName}.${PhotoContract.Columns.id}=
             ${UserPhotoContract.tableName}.${UserPhotoContract.Columns.photoId}
         WHERE ${UserPhotoContract.tableName}.${UserPhotoContract.Columns.userUsername}=:username
-        ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.cacheTime}"""
+        ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.updatedAt}"""
     )
     @RewriteQueriesToDropUnusedColumns
     abstract fun getByUser(username: String): Flow<List<PhotoEntity>>
@@ -57,7 +57,8 @@ abstract class PhotoDao {
         ON
             ${PhotoContract.tableName}.${PhotoContract.Columns.id}=
             ${UserLikeContract.tableName}.${UserLikeContract.Columns.photoId}
-        WHERE ${UserLikeContract.tableName}.${UserLikeContract.Columns.userUsername}=:username"""
+        WHERE ${UserLikeContract.tableName}.${UserLikeContract.Columns.userUsername}=:username
+        ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.updatedAt}"""
     )
     @RewriteQueriesToDropUnusedColumns
     abstract fun getLikedByUser(username: String): Flow<List<PhotoEntity>>
@@ -71,7 +72,7 @@ abstract class PhotoDao {
                   ${TagContract.tableName}.${TagContract.Columns.photoId} 
           WHERE ${PhotoContract.tableName}.${PhotoContract.Columns.description} LIKE :query 
           OR ${TagContract.tableName}.${TagContract.Columns.title} LIKE :query
-          ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.cacheTime}"""
+          ORDER BY ${PhotoContract.tableName}.${PhotoContract.Columns.updatedAt}"""
     )
     @RewriteQueriesToDropUnusedColumns
     abstract fun search(query: String): Flow<List<PhotoEntity>>
@@ -121,21 +122,9 @@ abstract class PhotoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertLikeRelations(relations: List<UserLikeCrossRef>)
 
-//    suspend fun insertOrUpdate(photoEntity: PhotoEntity) =
-//        if (getById(photoEntity.id).catch { emit(null) }.firstOrNull() != null)
-//            update(photoEntity)
-//        else
-//            insert(photoEntity)
-//
-//    suspend fun insertOrUpdate(photoEntities: List<PhotoEntity>) =
-//        photoEntities.forEach { insertOrUpdate(it) }
-
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertCollectionRelations(relations: List<CollectionPhotoCrossRef>)
-
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    abstract suspend fun insertUserRelation(relation: UserPhotoCrossRef)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -28,6 +28,7 @@
     <string name="common_forbidden">Not enough rights to access this content</string>
     <string name="forbidden_photo">Not enough rights to access this photo</string>
     <string name="forbidden_collection">Not enough rights to access this collection</string>
+    <string name="forbidden_add_to_collection">Not enough rights to add a photos to this collection</string>
     <string name="forbidden_user">Not enough rights to access information about this user</string>
     <string name="common_not_found">Requested content not found</string>
     <string name="photo_not_found">Photo not found</string>
@@ -55,9 +56,10 @@
     <string name="photos">Photos</string>
     <string name="likes">Likes</string>
     <string name="common_like_error">Unable to set like</string>
-    <string name="downloaded">Downloaded</string>
+    <string name="downloaded_placeholder">Downloaded in %s</string>
     <string name="download_error">Downloading error</string>
     <string name="share_collection">Share collection</string>
+    <string name="added_to_collection">Photo added</string>
 
     <plurals name="photos_count">
         <item quantity="zero">No photos yet</item>

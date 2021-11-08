@@ -15,7 +15,7 @@ abstract class CollectionDao {
     @Query(
         """
         SELECT * FROM ${CollectionContract.tableName}
-        ORDER BY ${CollectionContract.Columns.cacheTime}"""
+        ORDER BY ${CollectionContract.Columns.updatedAt}"""
     )
     abstract fun getAll(): Flow<List<CollectionEntity>>
 
@@ -32,7 +32,8 @@ abstract class CollectionDao {
             ${CollectionContract.tableName}.${CollectionContract.Columns.id}=
             ${UserCollectionContract.tableName}.${UserCollectionContract.Columns.collectionId}
         WHERE ${UserCollectionContract.tableName}.${UserCollectionContract.Columns.userUsername}
-            =:userUsername"""
+            =:userUsername
+        ORDER BY ${CollectionContract.tableName}.${CollectionContract.Columns.updatedAt}"""
     )
     @RewriteQueriesToDropUnusedColumns
     abstract fun getByUser(userUsername: String): Flow<List<CollectionEntity>>
@@ -43,6 +44,14 @@ abstract class CollectionDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(collectionEntities: List<CollectionEntity>)
+
+    open suspend fun insertOrUpdate(collectionEntity: CollectionEntity) {
+        if (getById(collectionEntity.id).catch { }.firstOrNull() != null) {
+            update(collectionEntity)
+        } else {
+            insert(collectionEntity)
+        }
+    }
 
     @Transaction
     open suspend fun insertForUser(
@@ -57,14 +66,6 @@ abstract class CollectionDao {
             )
         }
         insertUserCollectionRelations(relations)
-    }
-
-    open suspend fun insertOrUpdate(collectionEntity: CollectionEntity) {
-        if (getById(collectionEntity.id).catch { }.firstOrNull() != null) {
-            update(collectionEntity)
-        } else {
-            insert(collectionEntity)
-        }
     }
 
     open suspend fun insertOrUpdate(collectionEntities: List<CollectionEntity>) {

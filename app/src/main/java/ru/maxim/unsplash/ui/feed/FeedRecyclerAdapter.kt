@@ -8,7 +8,6 @@ import ru.maxim.unsplash.ui.feed.items.*
 
 class FeedRecyclerAdapter(
     onLikeClick: (photoId: String, hasLike: Boolean, itemPosition: Int) -> Unit,
-    onAddToCollectionClick: (photoId: String) -> Unit,
     onDownloadClick: (photoId: String) -> Unit,
     feedActionsListener: FeedActionsListener,
     onRefresh: () -> Unit,
@@ -19,17 +18,17 @@ class FeedRecyclerAdapter(
         delegatesManager
             .addDelegate(
                 PhotoItemDelegate(
-                    onLikeClick,
-                    onAddToCollectionClick,
-                    onDownloadClick,
-                    feedActionsListener::onPhotoClick,
-                    feedActionsListener::onProfileClick
+                    onLikeClick = onLikeClick,
+                    onDownloadClick = onDownloadClick,
+                    onPhotoClick = feedActionsListener::onPhotoClick,
+                    onProfileClick = feedActionsListener::onProfileClick,
+                    onAddToCollectionClick = feedActionsListener::onAddToCollectionClick
                 )
             )
             .addDelegate(
                 CollectionItemDelegate(
-                    feedActionsListener::onCollectionClick,
-                    feedActionsListener::onProfileClick
+                    onCollectionClick = feedActionsListener::onCollectionClick,
+                    onProfileClick = feedActionsListener::onProfileClick
                 )
             )
             .addDelegate(InitialLoadingItemDelegate())

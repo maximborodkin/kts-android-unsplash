@@ -1,15 +1,18 @@
 package ru.maxim.unsplash.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import ru.maxim.unsplash.domain.DomainMapper
 import ru.maxim.unsplash.domain.model.Collection
+import ru.maxim.unsplash.network.exception.*
 import ru.maxim.unsplash.network.model.CollectionDto
 import ru.maxim.unsplash.network.service.CollectionService
 import ru.maxim.unsplash.persistence.dao.CollectionDao
 import ru.maxim.unsplash.persistence.model.CollectionEntity
 import ru.maxim.unsplash.util.Result
 import ru.maxim.unsplash.util.networkBoundResource
+import timber.log.Timber
 
 class CollectionRepositoryImpl(
     private val collectionService: CollectionService,
@@ -28,9 +31,6 @@ class CollectionRepositoryImpl(
                 collectionService.getFeedPage(page, loadSize)
             },
             cacheFetchResult = { response: List<CollectionDto> ->
-                if (page == 1) {
-                    collectionDao.deleteAll()
-                }
                 val domainList = collectionDtoMapper.toDomainModelList(response)
                 val collectionEntityList = collectionEntityMapper.fromDomainModelList(domainList)
                 collectionDao.insertOrUpdate(collectionEntityList)
@@ -62,7 +62,7 @@ class CollectionRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override fun getUserCollectionsPage(
+    override suspend fun getUserCollectionsPage(
         userUsername: String,
         page: Int
     ): Flow<Result<List<Collection>>> =
@@ -76,9 +76,6 @@ class CollectionRepositoryImpl(
                 collectionService.getUserCollectionsPage(userUsername, page, loadSize)
             },
             cacheFetchResult = { response: List<CollectionDto> ->
-                if (page == 1) {
-                    collectionDao.deleteAll()
-                }
                 val domainList = collectionDtoMapper.toDomainModelList(response)
                 val collectionEntityList = collectionEntityMapper.fromDomainModelList(domainList)
                 collectionDao.insertForUser(collectionEntityList, userUsername)
@@ -89,8 +86,31 @@ class CollectionRepositoryImpl(
             }
         )
 
-    override suspend fun share(shareKey: String): Flow<Boolean> {
-        TODO("Not yet implemented")
+    override suspend fun addPhotoToCollection(
+        photoId: String,
+        collectionId: String
+    ): Flow<Result<Unit>> = flow {
+        try {
+            val response = collectionService.addPhotoToCollection(
+                collectionId = collectionId,
+                photoId = photoId
+            )
+            if (response.isSuccessful) {
+                emit(Result.Success(Unit))
+            } else {
+                throw when(response.code()) {
+                    401 -> UnauthorizedException(response)
+                    403 -> ForbiddenException(response)
+                    404 -> NotFoundException(response)
+                    408 -> TimeoutException(response)
+                    in 500..599 -> ServerErrorException(response)
+                    else -> NetworkException(response)
+                }
+            }
+        } catch (e: Exception) {
+            Timber.w(e)
+            emit(Result.Error(Unit, e))
+        }
     }
 
     private companion object {

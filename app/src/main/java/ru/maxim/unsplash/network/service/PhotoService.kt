@@ -53,8 +53,8 @@ interface PhotoService {
         @Query("per_page") pageSize: Int = 10
     ): Response<List<PhotoDto>>
 
-    @GET("/photos/{photoId}/download")
-    suspend fun getDownloadUrl(@Path("photoId") photoId: String): PhotoDownloadResponse
+    @GET("/photos/{photo_id}/download")
+    suspend fun getDownloadUrl(@Path("photo_id") photoId: String): PhotoDownloadResponse
 
     @GET
     suspend fun downloadPhoto(@Url trackableDownloadUrl: String): Response<ResponseBody>

@@ -1,3 +1,5 @@
 package ru.maxim.unsplash.ui.feed.items
 
-data class InitialLoadingErrorItem(val errorMessage: Int?) : BaseFeedListItem()
+import androidx.annotation.StringRes
+
+data class InitialLoadingErrorItem(@StringRes val errorMessage: Int) : BaseFeedListItem()

@@ -8,9 +8,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import ru.maxim.unsplash.R
+import ru.maxim.unsplash.util.longToast
 import ru.maxim.unsplash.util.toFileName
 import ru.maxim.unsplash.util.toast
-import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -40,7 +40,6 @@ class ExternalStorageManager(private val context: Context) {
             filename = """$filename${if (index == 0) "" else "_${index++}"}"""
         }
         File(filename).createNewFile()
-        Timber.tag("File_DOWNLOAD").d("Start downloading file to $filename")
 
         var fileInputStream: InputStream? = null
         var fileOutputStream: OutputStream? = null
@@ -54,8 +53,11 @@ class ExternalStorageManager(private val context: Context) {
                     fileOutputStream.write(buffer, 0, size)
                 }
                 fileOutputStream.flush()
-                withContext(Main) { context.toast(R.string.downloaded) }
-                Timber.tag("File_DOWNLOAD").d("File saved to $filename")
+                withContext(Main) {
+                    context.longToast(
+                        context.getString(R.string.downloaded_placeholder, externalImagesFolder)
+                    )
+                }
             }
         } catch (e: Exception) {
             withContext(Main) { context.toast(R.string.download_error) }

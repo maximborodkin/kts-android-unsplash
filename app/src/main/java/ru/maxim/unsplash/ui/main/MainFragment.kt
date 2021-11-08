@@ -72,4 +72,9 @@ class MainFragment : Fragment(R.layout.fragment_main), FeedActionsListener {
         val extras = FragmentNavigatorExtras(*transitionExtras)
         findNavController().navigate(action, extras)
     }
+
+    override fun onAddToCollectionClick(photoId: String) {
+        val action = MainFragmentDirections.actionMainToAddToCollectionDialog(photoId)
+        findNavController().navigate(action)
+    }
 }

@@ -7,21 +7,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.TokenRequest
 import ru.maxim.unsplash.network.service.AuthService
+import ru.maxim.unsplash.repository.UserRepository
 import ru.maxim.unsplash.ui.login.LoginViewModel.LoginState.*
 import ru.maxim.unsplash.util.NetworkUtils
+import ru.maxim.unsplash.util.Result
 
 class LoginViewModel private constructor(
     application: Application,
     private val authService: AuthService,
+    private val userRepository: UserRepository,
     private val authorizationService: AuthorizationService,
     private val networkUtils: NetworkUtils
 ) : AndroidViewModel(application) {
@@ -51,9 +51,17 @@ class LoginViewModel private constructor(
         authService.performTokenRequest(
             authorizationService,
             tokenRequest,
-            onComplete = { viewModelScope.launch(Main) { _loginState.emit(Success) } },
+            onComplete = {
+                resolveCurrentUser()
+                viewModelScope.launch(Main) { _loginState.emit(Success) }
+            },
             onError = { viewModelScope.launch(Main) { _loginState.emit(Error(it)) } }
         )
+    }
+
+    // Load current user to update username field in SharedPreferences
+    private fun resolveCurrentUser() = viewModelScope.launch {
+        userRepository.getCurrentUser().filter { result -> result is Result.Success }.first()
     }
 
     fun onAuthFailed(exception: AuthorizationException) = viewModelScope.launch(Main) {
@@ -64,6 +72,7 @@ class LoginViewModel private constructor(
     class LoginViewModelFactory(
         private val application: Application,
         private val authService: AuthService,
+        private val userRepository: UserRepository,
         private val authorizationService: AuthorizationService,
         private val networkUtils: NetworkUtils
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
@@ -73,6 +82,7 @@ class LoginViewModel private constructor(
                 return LoginViewModel(
                     application,
                     authService,
+                    userRepository,
                     authorizationService,
                     networkUtils
                 ) as T

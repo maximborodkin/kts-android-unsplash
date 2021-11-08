@@ -13,7 +13,6 @@ import ru.maxim.unsplash.ui.feed.items.PhotoItem
 
 class PhotoItemDelegate(
     private val onLikeClick: (photoId: String, hasLike: Boolean, itemPosition: Int) -> Unit,
-    private val onAddToCollectionClick: (photoId: String) -> Unit,
     private val onDownloadClick: (photoId: String) -> Unit,
     private val onPhotoClick: (
         photoId: String,
@@ -26,7 +25,8 @@ class PhotoItemDelegate(
     private val onProfileClick: (
         userUsername: String,
         transitionExtras: Array<Pair<View, String>>
-    ) -> Unit
+    ) -> Unit,
+    private val onAddToCollectionClick: (photoId: String) -> Unit
 ) : BaseMainItemDelegate<PhotoItem, PhotoViewHolder>() {
 
     override fun isForViewType(

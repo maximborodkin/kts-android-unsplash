@@ -90,10 +90,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
             TabLayoutMediator(binding.profileTabLayout, binding.profileViewPager) { tab, position ->
                 tab.setText(pages[position].first)
             }.attach()
-        } else {
-//            profilePagerAdapter?.fragments?.forEach { page ->
-//                (page as? FeedFragment)?.refresh()
-//            }
         }
     }
 
@@ -130,7 +126,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), FeedActionsListener
             }
     }
 
-    fun openAvatarViewer(avatarUrl: String) {
+    override fun onAddToCollectionClick(photoId: String) {
+        val action = ProfileFragmentDirections.actionProfileToAddToCollectionDialog(photoId)
+        findNavController().navigate(action)
+    }
+
+    private fun openAvatarViewer(avatarUrl: String) {
         val action = ProfileFragmentDirections.actionProfileToImageViewer(avatarUrl)
         findNavController().navigate(action)
     }

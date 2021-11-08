@@ -43,7 +43,6 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
 
         feedRecyclerAdapter = FeedRecyclerAdapter(
             onLikeClick = model::setLike,
-            onAddToCollectionClick = model::addToCollection,
             onDownloadClick = model::download,
             feedActionsListener = parentFragment as FeedActionsListener,
             onRefresh = ::loadInitialPage,
@@ -73,16 +72,19 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                         feedSwipeRefresh.isRefreshing = true
                     }
 
-                    InitialLoading -> {
-                        feedRecyclerAdapter.items = listOf(InitialLoadingItem)
+                    InitialLoading -> with(feedRecyclerAdapter) {
+                        if (items.isEmpty()){
+                            items = listOf(InitialLoadingItem)
+                            notifyDataSetChanged()
+                        }
                     }
 
                     is InitialLoadingSuccess -> with(binding) {
                         feedSwipeRefresh.isRefreshing = false
-                        val newItems = state.items
+                        var newItems = state.items
                         cacheWarningSnackbar?.dismiss()
                         if (newItems.isEmpty() && state.isCache) {
-                            newItems.add(EmptyListItem)
+                            newItems = listOf(EmptyListItem)
                         }
                         feedRecyclerAdapter.items = newItems
                         feedRecyclerAdapter.notifyDataSetChanged()
@@ -104,13 +106,11 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                             feedRecyclerAdapter.items = cache
                         } else {
                             feedRecyclerAdapter.items = listOf(
-                                InitialLoadingErrorItem(
-                                    state.message ?: R.string.common_loading_error
-                                )
+                                InitialLoadingErrorItem(state.message)
                             )
                         }
                         feedRecyclerAdapter.notifyDataSetChanged()
-                        state.message?.let { context?.longToast(it) }
+                        context?.longToast(state.message)
                     }
 
                     is PageLoading -> with(feedRecyclerAdapter) {

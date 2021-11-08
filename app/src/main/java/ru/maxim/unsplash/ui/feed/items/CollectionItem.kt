@@ -10,5 +10,6 @@ data class CollectionItem(
     val authorUsername: String,
     val authorName: String?,
     val authorAvatar: String?,
+    val isPrivate: Boolean,
     val link: String
 ) : BaseFeedListItem()

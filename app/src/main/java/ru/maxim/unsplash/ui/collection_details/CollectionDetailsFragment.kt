@@ -1,5 +1,6 @@
 package ru.maxim.unsplash.ui.collection_details
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
@@ -15,6 +16,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentCollectionDetailsBinding
+import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsState.Success
 import ru.maxim.unsplash.ui.collection_details.CollectionPhotosFeedFragment.Companion.collectionIdKey
 import ru.maxim.unsplash.ui.feed.FeedActionsListener
 import ru.maxim.unsplash.ui.feed.FeedFragment
@@ -29,6 +31,18 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.collectionSwipeRefresh.setOnRefreshListener { model.refresh() }
+        binding.collectionShareBtn.setOnClickListener {
+            val currentState = model.collectionDetailsState.value
+            if (currentState is Success) {
+                with(Intent(Intent.ACTION_SEND)) {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, currentState.collection.links.html)
+                    context?.startActivity(
+                        Intent.createChooser(this, context?.getString(R.string.share_collection))
+                    )
+                }
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             model.collectionDetailsState.collect { state ->
@@ -41,29 +55,23 @@ class CollectionDetailsFragment : Fragment(R.layout.fragment_collection_details)
                         isCache = false
                     }
 
-                    is CollectionDetailsViewModel.CollectionDetailsState.Success -> with(binding) {
+                    is Success -> with(binding) {
                         collectionSwipeRefresh.isRefreshing = false
                         isCache = false
-                        state.collection.let {
-                            collection = it
-                            loadCollectionPhotos(it.id)
-                        }
+                        state.collection.let { collection = it }
                     }
 
                     is CollectionDetailsViewModel.CollectionDetailsState.Error -> with(binding) {
                         collectionSwipeRefresh.isRefreshing = false
                         isCache = true
-                        state.cache?.let {
-                            collection = it
-                            loadCollectionPhotos(it.id)
-                        }
+                        state.cache?.let { collection = it }
                         context?.longToast(state.messageRes)
                     }
                 }
             }
         }
+        loadCollectionPhotos(args.collectionId)
     }
-
 
     private fun loadCollectionPhotos(collectionId: String) {
         /*

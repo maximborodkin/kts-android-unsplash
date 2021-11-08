@@ -5,6 +5,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel
 import ru.maxim.unsplash.ui.collection_details.CollectionDetailsViewModel.CollectionDetailsViewModelFactory
+import ru.maxim.unsplash.ui.dialogs.add_to_collection.AddToCollectionViewModel
+import ru.maxim.unsplash.ui.dialogs.add_to_collection.AddToCollectionViewModel.AddToCollectionViewModelFactory
 import ru.maxim.unsplash.ui.feed.FeedViewModel
 import ru.maxim.unsplash.ui.feed.FeedViewModel.FeedViewModelFactory
 import ru.maxim.unsplash.ui.login.LoginViewModel
@@ -22,6 +24,7 @@ val presentationModule = module(createdAtStart = true) {
         LoginViewModelFactory(
             application = androidApplication(),
             authService = get(),
+            userRepository = get(),
             authorizationService = get(),
             networkUtils = get()
         ).create(LoginViewModel::class.java)
@@ -31,7 +34,6 @@ val presentationModule = module(createdAtStart = true) {
         FeedViewModelFactory(
             application = androidApplication(),
             photoRepository = get(),
-            collectionRepository = get(),
             getItemsPage = parameters.get()
         ).create(FeedViewModel::class.java)
     }
@@ -59,5 +61,12 @@ val presentationModule = module(createdAtStart = true) {
             preferencesManager = get(),
             username = parameters.getOrNull()
         ).create(ProfileViewModel::class.java)
+    }
+
+    viewModel {
+        AddToCollectionViewModelFactory(
+            application = androidApplication(),
+            collectionRepository = get(),
+        ).create(AddToCollectionViewModel::class.java)
     }
 }

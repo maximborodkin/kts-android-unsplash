@@ -12,7 +12,6 @@ import ru.maxim.unsplash.R
 import ru.maxim.unsplash.domain.model.Collection
 import ru.maxim.unsplash.domain.model.Photo
 import ru.maxim.unsplash.network.exception.*
-import ru.maxim.unsplash.repository.CollectionRepository
 import ru.maxim.unsplash.repository.PhotoRepository
 import ru.maxim.unsplash.ui.feed.FeedViewModel.FeedState.*
 import ru.maxim.unsplash.ui.feed.items.BaseFeedListItem
@@ -23,7 +22,6 @@ import ru.maxim.unsplash.util.Result.*
 class FeedViewModel private constructor(
     application: Application,
     private val photoRepository: PhotoRepository,
-    private val collectionRepository: CollectionRepository,
     private val getItemsPage: suspend (page: Int) -> Flow<Result<List<Any>>>
 ) : AndroidViewModel(application) {
 
@@ -38,12 +36,12 @@ class FeedViewModel private constructor(
 
         object InitialLoading : FeedState()
         data class InitialLoadingSuccess(
-            val items: ArrayList<BaseFeedListItem>,
+            val items: List<BaseFeedListItem>,
             val isCache: Boolean
         ) : FeedState()
         data class InitialLoadingError(
-            @StringRes val message: Int?,
-            val items: ArrayList<BaseFeedListItem>? = null
+            @StringRes val message: Int,
+            val items: List<BaseFeedListItem>? = null
         ) : FeedState()
 
         object PageLoading : FeedState()
@@ -156,10 +154,6 @@ class FeedViewModel private constructor(
         }
     }
 
-    fun addToCollection(photoId: String) {
-
-    }
-
     fun download(photoId: String) = viewModelScope.launch {
         photoRepository.downloadPhoto(photoId)
     }
@@ -174,7 +168,6 @@ class FeedViewModel private constructor(
     class FeedViewModelFactory(
         private val application: Application,
         private val photoRepository: PhotoRepository,
-        private val collectionRepository: CollectionRepository,
         private val getItemsPage: suspend (page: Int) -> Flow<Result<List<Any>>>
     ) : ViewModelProvider.AndroidViewModelFactory(application) {
 
@@ -183,7 +176,6 @@ class FeedViewModel private constructor(
                 return FeedViewModel(
                     application,
                     photoRepository,
-                    collectionRepository,
                     getItemsPage
                 ) as T
             }

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
     app:startDestination="@id/onboardingFragment">
+
+    <dialog
+        android:id="@+id/addToCollectionDialog"
+        android:name="ru.maxim.unsplash.ui.dialogs.add_to_collection.AddToCollectionDialogFragment"
+        android:label="AddToCollectionDialog">
+        <argument
+            android:name="photoId"
+            app:argType="string" />
+    </dialog>
 
     <fragment
         android:id="@+id/onboardingFragment"
@@ -38,11 +46,112 @@
             app:popExitAnim="@android:anim/fade_out"
             app:popUpTo="@id/nav_graph.xml"
             app:popUpToInclusive="true" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="school://ru.maxim.unsplash/oauth2/logout_callback" />
     </fragment>
 
     <fragment
         android:id="@+id/mainFragment"
         android:name="ru.maxim.unsplash.ui.main.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_main_to_photoDetails"
+            app:destination="@id/photoDetailsFragment" />
+        <action
+            android:id="@+id/action_main_to_collectionDetails"
+            app:destination="@id/collectionDetailsFragment" />
+        <action
+            android:id="@+id/action_main_to_profile"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_main_to_addToCollectionDialog"
+            app:destination="@id/addToCollectionDialog" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photoDetailsFragment"
+        android:name="ru.maxim.unsplash.ui.photo_details.PhotoDetailsFragment"
+        android:label="PhotoDetailsFragment"
+        tools:layout="@layout/fragment_photo_details">
+        <argument
+            android:name="photoId"
+            app:argType="string" />
+        <argument
+            android:name="photoUrl"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="imageWidth"
+            app:argType="integer" />
+        <argument
+            android:name="imageHeight"
+            app:argType="integer" />
+        <argument
+            android:name="blurHash"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_photoDetails_to_ImageViewer"
+            app:destination="@id/fragmentImageViewer"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_photoDetails_to_profile"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/collectionDetailsFragment"
+        android:name="ru.maxim.unsplash.ui.collection_details.CollectionDetailsFragment"
+        android:label="CollectionDetailsFragment"
+        tools:layout="@layout/fragment_collection_details">
+        <argument
+            android:name="collectionId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_collectionDetails_to_profile"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_collectionDetails_to_photoDetails"
+            app:destination="@id/photoDetailsFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentImageViewer"
+        android:name="ru.maxim.unsplash.ui.image_viewer.ImageViewerFragment"
+        android:label="FragmentImageViewer">
+        <argument
+            android:name="photoUrl"
+            app:argType="string" />
+        <argument
+            android:name="blurHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="ru.maxim.unsplash.ui.profile.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="username"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_profile_to_collectionDetails"
+            app:destination="@id/collectionDetailsFragment" />
+        <action
+            android:id="@+id/action_profile_to_photoDetails"
+            app:destination="@id/photoDetailsFragment" />
+        <action
+            android:id="@+id/action_profile_to_ImageViewer"
+            app:destination="@id/fragmentImageViewer" />
+        <action
+            android:id="@+id/action_profile_to_addToCollectionDialog"
+            app:destination="@id/addToCollectionDialog" />
+    </fragment>
 </navigation>

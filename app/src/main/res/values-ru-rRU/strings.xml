@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Unsplash</string>
     <string name="welcome_to_unsplash">Добро пожаловать в Unsplash</string>
     <string name="back">Назад</string>
@@ -15,4 +15,52 @@
     <string name="onboarding_second_description">Вам доступны тысячи красивых фотографий в высоком разрешении. Оценивайте их, создавайте коллекции, делитесь. Ваши собственные фото также будут интересны другим</string>
     <string name="onboarding_third_title">Войдите для разблокирования всех функций</string>
     <string name="onboarding_third_description">Используйте свой аккаунт Unsplash чтобы смотреть, скачивать и делиться фотографиями, создавать собственные коллекции, менять данные аккаунта</string>
+    <string name="unauthorized_error">Ошибка аутентификации. Требуется повторный вход</string>
+    <string name="common_loading_error">Что-то пошло не так. Пожалуйста, попробуйте снова</string>
+    <string name="server_error">Ошибка сервера. Пожалйста, попробуйте снова</string>
+    <string name="timeout_error">Превышено время ожидания ответа. Проверьте соединение с интернетом</string>
+    <string name="common_login_error">Ошибка при попытке входа. Пожалуйста, попробуйте снова</string>
+    <string name="editorial">Редакция</string>
+    <string name="collections">Коллекции</string>
+    <string name="profile">Профиль</string>
+    <string name="unable_to_load_photo">Невозможно загрузить фото</string>
+    <string name="forbidden_photo">Недостаточно проав для доступа к этому фото</string>
+    <string name="forbidden_add_to_collection">Недостаточно прав для добавления фото в эту коллекцию</string>
+    <string name="photo_not_found">Фото не найдено</string>
+    <string name="dimensions">Размер</string>
+    <string name="camera">Камера</string>
+    <string name="color">Цвет</string>
+    <string name="focal_length">Фокусное расстояние</string>
+    <string name="exposure">Экспозиция</string>
+    <string name="refresh">Обновить</string>
+    <string name="empty_list_notification">Этот список пустой. Попробуйте обновить страницу позже</string>
+    <string name="no_internet">Нет сети</string>
+    <string name="settings">Настройки</string>
+    <string name="login_page_start_message">Вы автоматически будете перенаправлены на страницу аутентификации в Unsplash. Если это не происходит, нажмите на кнопку войти</string>
+    <string name="unable_to_set_like">Невозможно поставить лайк</string>
+    <string name="cached_data_shown">Показаны данные из кэша</string>
+    <string name="logout">Выйти</string>
+    <string name="forbidden_collection">Недостаточно прав для доступа к этой коллекции</string>
+    <string name="collection_not_found">Коллекция не найдена</string>
+
+    <plurals name="photos_count" tools:ignore="UnusedQuantity">
+        <item quantity="zero" tools:ignore="UnusedQuantity">Пока нет фото</item>
+        <item quantity="one">%d фото</item>
+        <item quantity="few">%d фотографии</item>
+        <item quantity="many">%d фотографий</item>
+        <item quantity="other">%d фотографий</item>
+    </plurals>
+    <string name="published_at">Опубликовано</string>
+    <string name="last_update">Обновлено</string>
+    <string name="common_forbidden">Недостаточно прав для доступа к этому контенту</string>
+    <string name="common_not_found">Запрашиваемый контент не найден</string>
+    <string name="forbidden_user">Недостаточно прав для доступа к информации об этом пользователе</string>
+    <string name="user_not_found">Пользователь не найден</string>
+    <string name="photos">Фотографии</string>
+    <string name="likes">Избранное</string>
+    <string name="common_like_error">Невозможно изменить лайк</string>
+    <string name="downloaded_placeholder">Загружено в %s</string>
+    <string name="download_error">Ошибка загрузки</string>
+    <string name="share_collection">Поделиться коллекцией</string>
+    <string name="added_to_collection">Добавлено в коллекцию</string>
 </resources>

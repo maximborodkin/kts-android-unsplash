@@ -7,50 +7,48 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
+import org.koin.android.ext.android.inject
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.FragmentOnboardingBinding
-import ru.maxim.unsplash.ui.onboarding.pages.OnboardingFirstFragment
-import ru.maxim.unsplash.ui.onboarding.pages.OnboardingSecondFragment
-import ru.maxim.unsplash.ui.onboarding.pages.OnboardingThirdFragment
+import ru.maxim.unsplash.persistence.PreferencesManager
 import ru.maxim.unsplash.util.clearDrawables
 import ru.maxim.unsplash.util.setDrawableEnd
 
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     private val binding by viewBinding(FragmentOnboardingBinding::bind)
+    private val preferencesManager: PreferencesManager by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fragments = arrayListOf(
-            OnboardingFirstFragment(),
-            OnboardingSecondFragment(),
-            OnboardingThirdFragment()
+            Fragment(R.layout.fragment_onboarding_first),
+            Fragment(R.layout.fragment_onboarding_second),
+            Fragment(R.layout.fragment_onboarding_third)
         )
 
-        binding.onboardingPager.adapter = OnboardingPagerAdapter(
-            childFragmentManager,
-            lifecycle,
-            fragments
-        )
+        binding.onboardingPager.adapter =
+            OnboardingPagerAdapter(childFragmentManager, lifecycle, fragments)
 
-        binding.onboardingPager.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                binding.onboardingBackBtn.isVisible = position > 0
-                // Change next button to finish button on last fragment
-                if (position == fragments.size - 1) {
-                    binding.onboardingNextBtn.apply {
-                        text = getString(R.string.finish)
-                        clearDrawables()
-                    }
-                } else {
-                    binding.onboardingNextBtn.apply {
-                        text = getString(R.string.next)
-                        setDrawableEnd(R.drawable.ic_arrow_forward_white)
+        binding.onboardingPager.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    binding.onboardingBackBtn.isVisible = position > 0
+                    // Change label on next button to finish button on last fragment
+                    // and next for others
+                    if (position == fragments.size - 1) {
+                        binding.onboardingNextBtn.apply {
+                            text = getString(R.string.finish)
+                            clearDrawables()
+                        }
+                    } else {
+                        binding.onboardingNextBtn.apply {
+                            text = getString(R.string.next)
+                            setDrawableEnd(R.drawable.ic_arrow_forward)
+                        }
                     }
                 }
-            }
-        })
+            })
 
         binding.onboardingNextBtn.setOnClickListener {
             // Navigate to next fragment if its possible
@@ -70,8 +68,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
 
     private fun finishOnboarding() {
-        //TODO: Set isOnboardingFinished property to true in SharedPreferences
-
+        preferencesManager.isOnboardingDone = true
         findNavController().navigate(OnboardingFragmentDirections.actionOnboardingToLogin())
     }
 }

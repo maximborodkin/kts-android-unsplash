@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
             name="photo"
-            type="ru.maxim.unsplash.model.Photo" />
+            type="ru.maxim.unsplash.ui.feed.items.PhotoItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context="ru.maxim.unsplash.ui.main.MainFragment">
@@ -21,6 +20,9 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="center"
+            android:transitionName="@{@string/item_photo_image_transition(photo.id)}"
+            app:blurHash="@{photo.blurHash}"
+            app:image="@{photo.regular}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -51,6 +53,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="12dp"
+            android:transitionName="@{@string/item_photo_author_avatar_transition(photo.id)}"
+            app:image="@{photo.authorAvatar}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:src="@tools:sample/avatars" />
@@ -59,10 +63,12 @@
             android:id="@+id/itemPhotoAuthorName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:padding="12dp"
             android:maxLines="1"
-            android:text="@{photo.user.name}"
+            android:text="@{photo.authorName}"
             android:textColor="@color/white"
+            android:transitionName="@{@string/item_photo_author_name_transition(photo.id)}"
+
             app:layout_constraintBottom_toBottomOf="@id/itemPhotoAuthorAvatar"
             app:layout_constraintStart_toEndOf="@id/itemPhotoAuthorAvatar"
             app:layout_constraintTop_toTopOf="@id/itemPhotoAuthorAvatar"
@@ -75,6 +81,7 @@
             android:padding="8dp"
             android:src="@drawable/ic_like"
             android:tint="@{photo.likedByUser ? @color/red_500 : @color/grey}"
+            android:transitionName="@{@string/item_photo_like_btn_transition(photo.id)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/itemPhotoLikesCount" />
 
@@ -83,9 +90,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:text="@{Integer.toString(photo.likes)}"
+
+            android:text="@{Integer.toString(photo.likesCount)}"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:transitionName="@{@string/item_photo_likes_count_transition(photo.id)}"
             app:layout_constraintBottom_toBottomOf="@id/itemPhotoLikeBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/itemPhotoLikeBtn"

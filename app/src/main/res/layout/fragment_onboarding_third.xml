@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/yellow_100"
     android:paddingHorizontal="48dp"
-    tools:context="ru.maxim.unsplash.ui.onboarding.pages.OnboardingThirdFragment">
+    tools:viewBindingIgnore="true">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/onboardingPageImage"

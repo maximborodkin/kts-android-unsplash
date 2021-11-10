@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="collection"
+            type="ru.maxim.unsplash.ui.feed.items.CollectionItem" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemCollectionCover"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="center"
+            android:tint="@color/transparent_dark"
+            app:image="@{collection.cover}"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemCollectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:text="@{collection.title}"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:transitionName="@{@string/item_collection_title_transition(collection.id)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Example collection" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_private"
+            android:visibility="@{collection.isPrivate ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/itemCollectionTitle"
+            app:layout_constraintStart_toEndOf="@id/itemCollectionTitle"
+            app:layout_constraintTop_toTopOf="@id/itemCollectionTitle" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/itemCollectionShareBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_share"
+            android:tint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ru.maxim.unsplash.ui.view.AvatarView
+            android:id="@+id/itemCollectionAuthorAvatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="12dp"
+            android:transitionName="@{@string/item_collection_author_avatar_transition(collection.id)}"
+            app:image="@{collection.authorAvatar}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemCollectionAuthorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:padding="12dp"
+            android:text="@{collection.authorName}"
+            android:textColor="@color/white"
+            android:transitionName="@{@string/item_collection_author_name_transition(collection.id)}"
+            app:layout_constraintBottom_toBottomOf="@id/itemCollectionAuthorAvatar"
+            app:layout_constraintStart_toEndOf="@id/itemCollectionAuthorAvatar"
+            app:layout_constraintTop_toTopOf="@id/itemCollectionAuthorAvatar"
+            tools:text="@tools:sample/full_names" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemCollectionPhotosCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:drawableEnd="@drawable/ic_image"
+            android:text="@{Integer.toString(collection.totalPhotos)}"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="10" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

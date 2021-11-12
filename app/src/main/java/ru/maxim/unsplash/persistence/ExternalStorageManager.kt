@@ -1,7 +1,6 @@
 package ru.maxim.unsplash.persistence
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Environment
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -19,18 +18,8 @@ import java.util.*
 
 class ExternalStorageManager(private val context: Context) {
 
-    // Using english version of application name for folders
-    private val applicationFolderName by lazy {
-        val localeContext =
-            Configuration(context.resources.configuration).apply { setLocale(Locale.US) }
-        context.createConfigurationContext(localeContext).getString(R.string.app_name)
-    }
-
     private val externalImagesFolder =
-        context.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath +
-                File.separator +
-                applicationFolderName
-
+        context.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun saveFile(file: ResponseBody) = withContext(IO) {

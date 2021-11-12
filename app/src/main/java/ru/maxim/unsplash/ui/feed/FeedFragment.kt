@@ -83,9 +83,13 @@ abstract class FeedFragment : Fragment(R.layout.fragment_feed) {
                         feedSwipeRefresh.isRefreshing = false
                         var newItems = state.items
                         cacheWarningSnackbar?.dismiss()
-                        if (newItems.isEmpty() && state.isCache) {
-                            newItems = listOf(EmptyListItem)
-                        }
+                        if(newItems.isEmpty() )
+                            newItems = if(state.isCache) {
+                                listOf(InitialLoadingItem)
+                            } else {
+                                listOf(EmptyListItem)
+                            }
+
                         feedRecyclerAdapter.items = newItems
                         feedRecyclerAdapter.notifyDataSetChanged()
                     }

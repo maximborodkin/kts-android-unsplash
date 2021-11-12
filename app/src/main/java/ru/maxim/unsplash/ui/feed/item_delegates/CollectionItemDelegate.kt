@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.maxim.unsplash.R
 import ru.maxim.unsplash.databinding.ItemCollectionBinding
 import ru.maxim.unsplash.ui.feed.item_delegates.CollectionItemDelegate.PhotosCollectionViewHolder
@@ -31,9 +30,9 @@ class CollectionItemDelegate(
     ): Boolean = item is CollectionItem
 
     override fun onCreateViewHolder(parent: ViewGroup): PhotosCollectionViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_collection, parent, false)
-        return PhotosCollectionViewHolder(itemView)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemCollectionBinding.inflate(inflater, parent, false)
+        return PhotosCollectionViewHolder(binding)
     }
 
     override fun onBindViewHolder(
@@ -42,8 +41,8 @@ class CollectionItemDelegate(
         payloads: MutableList<Any>
     ) = holder.bind(item)
 
-    inner class PhotosCollectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val binding by viewBinding(ItemCollectionBinding::bind)
+    inner class PhotosCollectionViewHolder(private val binding: ItemCollectionBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private val context = itemView.context
 
         fun bind(collection: CollectionItem) = with(binding) {
